@@ -12,8 +12,11 @@ class BannerRestfulApiSupportGrailsPlugin {
     def grailsVersion = "2.2.1 > *"
 
     // the other plugins this plugin depends on
-    def dependsOn = [ 'springSecurityCore': '1.2.7.3',
-                    ]
+    def dependsOn = [ 'springSecurityCore': '1.2.7.3' ]
+
+    //must load after banner-core to override basic auth
+    //and exception filters if configured to do so.
+    def loadAfter = ['banner-core']
 
     // resources that are excluded from plugin packaging
     def pluginExcludes = ["grails-app/views/error.gsp"]
@@ -37,17 +40,6 @@ class BannerRestfulApiSupportGrailsPlugin {
 
             basicExceptionTranslationFilter(ExceptionTranslationFilter) {
                 authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
-                accessDeniedHandler = ref('accessDeniedHandler')
-            }
-        }
-        else {
-            basicAuthenticationFilter(BasicAuthenticationFilter) {
-                authenticationManager = ref('authenticationManager')
-                authenticationEntryPoint = ref('basicAuthenticationEntryPoint')
-            }
-
-            basicExceptionTranslationFilter(ExceptionTranslationFilter) {
-                authenticationEntryPoint = ref('basicAuthenticationEntryPoint')
                 accessDeniedHandler = ref('accessDeniedHandler')
             }
         }
