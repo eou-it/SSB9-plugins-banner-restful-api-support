@@ -3,8 +3,9 @@ Copyright 2013 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 package net.hedtech.banner.restfulapi
 
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.service.ServiceBase
 import net.hedtech.restfulapi.RestfulServiceAdapter
-
 
 /**
  * An service adapter implementation for use with the 'restful-api' plugin.
@@ -25,7 +26,14 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * by the RestfulApiController versus invoking the 'count' method below.
      **/
     def list(def service, Map params) {
-        service.list(params)
+        try {
+            service.list(params)
+        } catch (ApplicationException ae) {
+            throw ae // we'll let this pass through
+        } catch (e) {
+            def nfe = ServiceBase.extractNestedNotFoundException(e)
+            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+        }
     }
 
     /**
@@ -39,10 +47,17 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * use that (which contains the total count) versus calling this method.
      **/
     def count(def service, Map params) {
-        if (service.metaClass.respondsTo(service, "count", Map)) {
-            service.count(params)
-        } else {
-            service.count()
+        try {
+            if (service.metaClass.respondsTo(service, "count", Map)) {
+                service.count(params)
+            } else {
+                service.count()
+            }
+        } catch (ApplicationException ae) {
+            throw ae // we'll let this pass through
+        } catch (e) {
+            def nfe = ServiceBase.extractNestedNotFoundException(e)
+            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
         }
     }
 
@@ -52,14 +67,28 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * 'get(id) method.
      **/
     def show(def service, Map params) {
-        service.get(params.id)
+        try {
+            service.get(params.id)
+        } catch (ApplicationException ae) {
+            throw ae // we'll let this pass through
+        } catch (e) {
+            def nfe = ServiceBase.extractNestedNotFoundException(e)
+            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+        }
     }
 
     /**
      * Creates a new instance of the domain object.
      **/
     def create(def service, Map content, Map params) {
-        service.create(content)
+        try {
+            service.create(content)
+        } catch (ApplicationException ae) {
+            throw ae // we'll let this pass through
+        } catch (e) {
+            def nfe = ServiceBase.extractNestedNotFoundException(e)
+            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+        }
     }
 
     /**
@@ -68,8 +97,15 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * it only passes the 'content' map.
      **/
     def update(def service, def id, Map content, Map params) {
-        if (!content.id) content.id = id
-        service.update(content)
+        try {
+            if (!content.id) content.id = id
+            service.update(content)
+        } catch (ApplicationException ae) {
+            throw ae // we'll let this pass through
+        } catch (e) {
+            def nfe = ServiceBase.extractNestedNotFoundException(e)
+            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+        }
     }
 
     /**
@@ -78,7 +114,14 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * it only passes the 'content' map.
      **/
     void delete(def service, def id, Map content, Map params) {
-        if (!content.id) content.id = id
-        service.delete(content)
+        try {
+            if (!content.id) content.id = id
+            service.delete(content)
+        } catch (ApplicationException ae) {
+            throw ae // we'll let this pass through
+        } catch (e) {
+            def nfe = ServiceBase.extractNestedNotFoundException(e)
+            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+        }
     }
 }
