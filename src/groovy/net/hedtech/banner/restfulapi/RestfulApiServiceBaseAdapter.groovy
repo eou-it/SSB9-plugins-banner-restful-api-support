@@ -32,7 +32,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+            if (nfe) throw new SimpleApplicationException( nfe )
+            else     throw e
         }
     }
 
@@ -57,7 +58,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+            if (nfe) throw new SimpleApplicationException( nfe )
+            else     throw e
         }
     }
 
@@ -73,7 +75,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+            if (nfe) throw new SimpleApplicationException( nfe )
+            else     throw e
         }
     }
 
@@ -87,7 +90,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+            if (nfe) throw new SimpleApplicationException( nfe )
+            else     throw e
         }
     }
 
@@ -104,7 +108,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+            if (nfe) throw new SimpleApplicationException( nfe )
+            else     throw e
         }
     }
 
@@ -121,7 +126,52 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            throw new ApplicationException( service.getDomainClass(), nfe ?: e )
+            if (nfe) throw new SimpleApplicationException( nfe )
+            else     throw e
         }
     }
+}
+
+
+// Exceptions are generally expected to be wrapped within an ApplicationException. However, there are
+// some exceptions that may occur which will not be wrapped as such, and must be handled here.
+// One such exception is MepCodeNotFoundException, which we'll handle here to ensure it is reported
+// as desired (i.e., as a '404 Not Found'.
+//
+class SimpleApplicationException extends RuntimeException {
+
+    private httpStatusCode = 500
+    private e // the wrapped exception
+
+    public def returnMap = { localize ->
+              [ message: e?.message, // we won't localized unknown exceptions...
+                errors: null
+              ]
+    }
+
+    public SimpleApplicationException(Throwable e) {
+        this.e = e
+        if (e?.class?.name =~ "MepCodeNotFound") {
+            this.httpStatusCode = 404
+            returnMap = { localize ->
+                          [ message: localize( code: "default.mepcode.not.found.message",
+                                               args: [e?.hasProperty('mepCode') ? e?.mepCode : null ] ),
+                            errors: null
+                          ]
+                        }
+        }
+    }
+
+    public int getHttpStatusCode() {
+        httpStatusCode
+    }
+
+    public String getMessage() {
+        e ? e.message : "SimpleApplicationException"
+    }
+
+    public String toString() {
+        "SimpleApplicationException[e=$e] "
+    }
+
 }
