@@ -27,6 +27,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     def list(def service, Map params) {
         try {
+            RestfulApiRequestParams.set(params)
             service.list(params)
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
@@ -34,6 +35,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
             if (nfe) throw new SimpleApplicationException( nfe )
             else     throw e
+        } finally {
+            RestfulApiRequestParams.clear()
         }
     }
 
@@ -49,6 +52,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     def count(def service, Map params) {
         try {
+            RestfulApiRequestParams.set(params)
             if (service.metaClass.respondsTo(service, "count", Map)) {
                 service.count(params)
             } else {
@@ -60,6 +64,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
             if (nfe) throw new SimpleApplicationException( nfe )
             else     throw e
+        } finally {
+            RestfulApiRequestParams.clear()
         }
     }
 
@@ -70,6 +76,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     def show(def service, Map params) {
         try {
+            RestfulApiRequestParams.set(params)
             service.get(params.id)
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
@@ -77,6 +84,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
             if (nfe) throw new SimpleApplicationException( nfe )
             else     throw e
+        } finally {
+            RestfulApiRequestParams.clear()
         }
     }
 
@@ -85,6 +94,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     def create(def service, Map content, Map params) {
         try {
+            RestfulApiRequestParams.set(params)
             service.create(content)
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
@@ -92,6 +102,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
             if (nfe) throw new SimpleApplicationException( nfe )
             else     throw e
+        } finally {
+            RestfulApiRequestParams.clear()
         }
     }
 
@@ -102,6 +114,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     def update(def service, def id, Map content, Map params) {
         try {
+            RestfulApiRequestParams.set(params)
             if (!content.id) content.id = id
             service.update(content)
         } catch (ApplicationException ae) {
@@ -110,6 +123,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
             if (nfe) throw new SimpleApplicationException( nfe )
             else     throw e
+        } finally {
+            RestfulApiRequestParams.clear()
         }
     }
 
@@ -120,6 +135,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     void delete(def service, def id, Map content, Map params) {
         try {
+            RestfulApiRequestParams.set(params)
             if (!content.id) content.id = id
             service.delete(content)
         } catch (ApplicationException ae) {
@@ -128,6 +144,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
             if (nfe) throw new SimpleApplicationException( nfe )
             else     throw e
+        } finally {
+            RestfulApiRequestParams.clear()
         }
     }
 }
