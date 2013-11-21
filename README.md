@@ -13,6 +13,10 @@ This plugin contains a restful-api service adapter for use with Banner XE servic
         restfulServiceAdapter( RestfulApiServiceBaseAdapter )
     }
 
+##Request parameters with the service adapter.
+The Banner ServiceBase has no provision for receiving request parameters (only the entity content).  To work around this restriction,
+the service adapter places the request params in the ThreadLocal net.hedtech.banner.restfulapi.RestfulApiRequestParams.  This can be used to obtain the request parameters as needed in the service; for example, to handle nested resources.
+
 ##Enabling Basic Authentication Entry Point
 This plugin contains an implementation of the Basic Authentication Entry Point that correctly returns a json or xml response to authentication failures (instead of html.)
 
