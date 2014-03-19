@@ -2,7 +2,7 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-grails.plugin.location.'restful-api' = '../restful-api.git'
+grails.plugin.location.'banner-core' = '../banner_core.git'
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -25,6 +25,7 @@ grails.project.dependency.resolution = {
         //should not have to do this, but it's a bug in grails 2.2.1
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
+        compile ":restful-api:0.8.0"
         build(":tomcat:$grailsVersion",
               ":release:2.2.0",
               ":rest-client-builder:1.0.3",) {
