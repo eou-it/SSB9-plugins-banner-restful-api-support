@@ -40,7 +40,7 @@ class BannerRestfulApiSupportGrailsPlugin {
 
             basicExceptionTranslationFilter(ExceptionTranslationFilter) {
                 authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
-                accessDeniedHandler = ref('accessDeniedHandler')
+                accessDeniedHandler = ref('restApiAccessDeniedHandler')
             }
         }
     }

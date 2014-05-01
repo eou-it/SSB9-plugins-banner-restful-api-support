@@ -17,18 +17,20 @@ This plugin contains a restful-api service adapter for use with Banner XE servic
 The Banner ServiceBase has no provision for receiving request parameters (only the entity content).  To work around this restriction,
 the service adapter places the request params in the ThreadLocal net.hedtech.banner.restfulapi.RestfulApiRequestParams.  This can be used to obtain the request parameters as needed in the service; for example, to handle nested resources.
 
-##Enabling Basic Authentication Entry Point
-This plugin contains an implementation of the Basic Authentication Entry Point that correctly returns a json or xml response to authentication failures (instead of html.)
+##Enabling Basic Authentication Entry Point and Access Denied Handler
+This plugin contains an implementation of the Basic Authentication Entry Point and Access Denied Handler that correctly returns a json or xml response to authentication failures (instead of html.)
 
 To enable it, add
 
     useRestApiAuthenticationEntryPoint = true
 
-to Config.groovy, and define the bean in your resources.groovy, e.g.:
+to Config.groovy, and define the beans in your resources.groovy, e.g.:
 
     restApiAuthenticationEntryPoint(RestApiAuthenticationEntryPoint) {
         realmName = 'Banner REST API Realm'
     }
+
+    restApiAccessDeniedHandler(RestApiAccessDeniedHandler)
 
 ##Additional Configuration for REST
 
