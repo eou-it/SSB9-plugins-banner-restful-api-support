@@ -26,9 +26,9 @@ grails.project.dependency.resolution = {
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
         compile ":restful-api:0.8.0"
-        build(":tomcat:$grailsVersion",
+        build(":tomcat:7.0.52.1",
               ":release:2.2.0",
-              ":rest-client-builder:1.0.3",) {
+              ":rest-client-builder:1.0.3") {
             export = false
         }
     }
