@@ -24,10 +24,11 @@ class RestApiAccessDeniedHandler implements AccessDeniedHandler {
         if (response.isCommitted()) {
             return
         }
+        def errors = [code: HttpServletResponse.SC_FORBIDDEN, message: e.getMessage()]
         response.setStatus(HttpServletResponse.SC_FORBIDDEN)
         AuthErrorResponse generator = new AuthErrorResponse( response,
                                            request.getHeader(HttpHeaders.ACCEPT), 
-                                           e.getMessage() )
+                                           errors )
         generator.sendResponse()
         return
     }

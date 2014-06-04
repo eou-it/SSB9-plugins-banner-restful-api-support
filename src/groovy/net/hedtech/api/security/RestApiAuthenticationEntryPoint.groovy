@@ -24,9 +24,10 @@ public class RestApiAuthenticationEntryPoint extends BasicAuthenticationEntryPoi
 
         response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"")
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)
+        def errors = [code: HttpServletResponse.SC_UNAUTHORIZED, message: authException.getMessage()]
         AuthErrorResponse generator = new AuthErrorResponse( response, 
                                           request.getHeader(HttpHeaders.ACCEPT), 
-                                          authException.getMessage() )
+                                          errors )
         generator.sendResponse()
         return
     }
