@@ -6,6 +6,8 @@ package net.hedtech.banner.restfulapi
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 import net.hedtech.restfulapi.RestfulServiceAdapter
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * An service adapter implementation for use with the 'restful-api' plugin.
@@ -15,6 +17,7 @@ import net.hedtech.restfulapi.RestfulServiceAdapter
  * If this adapter is registered in Spring IoC (e.g., in resources.groovy)
  * it will be used by the RestfulApiController when delegating to services.
  **/
+@Transactional(readOnly = true, propagation = Propagation.SUPPORTS )
 class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
 
 
