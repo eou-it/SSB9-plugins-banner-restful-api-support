@@ -11,19 +11,22 @@ import java.io.PrintWriter
 import net.hedtech.restfulapi.MediaType
 import net.hedtech.restfulapi.MediaTypeParser
 
+import grails.converters.JSON
+import grails.converters.XML
+
 class AuthErrorResponse {
 
     HttpServletResponse response
     String type
-    String message
+    Map errors
 
     MediaTypeParser  mediaTypeParser = new MediaTypeParser()
 
-    AuthErrorResponse (HttpServletResponse response, String type, String message) {
-        this.message = message
+    AuthErrorResponse (HttpServletResponse response, String type, Map errors) {
         this.response = response
         MediaType[] acceptedTypes = mediaTypeParser.parse(type)
         this.type = acceptedTypes.size() > 0 ? acceptedTypes[0].name : ""
+        this.errors = errors
     }
     
     void sendResponse() throws IOException,
@@ -35,15 +38,15 @@ class AuthErrorResponse {
         switch(this.type) {
             case ~/.*xml.*/:
                 contentType = 'application/xml'
-                content = "<Errors><Error><Code>${response.getStatus()}</Code>><Message>${this.message}</Message></Error></Errors>"
+                content = "<errors><error><code>${errors.code}</code><description>${errors.message}</description></error></errors>"
                 break
             case ~/.*json.*/:
                 contentType = 'application/json'
-                content = "{ \"errors\" : [ { \"code\":\"${response.getStatus()}\" , \"message\":\"${this.message}\" } ] }"
+                content = "{ \"errors\" : [ { \"code\": \"${errors.code}\", \"description\": \"${errors.message}\" } ] }"
                 break
             default:
                 contentType = 'plain/text'
-                content = response.getStatus() + " - " + this.message
+                content = errors.code + " - " + errors.message
                 break
         }
         response.addHeader("Content-Type", contentType )
