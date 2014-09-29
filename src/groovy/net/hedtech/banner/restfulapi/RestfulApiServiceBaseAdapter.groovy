@@ -27,9 +27,12 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      **/
     def list(def service, Map params) {
         def startDate = new Date()
+        def resultSize = null
         try {
             RestfulApiRequestParams.set(params)
-            service.list(params)
+            def results = service.list(params)
+            if (results instanceof List) resultSize = results.size()
+            return results
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
         } catch (e) {
@@ -38,7 +41,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "list", startDate, new Date())
+            RestfulApiServiceMetrics.logMetrics(service, "list", startDate, new Date(), resultSize)
         }
     }
 

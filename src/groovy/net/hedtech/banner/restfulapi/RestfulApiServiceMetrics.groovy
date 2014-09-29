@@ -22,7 +22,7 @@ class RestfulApiServiceMetrics {
      * @params startDate start date
      * @params endDate end date
      **/
-    public static void logMetrics(def service, String operation, Date startDate, Date endDate) {
+    public static void logMetrics(def service, String operation, Date startDate, Date endDate, def resultSize = null) {
         if (!log.isTraceEnabled()) return
         try {
             def metrics = null
@@ -31,27 +31,33 @@ class RestfulApiServiceMetrics {
             synchronized (metricsMap) {
                 def metricsList = metricsMap.get(metricName)
                 if (metricsList == null) {
-                    metricsList = [0, 0, 9999999999, 0] // [count, totalTime, minTime, maxTime]
+                    metricsList = [0, 0, 0, 9999999999, 0] // [count, totalSize, totalTime, minTime, maxTime]
                     metricsMap.put(metricName, metricsList)
                 }
                 // increment count
                 metricsList[0]++
+                // add result size to total size
+                metricsList[1] += (resultSize ?: 0)
                 // add elapsed time to total time
-                metricsList[1] += elapsedTime
+                metricsList[2] += elapsedTime
                 // adjust min time if needed
-                if (elapsedTime < metricsList[2]) {
-                    metricsList[2] = elapsedTime
+                if (elapsedTime < metricsList[3]) {
+                    metricsList[3] = elapsedTime
                 }
                 // adjust max time if needed
-                if (elapsedTime > metricsList[3]) {
-                    metricsList[3] = elapsedTime
+                if (elapsedTime > metricsList[4]) {
+                    metricsList[4] = elapsedTime
                 }
                 // create a clone to be used in the log statement outside of the synchronized block
                 metrics = metricsList.clone()
             }
             // calulate duration
             TimeDuration duration = TimeCategory.minus(endDate, startDate)
-            log.trace("${metricName} time:${duration} [count:${metrics[0]}, totalTime:${metrics[1]}, minTime:${metrics[2]}, maxTime:${metrics[3]}])")
+            if (operation == "list") {
+                log.trace("${metricName} time:${duration} (size=${(resultSize ?: 0)}) [count:${metrics[0]}, totalSize:${metrics[1]}, totalTime:${metrics[2]}, minTime:${metrics[3]}, maxTime:${metrics[4]}])")
+            } else {
+                log.trace("${metricName} time:${duration} [count:${metrics[0]}, totalTime:${metrics[2]}, minTime:${metrics[3]}, maxTime:${metrics[4]}])")
+            }
         } catch (Throwable t) {
             log.trace(t)
         }
