@@ -19,7 +19,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         compile ":spring-security-core:1.2.7.3"
-        runtime ":webxml-1.4.1"
+        runtime ":webxml:1.4.1"
         //should not have to do this, but it's a bug in grails 2.2.1
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
