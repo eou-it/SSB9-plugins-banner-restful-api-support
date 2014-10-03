@@ -15,20 +15,19 @@ grails.project.dependency.resolution = {
         grailsCentral()
     }
     dependencies {
-        //should not have to do this, but it's a bug in grails 2.2.1
-        //http://jira.grails.org/browse/GRAILS-9939
-        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
     }
 
     plugins {
         compile ":spring-security-core:1.2.7.3"
+        runtime ":webxml-1.4.1"
         //should not have to do this, but it's a bug in grails 2.2.1
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
+
         compile ":restful-api:0.10.0"
-        build(":tomcat:$grailsVersion",
+        build(":tomcat:7.0.52.1",
               ":release:2.2.0",
-              ":rest-client-builder:1.0.3",) {
+              ":rest-client-builder:1.0.3") {
             export = false
         }
     }
