@@ -115,10 +115,10 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * Note: When this method delegates to ServiceBase's 'update' method,
      * it only passes the 'content' map.
      **/
-    def update(def service, def id, Map content, Map params) {
+    def update(def service, Map content, Map params) {
         try {
             RestfulApiRequestParams.set(params)
-            if (!content.id) content.id = id
+            if (!content.id) content.id = params.id
             service.update(content)
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
@@ -136,10 +136,10 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * Note: When this method delegates to ServiceBase's 'delete' method,
      * it only passes the 'content' map.
      **/
-    void delete(def service, def id, Map content, Map params) {
+    void delete(def service, Map content, Map params) {
         try {
             RestfulApiRequestParams.set(params)
-            if (!content.id) content.id = id
+            if (!content.id) content.id = params.id
             service.delete(content)
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
