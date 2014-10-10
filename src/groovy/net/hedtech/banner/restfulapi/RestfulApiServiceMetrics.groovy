@@ -18,15 +18,16 @@ class RestfulApiServiceMetrics {
     /**
      * Logs metrics accumulating invocation count with total, min, and max elapsed times.
      * @params service service to be associated with the metric for accumulations
+     * @params params parameters used to determine resource name for service
      * @params operation service operation that was performed
      * @params startDate start date
      * @params endDate end date
      **/
-    public static void logMetrics(def service, String operation, Date startDate, Date endDate, def resultSize = null) {
+    public static void logMetrics(def service, Map params, String operation, Date startDate, Date endDate, def resultSize = null) {
         if (!log.isTraceEnabled()) return
         try {
             def metrics = null
-            def metricName = generateMetricName(service, operation)
+            def metricName = generateMetricName(service, params, operation)
             def elapsedTime = endDate.time - startDate.time // capture elapsed time in milliseconds
             synchronized (metricsMap) {
                 def metricsList = metricsMap.get(metricName)
@@ -77,8 +78,14 @@ class RestfulApiServiceMetrics {
     /**
      * Generate metric name based on service and operation.
      */
-    private static generateMetricName(def service, String operation) {
+    private static generateMetricName(def service, Map params, String operation) {
         def metricName = service.class.simpleName
+        if (params.pluralizedResourceName != null) {
+            metricName = params.pluralizedResourceName
+            if (params.parentPluralizedResourceName != null) {
+                metricName = params.parentPluralizedResourceName + "." + metricName
+            }
+        }
         def index = metricName.indexOf('$')
         if (index != -1) {
             metricName = metricName.substring(0, index)

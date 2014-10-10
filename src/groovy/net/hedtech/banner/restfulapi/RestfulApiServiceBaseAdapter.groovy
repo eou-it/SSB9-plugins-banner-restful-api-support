@@ -41,7 +41,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "list", startDate, new Date(), resultSize)
+            RestfulApiServiceMetrics.logMetrics(service, params, "list", startDate, new Date(), resultSize)
         }
     }
 
@@ -72,7 +72,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "count", startDate, new Date())
+            RestfulApiServiceMetrics.logMetrics(service, params, "count", startDate, new Date())
         }
     }
 
@@ -94,7 +94,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "show", startDate, new Date())
+            RestfulApiServiceMetrics.logMetrics(service, params, "show", startDate, new Date())
         }
     }
 
@@ -114,7 +114,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "create", startDate, new Date())
+            RestfulApiServiceMetrics.logMetrics(service, params, "create", startDate, new Date())
         }
     }
 
@@ -137,7 +137,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "update", startDate, new Date())
+            RestfulApiServiceMetrics.logMetrics(service, params, "update", startDate, new Date())
         }
     }
 
@@ -160,7 +160,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
-            RestfulApiServiceMetrics.logMetrics(service, "delete", startDate, new Date())
+            RestfulApiServiceMetrics.logMetrics(service, params, "delete", startDate, new Date())
         }
     }
 }
