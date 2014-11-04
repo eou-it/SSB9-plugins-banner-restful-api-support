@@ -29,9 +29,13 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * by the RestfulApiController versus invoking the 'count' method below.
      **/
     def list(def service, Map params) {
+        def startDate = new Date()
+        def resultSize = null
         try {
             RestfulApiRequestParams.set(params)
-            service.list(params)
+            def results = service.list(params)
+            if (results instanceof List) resultSize = results.size()
+            return results
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
         } catch (e) {
@@ -40,6 +44,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
+            RestfulApiServiceMetrics.logMetrics(service, params, "list", startDate, new Date(), resultSize)
         }
     }
 
@@ -54,6 +59,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * use that (which contains the total count) versus calling this method.
      **/
     def count(def service, Map params) {
+        def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
             if (service.metaClass.respondsTo(service, "count", Map)) {
@@ -69,6 +75,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
+            RestfulApiServiceMetrics.logMetrics(service, params, "count", startDate, new Date())
         }
     }
 
@@ -78,6 +85,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * 'get(id) method.
      **/
     def show(def service, Map params) {
+        def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
             service.get(params.id)
@@ -89,6 +97,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
+            RestfulApiServiceMetrics.logMetrics(service, params, "show", startDate, new Date())
         }
     }
 
@@ -96,6 +105,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * Creates a new instance of the domain object.
      **/
     def create(def service, Map content, Map params) {
+        def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
             service.create(content)
@@ -107,6 +117,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
+            RestfulApiServiceMetrics.logMetrics(service, params, "create", startDate, new Date())
         }
     }
 
@@ -116,6 +127,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * it only passes the 'content' map.
      **/
     def update(def service, Map content, Map params) {
+        def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
             if (!content.id) content.id = params.id
@@ -128,6 +140,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
+            RestfulApiServiceMetrics.logMetrics(service, params, "update", startDate, new Date())
         }
     }
 
@@ -137,6 +150,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * it only passes the 'content' map.
      **/
     void delete(def service, Map content, Map params) {
+        def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
             if (!content.id) content.id = params.id
@@ -149,6 +163,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else     throw e
         } finally {
             RestfulApiRequestParams.clear()
+            RestfulApiServiceMetrics.logMetrics(service, params, "delete", startDate, new Date())
         }
     }
 }
