@@ -1,4 +1,14 @@
+import net.hedtech.banner.configuration.ApplicationConfigurationUtils
+
 // configuration for plugin testing - will not be included in the plugin zip
+
+grails.config.locations = []
+def locationAdder = ApplicationConfigurationUtils.&addLocation.curry(grails.config.locations)
+
+[bannerGrailsAppConfig: "${userHome}/.grails/banner_configuration.groovy",
+].each { envName, defaultFileName -> locationAdder(envName, defaultFileName) }
+
+
 
 log4j = {
     // Example of changing the log pattern for the default console
