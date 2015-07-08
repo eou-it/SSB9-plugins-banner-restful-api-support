@@ -97,7 +97,7 @@ class RestfulApiServiceBaseAdapterSpec extends Specification {
         def params = ['one':'two']
 
         when:
-        adapter.update(mock, 1, [:], params)
+        adapter.update(mock, [:], params)
 
         then:
         ['one':'two'] == threadLocalParams
