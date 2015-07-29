@@ -1,7 +1,7 @@
 /* ******************************************************************************
  Copyright 2009-2013 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
+import grails.util.Holders
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 
@@ -31,7 +31,7 @@ class BannerRestfulApiSupportGrailsPlugin {
     def documentation = ""
 
     def doWithSpring = {
-        if (CH.config.useRestApiAuthenticationEntryPoint) {
+        if (Holders.config.useRestApiAuthenticationEntryPoint) {
 
             basicAuthenticationFilter(BasicAuthenticationFilter) {
                 authenticationManager = ref('authenticationManager')
