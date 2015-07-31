@@ -1,5 +1,5 @@
 /* ******************************************************************************
- Copyright 2009-2013 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2015 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 import grails.util.Holders
 import org.springframework.security.web.access.ExceptionTranslationFilter
@@ -10,9 +10,6 @@ class BannerRestfulApiSupportGrailsPlugin {
 
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
-
-    // the other plugins this plugin depends on
-    def dependsOn = [ 'springSecurityCore': '1.2.7.3' ]
 
     //must load after banner-core to override basic auth
     //and exception filters if configured to do so.
