@@ -1,12 +1,13 @@
 /* ******************************************************************************
  Copyright 2013-2015 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
+
 import grails.util.Holders
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 
 class BannerRestfulApiSupportGrailsPlugin {
-     String version = "2.5.1"
+    String version = "2.5.1"
 
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
@@ -29,7 +30,6 @@ class BannerRestfulApiSupportGrailsPlugin {
 
     def doWithSpring = {
         if (Holders.config.useRestApiAuthenticationEntryPoint) {
-
             basicAuthenticationFilter(BasicAuthenticationFilter) {
                 authenticationManager = ref('authenticationManager')
                 authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
