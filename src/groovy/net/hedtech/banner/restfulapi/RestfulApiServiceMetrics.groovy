@@ -93,4 +93,18 @@ class RestfulApiServiceMetrics {
         return "${metricName}.${operation}"
     }
 
+
+    /**
+     * Returns a clone of the metrics map.
+     */
+    public static Map getAllMeterics() {
+        def clonedMetricsMap = new HashMap()
+        synchronized (metricsMap) {
+            metricsMap.each {
+                clonedMetricsMap.put(it.key, it.value.clone())
+            }
+        }
+        return clonedMetricsMap
+    }
+
 }
