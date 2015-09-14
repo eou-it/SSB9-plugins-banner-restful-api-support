@@ -32,7 +32,7 @@ class RestfulApiServiceMetrics {
             synchronized (metricsMap) {
                 def metricsList = metricsMap.get(metricName)
                 if (metricsList == null) {
-                    metricsList = [0, 0, 0, 9999999999, 0] // [count, totalSize, totalTime, minTime, maxTime]
+                    metricsList = [0, 0, 0, 9999999999, 0, null] // [count, totalSize, totalTime, minTime, maxTime, lastActivity]
                     metricsMap.put(metricName, metricsList)
                 }
                 // increment count
@@ -49,6 +49,8 @@ class RestfulApiServiceMetrics {
                 if (elapsedTime > metricsList[4]) {
                     metricsList[4] = elapsedTime
                 }
+                // record current time for last activity
+                metricsList[5] = new Date()
                 // create a clone to be used in the log statement outside of the synchronized block
                 metrics = metricsList.clone()
             }
