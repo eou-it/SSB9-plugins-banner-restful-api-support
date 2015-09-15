@@ -13,6 +13,8 @@ class RestfulApiServiceMetrics {
     private static final HashMap metricsMap = new HashMap()
     
     private static final log = LogFactory.getLog(this)
+    
+    private static trackApiMetrics = false
 
 
     /**
@@ -24,7 +26,7 @@ class RestfulApiServiceMetrics {
      * @params endDate end date
      **/
     public static void logMetrics(def service, Map params, String operation, Date startDate, Date endDate, def resultSize = null) {
-        if (!log.isTraceEnabled()) return
+        if (!log.isTraceEnabled() && !trackApiMetrics) return
         try {
             def metrics = null
             def metricName = generateMetricName(service, params, operation)
@@ -54,12 +56,15 @@ class RestfulApiServiceMetrics {
                 // create a clone to be used in the log statement outside of the synchronized block
                 metrics = metricsList.clone()
             }
-            // calulate duration
-            TimeDuration duration = TimeCategory.minus(endDate, startDate)
-            if (operation == "list") {
-                log.trace("${metricName} time:${duration} (size=${(resultSize ?: 0)}) [count:${metrics[0]}, totalSize:${metrics[1]}, totalTime:${metrics[2]}, minTime:${metrics[3]}, maxTime:${metrics[4]}])")
-            } else {
-                log.trace("${metricName} time:${duration} [count:${metrics[0]}, totalTime:${metrics[2]}, minTime:${metrics[3]}, maxTime:${metrics[4]}])")
+            // log metrics only if trace is enabled
+            if (log.isTraceEnabled()) {
+                // calulate duration
+                TimeDuration duration = TimeCategory.minus(endDate, startDate)
+                if (operation == "list") {
+                    log.trace("${metricName} time:${duration} (size=${(resultSize ?: 0)}) [count:${metrics[0]}, totalSize:${metrics[1]}, totalTime:${metrics[2]}, minTime:${metrics[3]}, maxTime:${metrics[4]}])")
+                } else {
+                    log.trace("${metricName} time:${duration} [count:${metrics[0]}, totalTime:${metrics[2]}, minTime:${metrics[3]}, maxTime:${metrics[4]}])")
+                }
             }
         } catch (Throwable t) {
             log.trace(t)
@@ -97,16 +102,26 @@ class RestfulApiServiceMetrics {
 
 
     /**
-     * Returns a clone of the metrics map.
+     * Returns a clone of the metrics map. Tracking of API metrics must be enabled.
      */
     public static Map getAllMeterics() {
         def clonedMetricsMap = new HashMap()
-        synchronized (metricsMap) {
-            metricsMap.each {
-                clonedMetricsMap.put(it.key, it.value.clone())
+        if (trackApiMetrics) {
+            synchronized (metricsMap) {
+                metricsMap.each {
+                    clonedMetricsMap.put(it.key, it.value.clone())
+                }
             }
         }
         return clonedMetricsMap
+    }
+
+
+    /**
+     * Allowing tracking of API metrics for non-logging purposes.
+     */
+    public static void setTrackApiMetrics(boolean trackApiMetrics) {
+        this.trackApiMetrics = trackApiMetrics
     }
 
 }
