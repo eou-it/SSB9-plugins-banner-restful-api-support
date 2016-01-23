@@ -1,34 +1,39 @@
+/* ****************************************************************************
+Copyright 2014-2015 Ellucian Company L.P. and its affiliates.
+*******************************************************************************/
+
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
 grails.plugin.location.'banner-core' = '../banner_core.git'
 
+grails.project.dependency.resolver = "maven"
+
 grails.project.dependency.resolution = {
+
     // inherit Grails' default dependencies
     inherits("global") {
         // uncomment to disable ehcache
         // excludes 'ehcache'
     }
-    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+
+    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+
     repositories {
         grailsCentral()
     }
+
     dependencies {
     }
 
     plugins {
-        compile ":spring-security-core:1.2.7.3"
-        runtime ":webxml:1.4.1"
+        compile ":restful-api:1.0.0"
+
         //should not have to do this, but it's a bug in grails 2.2.1
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
-
-        compile ":restful-api:1.0.0"
-        build(":tomcat:7.0.52.1",
-              ":release:2.2.0",
-              ":rest-client-builder:1.0.3") {
-            export = false
-        }
+        compile ":cache-headers:1.1.7"
     }
+
 }

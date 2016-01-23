@@ -1,18 +1,16 @@
 /* ******************************************************************************
- Copyright 2009-2013 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2015 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
+
+import grails.util.Holders
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 
 class BannerRestfulApiSupportGrailsPlugin {
-     String version = "2.5.1"
+    String version = "9.14"
 
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
-
-    // the other plugins this plugin depends on
-    def dependsOn = [ 'springSecurityCore': '1.2.7.3' ]
 
     //must load after banner-core to override basic auth
     //and exception filters if configured to do so.
@@ -31,8 +29,7 @@ class BannerRestfulApiSupportGrailsPlugin {
     def documentation = ""
 
     def doWithSpring = {
-        if (CH.config.useRestApiAuthenticationEntryPoint) {
-
+        if (Holders.config.useRestApiAuthenticationEntryPoint) {
             basicAuthenticationFilter(BasicAuthenticationFilter) {
                 authenticationManager = ref('authenticationManager')
                 authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
