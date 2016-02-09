@@ -72,3 +72,9 @@ restfulApiConfig = {
     }
 
 }
+
+restfulapi.apiErrorCodes = [
+        "Global.Internal.Error",
+        "Global.SchemaValidation.Error",
+        "Global.UnauthorizedOperation"
+]
