@@ -1,6 +1,9 @@
+/* ******************************************************************************
+ Copyright 2014-2015 Ellucian Company L.P. and its affiliates.
+ ****************************************************************************** */
 package net.hedtech.banner.restfulapi
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
+import grails.util.Holders
 import net.hedtech.restfulapi.ErrorResponse
 import net.hedtech.restfulapi.ExceptionHandlerContext
 import net.hedtech.restfulapi.exceptionhandlers.ApplicationExceptionHandler
@@ -23,7 +26,7 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
                     if( error instanceof Map ) {
                         if (error.containsKey('messageCode') &&
                                 error.containsKey('message')) {
-                            if (CH.config.restfulapi.apiErrorCodes.contains(error.messageCode)) {
+                            if (Holders.config.restfulapi.apiErrorCodes.contains(error.messageCode)) {
                                 newContent << ['code'   : error.messageCode,
                                                'message': error.message.encodeAsHTML(),
                                                'description':error.message.encodeAsHTML()]
