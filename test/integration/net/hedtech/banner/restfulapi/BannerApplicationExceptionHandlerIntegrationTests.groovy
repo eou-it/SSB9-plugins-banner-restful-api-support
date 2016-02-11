@@ -31,15 +31,11 @@ class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationT
         formContext = ['GUAGMNU']
         super.setUp()
 
-        if (!bannerApplicationExceptionHandler) {
-            List errorProperties = ["#/instructorRoster.instructor.id", "#/term.code"]
-            BusinessLogicValidationException businessLogicValidationException = new BusinessLogicValidationException("blank.message", ["S9034823", "default.home.label"], errorProperties)
-            applicationException = new ApplicationException(this.getClass(), businessLogicValidationException)
-
-            exceptionHandlerContext = new ExceptionHandlerContext(pluralizedResourceName: "foo", localizer: new Localizer(new TermController().localizer))
-
-            bannerApplicationExceptionHandler = new BannerApplicationExceptionHandler()
-        }
+        List errorProperties = ["#/instructorRoster.instructor.id", "#/term.code"]
+        BusinessLogicValidationException businessLogicValidationException = new BusinessLogicValidationException("blank.message", ["S9034823", "default.home.label"], errorProperties)
+        applicationException = new ApplicationException(this.getClass(), businessLogicValidationException)
+        exceptionHandlerContext = new ExceptionHandlerContext(pluralizedResourceName: "foo", localizer: new Localizer(new TermController().localizer))
+        bannerApplicationExceptionHandler = new BannerApplicationExceptionHandler()
     }
 
 
@@ -79,10 +75,10 @@ class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationT
 
 
     @Test
-    void testHandle_BusinessLogicValidationException_MessageCodeNotInApiErrorCodes_HEDM_V5() {
+    void testHandle_BusinessLogicValidationException_HEDM_aboveV4_NonHEDMMessageKey() {
         setAcceptHeader("application/vnd.hedtech.integration.v5+json")
 
-        assertFalse Holders.config.restfulapi.apiErrorCodes.contains(applicationException.wrappedException.messageCode)
+        assertFalse applicationException.wrappedException.messageCode.startsWith("hedm.")
 
         ErrorResponse errorResponse = bannerApplicationExceptionHandler.handle(applicationException, exceptionHandlerContext)
         assertNotNull errorResponse
@@ -93,19 +89,17 @@ class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationT
 
 
     @Test
-    void testHandle_BusinessLogicValidationException_MessageCodeInApiErrorCodes_HEDM_V5() {
-        setAcceptHeader("application/vnd.hedtech.integration.v5+json")
+    void testHandle_BusinessLogicValidationException_HEDM_aboveV4_HEDMMessageKey() {
+        setAcceptHeader("application/vnd.hedtech.integration.v6+json")
 
-        Holders.config.restfulapi.apiErrorCodes << applicationException.wrappedException.messageCode
-        assertTrue Holders.config.restfulapi.apiErrorCodes.contains(applicationException.wrappedException.messageCode)
+        applicationException.wrappedException.messageCode = "hedm." + applicationException.wrappedException.messageCode
+        assertTrue applicationException.wrappedException.messageCode.startsWith("hedm.")
 
         ErrorResponse errorResponse = bannerApplicationExceptionHandler.handle(applicationException, exceptionHandlerContext)
         assertNotNull errorResponse
         assertEquals 400, errorResponse.httpStatusCode
-        assertEquals applicationException.wrappedException.messageCode, errorResponse.content.code
+        assertEquals applicationException.wrappedException.messageCode.substring(5), errorResponse.content.code
         assertTrue errorResponse.content.errorProperties.containsAll(applicationException.wrappedException.errorProperties)
-
-        Holders.config.restfulapi.apiErrorCodes.remove(applicationException.wrappedException.messageCode)
     }
 
 

@@ -148,8 +148,8 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
 
     private def getHEDMErrorMessage(def error) {
         def map = [:]
-        if (Holders.config.restfulapi.apiErrorCodes.contains(error.messageCode)) {
-            map.put("code", error.messageCode)
+        if (error.messageCode.startsWith("hedm.")) {
+            map.put("code", error.messageCode.substring(5))
         } else {
             map.put("code", SCHEMA_ERROR)
         }
