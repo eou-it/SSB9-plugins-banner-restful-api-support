@@ -15,6 +15,11 @@ import org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletRequest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.springframework.web.context.request.RequestAttributes
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
+
+import javax.servlet.http.HttpServletRequest
 
 /**
  * Test class for BannerApplicationExceptionHandler
@@ -74,38 +79,19 @@ class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationT
     }
 
 
-    @Test
-    void testHandle_BusinessLogicValidationException_HEDM_aboveV4_NonHEDMMessageKey() {
-        setAcceptHeader("application/vnd.hedtech.integration.v5+json")
-
-        assertFalse applicationException.wrappedException.messageCode.startsWith("hedm.")
-
-        ErrorResponse errorResponse = bannerApplicationExceptionHandler.handle(applicationException, exceptionHandlerContext)
-        assertNotNull errorResponse
-        assertEquals 400, errorResponse.httpStatusCode
-        assertEquals BannerApplicationExceptionHandler.SCHEMA_ERROR, errorResponse.content.code
-        assertTrue errorResponse.content.errorProperties.containsAll(applicationException.wrappedException.errorProperties)
-    }
-
-
-    @Test
-    void testHandle_BusinessLogicValidationException_HEDM_aboveV4_HEDMMessageKey() {
-        setAcceptHeader("application/vnd.hedtech.integration.v6+json")
-
-        applicationException.wrappedException.messageCode = "hedm." + applicationException.wrappedException.messageCode
-        assertTrue applicationException.wrappedException.messageCode.startsWith("hedm.")
-
-        ErrorResponse errorResponse = bannerApplicationExceptionHandler.handle(applicationException, exceptionHandlerContext)
-        assertNotNull errorResponse
-        assertEquals 400, errorResponse.httpStatusCode
-        assertEquals applicationException.wrappedException.messageCode.substring(5), errorResponse.content.code
-        assertTrue errorResponse.content.errorProperties.containsAll(applicationException.wrappedException.errorProperties)
-    }
-
-
     private void setAcceptHeader(String acceptHeader) {
-        GrailsMockHttpServletRequest request = BannerApplicationExceptionHandler.getHttpServletRequest()
+        GrailsMockHttpServletRequest request = getHttpServletRequest()
         request.addHeader("Accept", acceptHeader)
+    }
+
+
+    private HttpServletRequest getHttpServletRequest() {
+        HttpServletRequest request
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes()
+        if (requestAttributes && requestAttributes instanceof ServletRequestAttributes) {
+            request = ((ServletRequestAttributes) requestAttributes).getRequest()
+        }
+        return request
     }
 
 }
