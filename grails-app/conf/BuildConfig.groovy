@@ -7,6 +7,7 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
 grails.plugin.location.'banner-core' = '../banner_core.git'
+grails.plugin.location.'restful-api' = '../restful-api.git'
 
 grails.project.dependency.resolver = "maven"
 
@@ -28,8 +29,6 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":restful-api:1.0.0"
-
         //should not have to do this, but it's a bug in grails 2.2.1
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
