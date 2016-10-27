@@ -3,6 +3,10 @@
  ****************************************************************************** */
 package net.hedtech.api.security
 
+import grails.util.Holders
+import net.hedtech.banner.security.BannerAuthenticationEvent
+
+import javax.servlet.http.HttpSession
 import java.io.IOException
 import java.io.PrintWriter
 
@@ -21,6 +25,17 @@ public class RestApiAuthenticationEntryPoint extends BasicAuthenticationEntryPoi
     public void commence( HttpServletRequest request, HttpServletResponse response,
                           AuthenticationException authException)
                 throws IOException, ServletException {
+
+        def msg = request.session.getAttribute("msg")
+        def module = request.session.getAttribute("module")
+        def authName = request.session.getAttribute("auth_name")
+
+        Holders.getApplicationContext().publishEvent(new BannerAuthenticationEvent(authName, false, msg, module, new Date(), 1))
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
 
         response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"")
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)
