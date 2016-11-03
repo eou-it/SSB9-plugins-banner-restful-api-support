@@ -1,16 +1,19 @@
 /* ****************************************************************************
-Copyright 2013 Ellucian Company L.P. and its affiliates.
+Copyright 2013-2016 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 package net.hedtech.banner.restfulapi
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
+import net.hedtech.restfulapi.ContentFilter
+import net.hedtech.restfulapi.ContentFilterResult
 import net.hedtech.restfulapi.RestfulServiceAdapter
+
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 /**
- * An service adapter implementation for use with the 'restful-api' plugin.
+ * A service adapter implementation for use with the 'restful-api' plugin.
  * The RESTful API Grails Plugin delegates to transactional services,
  * however uses a slightly different contract with services than that
  * used within Banner XE (and specifically exposed by ServiceBase).
@@ -18,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional
  * it will be used by the RestfulApiController when delegating to services.
  **/
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS )
-class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
+class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilter {
+
+
+    ContentFilter restContentFilter
 
 
     /**
@@ -165,6 +171,18 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "delete", startDate, new Date())
         }
+    }
+
+    /**
+     * Apply filter to content and params.
+     **/
+    def ContentFilterResult applyFilter(String resourceName, def content, String contentType) {
+        if (!restContentFilter) {
+            return new ContentFilterResult(content: content)
+        }
+
+        log.trace("Filtering content for resource=$resourceName with contentType=$contentType")
+        return restContentFilter.applyFilter(resourceName, content, contentType)
     }
 }
 
