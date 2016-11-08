@@ -17,56 +17,51 @@ class BannerContentFilterFields implements ContentFilterFields {
     // must inject sessionFactory into this bean
     def sessionFactory
 
-    final static GORDMSK_SQL = """SELECT gordmsk_block_comp_name
-  FROM gordmsk
- WHERE ROWID IN
-       (SELECT substr(c.new_order,6)
-          FROM (SELECT DISTINCT b.gordmsk_block_comp_name
-                               ,MIN(b.my_order) "NEW_ORDER"
-                  FROM (SELECT a.*,to_char(rownum,'009') || '-' || a.ROWID "MY_ORDER"
-                          FROM (SELECT gordmsk_block_comp_name
-                                      ,gordmsk_column_comp_name
-                                      ,gordmsk_all_user_ind
-                                      ,gordmsk_fbpr_code
-                                      ,gordmsk_fgac_user_id
-                                  FROM gordmsk
-                                 WHERE gordmsk_objs_code  = ?
-                                   AND gordmsk_block_name = 'API'
-                                   AND (gordmsk_fgac_user_id IS NULL OR
-                                       gordmsk_fgac_user_id = ?)
-                                   AND (gordmsk_fbpr_code IS NULL OR gordmsk_fbpr_code IN
-                                                       (SELECT gorfbpr_fbpr_code
-                                                          FROM gorfbpr
-                                                         WHERE gorfbpr_fgac_user_id = ?))
-                                   AND gordmsk_display_ind = 'N'
-                                 ORDER BY gordmsk_block_comp_name
-                                         ,gordmsk_fgac_user_id
-                                         ,gordmsk_fbpr_code
-                                         ,gordmsk_all_user_ind DESC
-                               ) a
-                       ) b
-                 GROUP BY gordmsk_block_comp_name
-               ) c
-       )
- ORDER BY gordmsk_block_comp_name"""
+    final static GORDMSK_SQL =
+        """SELECT field_pattern,
+                  fgac_user_id,
+                  display_ind,
+                  group_fgac_user_id,
+                  all_user_ind
+             FROM gvq_rest_content_filter
+            WHERE resource_name = ?
+              AND (fgac_user_id = ? OR group_fgac_user_id = ? OR all_user_ind = 'Y')"""
 
 
     /**
-     * Retrieve list of fields or field patterns to be filtered from content.
+     * Retrieve list of field patterns to be filtered from content.
      **/
-    public List retrieveFields(String resourceName) {
+    public List retrieveFieldPatterns(String resourceName) {
         def startTime = new Date()
+        log.debug("ResourceName=$resourceName")
         def userId = SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName()?.toUpperCase()
-        def objectCode = '**API_' + resourceName.toUpperCase()
         log.debug("UserId=$userId")
-        log.debug("ObjectCode=$objectCode")
-        def fields = []
+        def fieldPatternsByUser = [:]
+        def fieldPatternsByGroupUser = [:]
+        def fieldPatternsByAllUsers = [:]
         def sql = new Sql(sessionFactory.currentSession.connection())
-        sql.eachRow(GORDMSK_SQL, [objectCode, userId, userId]) { row ->
-            fields.add(row.gordmsk_block_comp_name)
+        sql.eachRow(GORDMSK_SQL, [resourceName, userId, userId]) { row ->
+            if (row.fgac_user_id != null) {
+                fieldPatternsByUser.put(row.field_pattern, row.display_ind)
+            } else if (row.group_fgac_user_id != null) {
+                fieldPatternsByGroupUser.put(row.field_pattern, row.display_ind)
+            } else if (row.all_user_ind == "Y") {
+                fieldPatternsByAllUsers.put(row.field_pattern, row.display_ind)
+            }
         }
-        log.debug("Fields=$fields")
-        log.debug("Elapsed retrieveFields time in ms: ${new Date().time - startTime.time}")
-        return fields
+        def prioritizedFieldPatterns = [:]
+        prioritizedFieldPatterns.putAll(fieldPatternsByAllUsers)
+        prioritizedFieldPatterns.putAll(fieldPatternsByGroupUser)
+        prioritizedFieldPatterns.putAll(fieldPatternsByUser)
+        def fieldPatterns = []
+        prioritizedFieldPatterns.each {
+            if (it.value == "N") {
+                fieldPatterns.add(it.key)
+            }
+        }
+        fieldPatterns = fieldPatterns.unique().sort()
+        log.debug("Field patterns=$fieldPatterns")
+        log.debug("Elapsed retrieveFieldPatterns time in ms: ${new Date().time - startTime.time}")
+        return fieldPatterns
     }
 }
