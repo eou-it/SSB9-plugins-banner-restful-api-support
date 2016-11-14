@@ -34,6 +34,7 @@ class BannerContentFilterFields implements ContentFilterFields {
      * Retrieve list of field patterns to be filtered from content.
      **/
     public List retrieveFieldPatterns(String resourceName) {
+        assert sessionFactory != null
         def startTime = new Date()
         log.debug("ResourceName=$resourceName")
         def userId = SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName()?.toUpperCase()
