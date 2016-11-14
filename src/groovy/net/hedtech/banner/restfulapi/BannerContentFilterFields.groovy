@@ -19,13 +19,15 @@ class BannerContentFilterFields implements ContentFilterFields {
 
     final static GORDMSK_SQL =
         """SELECT field_pattern,
-                  fgac_user_id,
                   display_ind,
+                  fgac_user_id,
+                  group_fgac_code,
                   group_fgac_user_id,
                   all_user_ind
              FROM gvq_rest_content_filter
             WHERE resource_name = ?
-              AND (fgac_user_id = ? OR group_fgac_user_id = ? OR all_user_ind = 'Y')"""
+              AND (fgac_user_id = ? OR group_fgac_user_id = ? OR all_user_ind = 'Y')
+         ORDER BY field_pattern, fgac_user_id, group_fgac_code, all_user_ind"""
 
 
     /**
@@ -36,23 +38,16 @@ class BannerContentFilterFields implements ContentFilterFields {
         log.debug("ResourceName=$resourceName")
         def userId = SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName()?.toUpperCase()
         log.debug("UserId=$userId")
-        def fieldPatternsByUser = [:]
-        def fieldPatternsByGroupUser = [:]
-        def fieldPatternsByAllUsers = [:]
+        def prioritizedFieldPatterns = [:]
         def sql = new Sql(sessionFactory.currentSession.connection())
         sql.eachRow(GORDMSK_SQL, [resourceName, userId, userId]) { row ->
-            if (row.fgac_user_id != null) {
-                fieldPatternsByUser.put(row.field_pattern, row.display_ind)
-            } else if (row.group_fgac_user_id != null) {
-                fieldPatternsByGroupUser.put(row.field_pattern, row.display_ind)
-            } else if (row.all_user_ind == "Y") {
-                fieldPatternsByAllUsers.put(row.field_pattern, row.display_ind)
+            if (prioritizedFieldPatterns.get(row.field_pattern) == null &&
+                    (row.fgac_user_id != null ||
+                     row.group_fgac_user_id != null ||
+                     row.all_user_ind == "Y")) {
+                prioritizedFieldPatterns.put(row.field_pattern, row.display_ind)
             }
         }
-        def prioritizedFieldPatterns = [:]
-        prioritizedFieldPatterns.putAll(fieldPatternsByAllUsers)
-        prioritizedFieldPatterns.putAll(fieldPatternsByGroupUser)
-        prioritizedFieldPatterns.putAll(fieldPatternsByUser)
         def fieldPatterns = []
         prioritizedFieldPatterns.each {
             if (it.value == "N") {
