@@ -8,9 +8,13 @@ import net.hedtech.banner.service.ServiceBase
 import net.hedtech.restfulapi.ContentFilter
 import net.hedtech.restfulapi.ContentFilterResult
 import net.hedtech.restfulapi.RestfulServiceAdapter
+import net.hedtech.restfulapi.UnsupportedMethodException
 
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+
+import grails.util.Holders
 
 /**
  * A service adapter implementation for use with the 'restful-api' plugin.
@@ -111,6 +115,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilt
      * Creates a new instance of the domain object.
      **/
     def create(def service, Map content, Map params) {
+        if (isReadOnlyAccess(params)) {
+            throw new UnsupportedMethodException()
+        }
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
@@ -133,6 +140,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilt
      * it only passes the 'content' map.
      **/
     def update(def service, Map content, Map params) {
+        if (isReadOnlyAccess(params)) {
+            throw new UnsupportedMethodException()
+        }
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
@@ -156,6 +166,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilt
      * it only passes the 'content' map.
      **/
     void delete(def service, Map content, Map params) {
+        if (isReadOnlyAccess(params)) {
+            throw new UnsupportedMethodException()
+        }
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
@@ -183,6 +196,39 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilt
 
         log.trace("Filtering content for resource=$resourceName with contentType=$contentType")
         return restContentFilter.applyFilter(resourceName, content, contentType)
+    }
+
+    /**
+     * Return true if the user has read-only access to the resource.
+     */
+    def isReadOnlyAccess(Map params) {
+        // catch-all condition: allow full access if no user is defined
+        def user = SecurityContextHolder?.context?.authentication?.principal
+        if (!user) return false
+
+        // need to separately keep track of read-only and read-write access
+        boolean hasReadOnlyAccess = false
+        boolean hasReadWriteAccess = false
+
+        // locate all the granted authorities for the
+        // forms that are associated with this resource
+        def grantedAuthorities = []
+        Holders.config.formControllerMap[params.pluralizedResourceName]?.each { form ->
+            grantedAuthorities.addAll(user.formToRoleMap[form])
+        }
+
+        // determine if read-only or read-write access
+        // is specifically granted for this resource
+        grantedAuthorities.each { grantedAuthority ->
+            if (grantedAuthority.isReadOnly()) {
+                hasReadOnlyAccess = true
+            } else if (grantedAuthority.isReadWrite()) {
+                hasReadWriteAccess = true
+            }
+        }
+
+        // return read-only access if no read-write access found
+        return hasReadOnlyAccess && !hasReadWriteAccess
     }
 }
 

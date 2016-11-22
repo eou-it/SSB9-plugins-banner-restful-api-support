@@ -21,8 +21,8 @@ grails.config.locations.each {
 }
 
 formControllerMap = [
-        'foo'       : ['SELFSERVICE', 'GUAGMNU'],
-        'restfulapi': ['SELFSERVICE', 'GUAGMNU']
+        'foo'       : ['API_TEST_FOO_SERVICE_API'],
+        'restfulapi': ['API_RESTFULAPI']
 ]
 
 grails {
@@ -63,11 +63,11 @@ restfulApiConfig = {
 
     resource 'foo' config {
         serviceName = 'fooService'
-        methods = ['list']
         representation {
             mediaTypes = ["application/vnd.hedtech.v1+json", "application/json"]
             marshallers {
             }
+            jsonExtractor {}
         }
     }
 

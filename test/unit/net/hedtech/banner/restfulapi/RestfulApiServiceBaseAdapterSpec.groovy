@@ -104,23 +104,23 @@ class RestfulApiServiceBaseAdapterSpec extends Specification {
         [:] == RestfulApiRequestParams.get()
     }
 
-//    def "Test threadlocal params on update"() {
-//        setup:
-//        def mock = Mock(ServiceBase)
-//        def threadLocalParams
-//        mock.delete(_) >> {
-//            threadLocalParams = RestfulApiRequestParams.get()
-//            []
-//        }
-//        def adapter = new RestfulApiServiceBaseAdapter()
-//        def params = ['one':'two']
-//
-//        when:
-//        adapter.delete(mock, 1, [:], params)
-//
-//        then:
-//        ['one':'two'] == threadLocalParams
-//        [:] == RestfulApiRequestParams.get()
-//    }
+    def "Test threadlocal params on delete"() {
+        setup:
+        def mock = Mock(ServiceBase)
+        def threadLocalParams
+        mock.delete(_) >> {
+            threadLocalParams = RestfulApiRequestParams.get()
+            []
+        }
+        def adapter = new RestfulApiServiceBaseAdapter()
+        def params = ['one':'two']
+
+        when:
+        adapter.delete(mock, [:], params)
+
+        then:
+        ['one':'two'] == threadLocalParams
+        [:] == RestfulApiRequestParams.get()
+    }
 
 }
