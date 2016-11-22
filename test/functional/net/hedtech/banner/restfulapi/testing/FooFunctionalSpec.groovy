@@ -223,6 +223,39 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
     }
 
 
+    def "create - read-write supersedes read-only"() {
+        setup:
+        Foo.withTransaction {
+            def sql = new Sql(getSessionFactory().currentSession.connection())
+            sql.execute(INSERT_GURUCLS, ['BAN_FULL_CRUD_FOO_C', 'GRAILS_USER_READONLY'])
+        }
+
+        when:
+        post("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}") {
+            headers['Content-Type'] = 'application/json'
+            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Authorization'] = readOnlyAuthHeader()
+            body {
+                """
+				{
+					"code":"TT",
+					"description":"Test"
+				}
+                """
+            }
+        }
+
+        then:
+        201 == response.status
+        'application/json' == response.contentType
+        'application/vnd.hedtech.v1+json' == responseHeader("X-hedtech-Media-Type")
+        "foo resource created" == responseHeader('X-hedtech-message')
+        def foo = JSON.parse(response.text)
+        "TT" == foo.code
+        "Test" == foo.description
+    }
+
+
     private void setupTestData() {
         Foo.withTransaction {
             def sql = new Sql(getSessionFactory().currentSession.connection())
