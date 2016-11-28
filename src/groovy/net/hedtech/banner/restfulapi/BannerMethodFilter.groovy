@@ -28,7 +28,7 @@ class BannerMethodFilter extends BannerFilterConfig
         log.debug("Determining whether method=$methodName is not allowed for resource=$resourceName")
         def methodsNotAllowed = []
         retrieveFilterConfig(resourceName).each { config ->
-            if (config.key == "*" && config.value.configEnabled) {
+            if (config.key == "*" && config.value.configActive) {
                 def methodCodes = config.value.methodsNotAllowed
                 for (int i = 0; i < methodCodes.length(); i++) {
                     def methodNames = CRUD_METHODS_MAP.get(methodCodes[i])

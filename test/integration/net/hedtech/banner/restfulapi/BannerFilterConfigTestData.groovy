@@ -37,7 +37,7 @@ class BannerFilterConfigTestData extends BaseIntegrationTestCase {
             cmd.append('\', ')
             cmd.append(it.seqno)
             cmd.append(', \'')
-            cmd.append(it.displayInd)
+            cmd.append(it.statusInd)
             cmd.append('\', \'')
             cmd.append(it.userPattern)
             cmd.append('\');\n')
@@ -106,7 +106,7 @@ DECLARE
                            p_field_pattern  gordmsk.gordmsk_block_comp_name%TYPE,
                            p_methods_not_allowed  gordmsk.gordmsk_column_comp_name%TYPE,
                            p_sqno           gordmsk.gordmsk_seqno%TYPE,
-                           p_display_ind    gordmsk.gordmsk_display_ind%TYPE,
+                           p_status_ind     gordmsk.gordmsk_display_ind%TYPE,
                            p_user_pattern   VARCHAR2) IS
 
     lv_objs_code           gordmsk.gordmsk_objs_code%TYPE;
@@ -117,6 +117,7 @@ DECLARE
     lv_fbpr_code           gordmsk.gordmsk_fbpr_code%TYPE;
     lv_all_user_ind        gordmsk.gordmsk_all_user_ind%TYPE;
     lv_methods_not_allowed gordmsk.gordmsk_column_comp_name%TYPE;
+    lv_display_ind         gordmsk.gordmsk_display_ind%TYPE;
 
   BEGIN
     lv_objs_code := UPPER(REPLACE(SUBSTR('**API_'||p_resource_name,1,30),'-','_'));
@@ -127,6 +128,13 @@ DECLARE
       lv_column_name := 'HTTP_METHOD_NOT_ALLOWED_CODES';
     ELSE
       lv_methods_not_allowed := '*';
+    END IF;
+    IF (p_status_ind = 'A') THEN
+      lv_display_ind := 'N';
+    ELSIF (p_status_ind = 'I') THEN
+      lv_display_ind := 'Y';
+    ELSE
+      lv_display_ind := null;
     END IF;
 
     -- check if this field pattern applies to all users
@@ -180,7 +188,7 @@ DECLARE
         lv_block_name,
         lv_column_name,
         p_sqno,
-        p_display_ind,
+        lv_display_ind,
         'N',
         p_resource_name,
         p_field_pattern,

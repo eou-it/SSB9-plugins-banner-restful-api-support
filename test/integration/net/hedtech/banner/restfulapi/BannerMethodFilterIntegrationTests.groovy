@@ -51,7 +51,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testWithNoMethodsSpecified() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: '*', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -68,7 +68,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testWithOneMethodSpecified() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -92,7 +92,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testWithMultipleMethodsSpecified() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CRUD', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CRUD', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -116,7 +116,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testWithDuplicateMethodsSpecified() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CRUDCUD', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CRUDCUD', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -140,7 +140,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testWithInvalidMethodsSpecified() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'XYZ', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'XYZ', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -157,8 +157,8 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testFieldPatternsByUser() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CD', seqno: 1, displayInd: 'N', userPattern: 'OTHER_USER'],
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'R', seqno: 2, displayInd: 'N', userPattern: 'GRAILS_USER']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CD', seqno: 1, statusInd: 'A', userPattern: 'OTHER_USER'],
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'R', seqno: 2, statusInd: 'A', userPattern: 'GRAILS_USER']
         ]
         createTestData(testData)
         assertEquals 2, verifyCount()
@@ -179,9 +179,9 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
         // for which they are specified; the API_TEST1_FPBR group will contain
         // all 3 users which are correlated to all 3 field patterns
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CU', seqno: 1, displayInd: 'N', userPattern: 'OTHER_USER:API_TEST1_FPBR'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, displayInd: 'N', userPattern: 'GRAILS_USER:API_TEST1_FPBR'],
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, displayInd: 'N', userPattern: 'ANOTHER_USER:API_TEST1_FPBR']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CU', seqno: 1, statusInd: 'A', userPattern: 'OTHER_USER:API_TEST1_FPBR'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: 'GRAILS_USER:API_TEST1_FPBR'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: 'ANOTHER_USER:API_TEST1_FPBR']
         ]
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -200,8 +200,8 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
         // use the alphabetically first group if a person is referenced
         // by multiple groups for the same field pattern
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 1, displayInd: 'Y', userPattern: 'GRAILS_USER:API_TEST2_FPBR'],
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 2, displayInd: 'N', userPattern: 'GRAILS_USER:API_TEST1_FPBR']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 1, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST2_FPBR'],
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 2, statusInd: 'A', userPattern: 'GRAILS_USER:API_TEST1_FPBR']
         ]
         createTestData(testData)
         assertEquals 2, verifyCount()
@@ -211,7 +211,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
 
         // add another entry to cause field pattern to be removed
         testData.add(
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 3, displayInd: 'Y', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 3, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
         )
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -224,7 +224,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
     @Test
     void testFieldPatternsPrioritization() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CUD', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'CUD', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -238,7 +238,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
 
         // add another entry to show groups can override all users
         testData.add(
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 2, displayInd: 'Y', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 2, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
         )
         createTestData(testData)
         assertEquals 2, verifyCount()
@@ -252,7 +252,7 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
 
         // add another entry to show individual user can override groups all users
         testData.add(
-            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 3, displayInd: 'N', userPattern: 'GRAILS_USER'],
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: 'C', seqno: 3, statusInd: 'A', userPattern: 'GRAILS_USER'],
         )
         createTestData(testData)
         assertEquals 3, verifyCount()

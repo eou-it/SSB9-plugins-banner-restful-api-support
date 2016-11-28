@@ -19,12 +19,12 @@ class BannerFilterConfig {
     final static GORDMSK_SQL =
         """SELECT field_pattern,
                   methods_not_allowed,
-                  display_ind,
+                  status_ind,
                   fgac_user_id,
                   group_fgac_code,
                   group_fgac_user_id,
                   all_user_ind
-             FROM gvq_rest_content_filter
+             FROM gvq_rest_filter_config
             WHERE resource_name = ?
               AND (fgac_user_id = ? OR group_fgac_user_id = ? OR all_user_ind = 'Y')
          ORDER BY field_pattern, fgac_user_id, group_fgac_code, all_user_ind"""
@@ -44,7 +44,7 @@ class BannerFilterConfig {
         sql.eachRow(GORDMSK_SQL, [resourceName, userId, userId]) { row ->
             if (filterConfig.get(row.field_pattern) == null) {
                 filterConfig.put(row.field_pattern,
-                    [configEnabled: (row.display_ind == "N" ? true : false),
+                    [configActive: (row.status_ind == "A"),
                      methodsNotAllowed: row.methods_not_allowed])
             }
         }

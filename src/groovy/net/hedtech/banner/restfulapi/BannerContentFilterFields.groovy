@@ -18,7 +18,7 @@ class BannerContentFilterFields extends BannerFilterConfig
     public List retrieveFieldPatterns(String resourceName) {
         def fieldPatterns = []
         retrieveFilterConfig(resourceName).each { config ->
-            if (config.value.configEnabled) {
+            if (config.value.configActive) {
                 fieldPatterns.add(config.key)
             }
         }

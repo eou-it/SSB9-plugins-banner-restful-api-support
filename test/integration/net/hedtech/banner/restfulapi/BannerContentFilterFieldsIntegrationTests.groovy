@@ -49,7 +49,7 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
     @Test
     void testWithOneFieldPattern() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 1, verifyCount()
@@ -72,9 +72,9 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
     @Test
     void testWithMultipleFieldPatternsSorted() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -99,11 +99,11 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
     @Test
     void testWithDuplicateFieldPatternsRemoved() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 2, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 2, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 2, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 2, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 5, verifyCount()
@@ -128,9 +128,9 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
     @Test
     void testFieldPatternsByUser() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'N', userPattern: 'OTHER_USER'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, displayInd: 'N', userPattern: 'GRAILS_USER'],
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, displayInd: 'N', userPattern: 'OTHER_USER']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: 'OTHER_USER'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: 'GRAILS_USER'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: 'OTHER_USER']
         ]
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -151,9 +151,9 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
         // for which they are specified; the API_TEST1_FPBR group will contain
         // all 3 users which are correlated to all 3 field patterns
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'N', userPattern: 'OTHER_USER:API_TEST1_FPBR'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, displayInd: 'N', userPattern: 'GRAILS_USER:API_TEST1_FPBR'],
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, displayInd: 'N', userPattern: 'ANOTHER_USER:API_TEST1_FPBR']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: 'OTHER_USER:API_TEST1_FPBR'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: 'GRAILS_USER:API_TEST1_FPBR'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: 'ANOTHER_USER:API_TEST1_FPBR']
         ]
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -174,8 +174,8 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
         // use the alphabetically first group if a person is referenced
         // by multiple groups for the same field pattern
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'Y', userPattern: 'GRAILS_USER:API_TEST2_FPBR'],
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 2, displayInd: 'N', userPattern: 'GRAILS_USER:API_TEST1_FPBR']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST2_FPBR'],
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 2, statusInd: 'A', userPattern: 'GRAILS_USER:API_TEST1_FPBR']
         ]
         createTestData(testData)
         assertEquals 2, verifyCount()
@@ -189,7 +189,7 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
 
         // add another entry to cause field pattern to be removed
         testData.add(
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 3, displayInd: 'Y', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 3, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
         )
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -205,9 +205,9 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
     @Test
     void testFieldPatternsPrioritization() {
         def testData = [
-            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, displayInd: 'N', userPattern: '*'],
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, displayInd: 'N', userPattern: '*']
+            [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: '*'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: '*']
         ]
         createTestData(testData)
         assertEquals 3, verifyCount()
@@ -223,7 +223,7 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
 
         // add another entry to show groups can override all users
         testData.add(
-                [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 2, displayInd: 'Y', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 2, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
         )
         createTestData(testData)
         assertEquals 4, verifyCount()
@@ -238,10 +238,10 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
 
         // add another entry to show individual user can override groups all users
         testData.add(
-            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 3, displayInd: 'N', userPattern: 'GRAILS_USER'],
+            [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 3, statusInd: 'A', userPattern: 'GRAILS_USER'],
         )
         testData.add(
-            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 2, displayInd: 'Y', userPattern: 'GRAILS_USER']
+            [resourceName: 'my-resource', fieldPattern: 'code', seqno: 2, statusInd: 'I', userPattern: 'GRAILS_USER']
         )
         createTestData(testData)
         assertEquals 6, verifyCount()
