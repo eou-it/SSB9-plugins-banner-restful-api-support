@@ -5,8 +5,6 @@ package net.hedtech.banner.restfulapi
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
-import net.hedtech.restfulapi.ContentFilter
-import net.hedtech.restfulapi.ContentFilterResult
 import net.hedtech.restfulapi.RestfulServiceAdapter
 import net.hedtech.restfulapi.UnsupportedMethodException
 
@@ -25,10 +23,7 @@ import grails.util.Holders
  * it will be used by the RestfulApiController when delegating to services.
  **/
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS )
-class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilter {
-
-
-    ContentFilter restContentFilter
+class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
 
 
     /**
@@ -184,18 +179,6 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter, ContentFilt
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "delete", startDate, new Date())
         }
-    }
-
-    /**
-     * Apply filter to content and params.
-     **/
-    def ContentFilterResult applyFilter(String resourceName, def content, String contentType) {
-        if (!restContentFilter) {
-            return new ContentFilterResult(content: content)
-        }
-
-        log.trace("Filtering content for resource=$resourceName with contentType=$contentType")
-        return restContentFilter.applyFilter(resourceName, content, contentType)
     }
 
     /**
