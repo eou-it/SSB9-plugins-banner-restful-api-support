@@ -257,6 +257,73 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
 
 
     @Test
+    void testEmsApiUserFieldPatterns() {
+        def testData = [
+                [resourceName: 'my-resource', fieldPattern: 'name', seqno: 1, statusInd: 'A', userPattern: '*'],
+                [resourceName: 'my-resource', fieldPattern: 'code', seqno: 1, statusInd: 'A', userPattern: '*'],
+                [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 1, statusInd: 'A', userPattern: '*']
+        ]
+        createTestData(testData)
+        assertEquals 3, verifyCount()
+
+        // set the EMS API user for this test
+        updateIntegrationConfiguration("EMS-ETHOS-INTEGRATION", "EMS.API.USERNAME", "GRAILS_USER")
+
+        // test resource - we will always get an extra '*' field pattern for not allowed methods
+        List fieldPatterns = restContentFilterFields.retrieveFieldPatterns("my-resource")
+        assertNotNull fieldPatterns
+        assertTrue fieldPatterns instanceof List
+        assertEquals 4, fieldPatterns.size()
+        assertEquals "*", fieldPatterns.get(0)
+        assertEquals "code", fieldPatterns.get(1)
+        assertEquals "desc", fieldPatterns.get(2)
+        assertEquals "name", fieldPatterns.get(3)
+
+        // add another entry to show groups does not override an active field pattern
+        testData.add(
+                [resourceName: 'my-resource', fieldPattern: 'desc', seqno: 2, statusInd: 'I', userPattern: 'GRAILS_USER:API_TEST0_FPBR']
+        )
+        createTestData(testData)
+        assertEquals 4, verifyCount()
+
+        // test resource
+        fieldPatterns = restContentFilterFields.retrieveFieldPatterns("my-resource")
+        assertNotNull fieldPatterns
+        assertTrue fieldPatterns instanceof List
+        assertEquals 4, fieldPatterns.size()
+        assertEquals "*", fieldPatterns.get(0)
+        assertEquals "code", fieldPatterns.get(1)
+        assertEquals "desc", fieldPatterns.get(2)
+        assertEquals "name", fieldPatterns.get(3)
+
+        // add additional entries to show another user gets added for the EMS API user (but only if active)
+        testData.add(
+                [resourceName: 'my-resource', fieldPattern: 'status', seqno: 1, statusInd: 'A', userPattern: 'ANOTHER_USER'],
+        )
+        testData.add(
+                [resourceName: 'my-resource', fieldPattern: 'startDate', seqno: 1, statusInd: 'I', userPattern: 'ANOTHER_USER']
+        )
+        testData.add(
+                [resourceName: 'my-resource', fieldPattern: 'endDate', seqno: 1, statusInd: 'A', userPattern: 'ANOTHER_USER']
+        )
+        createTestData(testData)
+        assertEquals 7, verifyCount()
+
+        // test resource
+        fieldPatterns = restContentFilterFields.retrieveFieldPatterns("my-resource")
+        assertNotNull fieldPatterns
+        assertTrue fieldPatterns instanceof List
+        assertEquals 6, fieldPatterns.size()
+        assertEquals "*", fieldPatterns.get(0)
+        assertEquals "code", fieldPatterns.get(1)
+        assertEquals "desc", fieldPatterns.get(2)
+        assertEquals "endDate", fieldPatterns.get(3)
+        assertEquals "name", fieldPatterns.get(4)
+        assertEquals "status", fieldPatterns.get(5)
+    }
+
+
+    @Test
     void testMissingSessionFactoryInjection() {
         restContentFilterFields.sessionFactory = null
         try {

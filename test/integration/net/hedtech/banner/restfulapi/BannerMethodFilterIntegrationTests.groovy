@@ -267,6 +267,35 @@ class BannerMethodFilterIntegrationTests extends BannerFilterConfigTestData {
 
 
     @Test
+    void testEmsApiUserNotAllowedMethods() {
+        assertEquals 0, verifyCount()
+
+        // set the EMS API user for this test
+        updateIntegrationConfiguration("EMS-ETHOS-INTEGRATION", "EMS.API.USERNAME", "GRAILS_USER")
+
+        // test EMS API user with no matching resource is denied CUD methods
+        assertFalse restMethodFilter.isMethodNotAllowed("my-resource", Methods.LIST)
+        assertFalse restMethodFilter.isMethodNotAllowed("my-resource", Methods.SHOW)
+        assertTrue restMethodFilter.isMethodNotAllowed("my-resource", Methods.CREATE)
+        assertTrue restMethodFilter.isMethodNotAllowed("my-resource", Methods.UPDATE)
+        assertTrue restMethodFilter.isMethodNotAllowed("my-resource", Methods.DELETE)
+
+        def testData = [
+            [resourceName: 'my-resource', fieldPattern: '*', methodsNotAllowed: null, seqno: 1, statusInd: 'A', userPattern: '*']
+        ]
+        createTestData(testData)
+        assertEquals 1, verifyCount()
+
+        // test EMS API user with matching resource allowing full CRUD is still denied CUD methods
+        assertFalse restMethodFilter.isMethodNotAllowed("my-resource", Methods.LIST)
+        assertFalse restMethodFilter.isMethodNotAllowed("my-resource", Methods.SHOW)
+        assertTrue restMethodFilter.isMethodNotAllowed("my-resource", Methods.CREATE)
+        assertTrue restMethodFilter.isMethodNotAllowed("my-resource", Methods.UPDATE)
+        assertTrue restMethodFilter.isMethodNotAllowed("my-resource", Methods.DELETE)
+    }
+
+
+    @Test
     void testMissingSessionFactoryInjection() {
         restMethodFilter.sessionFactory = null
         try {

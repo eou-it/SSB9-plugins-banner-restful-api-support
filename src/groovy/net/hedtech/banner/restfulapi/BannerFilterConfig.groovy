@@ -29,6 +29,18 @@ class BannerFilterConfig {
               AND (fgac_user_id = ? OR group_fgac_user_id = ? OR all_user_ind = 'Y')
          ORDER BY field_pattern, fgac_user_id, group_fgac_code, all_user_ind"""
 
+    final static GORDMSK_FOR_EMS_API_USERS_SQL =
+        """SELECT field_pattern
+             FROM gvq_rest_filter_config
+            WHERE resource_name = ?
+              AND status_ind = ?"""
+
+    final static GORICCR_SQL =
+            """SELECT goriccr_translation_value
+             FROM gv_goriccr
+            WHERE goriccr_sqpr_code = ?
+              AND goriccr_icsn_code = ?"""
+
 
     /**
      * Retrieve filter configuration from the database.
@@ -39,16 +51,42 @@ class BannerFilterConfig {
         log.debug("ResourceName=$resourceName")
         def userId = SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName()?.toUpperCase()
         log.debug("UserId=$userId")
+        def emsApiUsernames = retrieveEmsApiUsernames()
         def filterConfig = [:]
         def sql = new Sql(sessionFactory.currentSession.connection())
-        sql.eachRow(GORDMSK_SQL, [resourceName, userId, userId]) { row ->
-            if (filterConfig.get(row.field_pattern) == null) {
-                filterConfig.put(row.field_pattern,
-                    [configActive: (row.status_ind == "A"),
-                     methodsNotAllowed: row.methods_not_allowed])
+        if (emsApiUsernames.contains(userId)) {
+            sql.eachRow(GORDMSK_FOR_EMS_API_USERS_SQL, [resourceName, "A"]) { row ->
+                if (filterConfig.get(row.field_pattern) == null) {
+                    filterConfig.put(row.field_pattern,
+                            [configActive: true])
+                }
+            }
+            // create an entry to disallow any CUD methods for the EMS API user
+            filterConfig.put("*", [configActive: true, methodsNotAllowed: "CUD"])
+        } else {
+            sql.eachRow(GORDMSK_SQL, [resourceName, userId, userId]) { row ->
+                if (filterConfig.get(row.field_pattern) == null) {
+                    filterConfig.put(row.field_pattern,
+                            [configActive: (row.status_ind == "A"),
+                             methodsNotAllowed: row.methods_not_allowed])
+                }
             }
         }
         log.debug("Elapsed retrieveFilterConfig time in ms: ${new Date().time - startTime.time}")
         return filterConfig
+    }
+
+
+    /**
+     * Retrieve list of usernames for the Ethos Integration Messaging Service.
+     **/
+    public List retrieveEmsApiUsernames() {
+        List emsApiUsernames = []
+        def sql = new Sql(sessionFactory.currentSession.connection())
+        sql.eachRow(GORICCR_SQL, ["EMS-ETHOS-INTEGRATION", "EMS.API.USERNAME"]) { row ->
+            emsApiUsernames.add(row.goriccr_translation_value?.toUpperCase())
+        }
+        log.debug "EMS API usernames $emsApiUsernames configured in GORICCR"
+        return emsApiUsernames
     }
 }

@@ -39,7 +39,7 @@ class BannerContentFilterIntegrationTests extends BannerFilterConfigTestData {
     }
 
     // Since BannerContentFilter just extends the restful-api BasicContentFilter, we just
-    // have to verify that everything is wireded up correctly through spring, as all the
+    // have to verify that everything is wired up correctly through spring, as all the
     // actual pattern matching logic is covered by the BasicContentFilter tests.
 
     @Test

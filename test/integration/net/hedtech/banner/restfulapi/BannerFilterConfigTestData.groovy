@@ -16,6 +16,7 @@ class BannerFilterConfigTestData extends BaseIntegrationTestCase {
     void teardownTestData() {
         def sql = new Sql(sessionFactory.currentSession.connection())
         sql.execute("delete from gordmsk where gordmsk_block_name = ?",['API'])
+        updateIntegrationConfiguration("EMS-ETHOS-INTEGRATION", "EMS.API.USERNAME", "UPDATE ME")
     }
 
 
@@ -223,5 +224,11 @@ BEGIN
             """
 END;
 """
+
+
+    def updateIntegrationConfiguration(String processCode, String settingName, String translationValue) {
+        def sql = new Sql(sessionFactory.currentSession.connection())
+        sql.execute("update goriccr set goriccr_translation_value = ? where goriccr_sqpr_code = ? and goriccr_icsn_code = ?",[translationValue, processCode, settingName])
+    }
 
 }
