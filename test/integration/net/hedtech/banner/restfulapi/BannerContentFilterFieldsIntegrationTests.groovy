@@ -273,11 +273,10 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
         List fieldPatterns = restContentFilterFields.retrieveFieldPatterns("my-resource")
         assertNotNull fieldPatterns
         assertTrue fieldPatterns instanceof List
-        assertEquals 4, fieldPatterns.size()
-        assertEquals "*", fieldPatterns.get(0)
-        assertEquals "code", fieldPatterns.get(1)
-        assertEquals "desc", fieldPatterns.get(2)
-        assertEquals "name", fieldPatterns.get(3)
+        assertEquals 3, fieldPatterns.size()
+        assertEquals "code", fieldPatterns.get(0)
+        assertEquals "desc", fieldPatterns.get(1)
+        assertEquals "name", fieldPatterns.get(2)
 
         // add another entry to show groups does not override an active field pattern
         testData.add(
@@ -290,11 +289,10 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
         fieldPatterns = restContentFilterFields.retrieveFieldPatterns("my-resource")
         assertNotNull fieldPatterns
         assertTrue fieldPatterns instanceof List
-        assertEquals 4, fieldPatterns.size()
-        assertEquals "*", fieldPatterns.get(0)
-        assertEquals "code", fieldPatterns.get(1)
-        assertEquals "desc", fieldPatterns.get(2)
-        assertEquals "name", fieldPatterns.get(3)
+        assertEquals 3, fieldPatterns.size()
+        assertEquals "code", fieldPatterns.get(0)
+        assertEquals "desc", fieldPatterns.get(1)
+        assertEquals "name", fieldPatterns.get(2)
 
         // add additional entries to show another user gets added for the EMS API user (but only if active)
         testData.add(
@@ -313,13 +311,12 @@ class BannerContentFilterFieldsIntegrationTests extends BannerFilterConfigTestDa
         fieldPatterns = restContentFilterFields.retrieveFieldPatterns("my-resource")
         assertNotNull fieldPatterns
         assertTrue fieldPatterns instanceof List
-        assertEquals 6, fieldPatterns.size()
-        assertEquals "*", fieldPatterns.get(0)
-        assertEquals "code", fieldPatterns.get(1)
-        assertEquals "desc", fieldPatterns.get(2)
-        assertEquals "endDate", fieldPatterns.get(3)
-        assertEquals "name", fieldPatterns.get(4)
-        assertEquals "status", fieldPatterns.get(5)
+        assertEquals 5, fieldPatterns.size()
+        assertEquals "code", fieldPatterns.get(0)
+        assertEquals "desc", fieldPatterns.get(1)
+        assertEquals "endDate", fieldPatterns.get(2)
+        assertEquals "name", fieldPatterns.get(3)
+        assertEquals "status", fieldPatterns.get(4)
     }
 
 

@@ -18,7 +18,6 @@ class BannerFilterConfig {
 
     final static GORDMSK_SQL =
         """SELECT field_pattern,
-                  methods_not_allowed,
                   status_ind,
                   fgac_user_id,
                   group_fgac_code,
@@ -57,18 +56,13 @@ class BannerFilterConfig {
         if (emsApiUsernames.contains(userId)) {
             sql.eachRow(GORDMSK_FOR_EMS_API_USERS_SQL, [resourceName, "A"]) { row ->
                 if (filterConfig.get(row.field_pattern) == null) {
-                    filterConfig.put(row.field_pattern,
-                            [configActive: true])
+                    filterConfig.put(row.field_pattern, [configActive: true])
                 }
             }
-            // create an entry to disallow any CUD methods for the EMS API user
-            filterConfig.put("*", [configActive: true, methodsNotAllowed: "CUD"])
         } else {
             sql.eachRow(GORDMSK_SQL, [resourceName, userId, userId]) { row ->
                 if (filterConfig.get(row.field_pattern) == null) {
-                    filterConfig.put(row.field_pattern,
-                            [configActive: (row.status_ind == "A"),
-                             methodsNotAllowed: row.methods_not_allowed])
+                    filterConfig.put(row.field_pattern, [configActive: (row.status_ind == "A")])
                 }
             }
         }
