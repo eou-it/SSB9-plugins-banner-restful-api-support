@@ -1,3 +1,7 @@
+/* ****************************************************************************
+Copyright 2013-2016 Ellucian Company L.P. and its affiliates.
+******************************************************************************/
+
 package net.hedtech.banner.restfulapi.testing
 
 import net.hedtech.banner.testing.Foo
