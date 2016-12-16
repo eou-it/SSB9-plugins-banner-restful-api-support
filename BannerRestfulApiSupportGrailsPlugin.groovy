@@ -7,7 +7,7 @@ import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 
 class BannerRestfulApiSupportGrailsPlugin {
-    String version = "9.16"
+    String version = "9.20"
 
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
