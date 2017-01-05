@@ -14,8 +14,8 @@ class BannerContentFilter extends BasicContentFilter {
     //  - set allowPartialRequest=true to allow partial request content
     //  - set bypassCreateRequest=true to bypass filtering of create request content
     //  - set bypassUpdateRequest=true to bypass filtering of update request content
-    boolean allowPartialRequest = true
+    boolean allowPartialRequest = false
     boolean bypassCreateRequest = true
-    boolean bypassUpdateRequest = true
+    boolean bypassUpdateRequest = false
 
 }
