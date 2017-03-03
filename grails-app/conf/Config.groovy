@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2013-2015 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2016 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
 import grails.plugin.springsecurity.SecurityConfigType
@@ -21,8 +21,8 @@ grails.config.locations.each {
 }
 
 formControllerMap = [
-        'foo'       : ['SELFSERVICE', 'GUAGMNU'],
-        'restfulapi': ['SELFSERVICE', 'GUAGMNU']
+        'foo'       : ['API_TEST_FOO_SERVICE_API'],
+        'restfulapi': ['API_RESTFULAPI']
 ]
 
 grails {
@@ -63,11 +63,11 @@ restfulApiConfig = {
 
     resource 'foo' config {
         serviceName = 'fooService'
-        methods = ['list']
         representation {
             mediaTypes = ["application/vnd.hedtech.v1+json", "application/json"]
             marshallers {
             }
+            jsonExtractor {}
         }
     }
 

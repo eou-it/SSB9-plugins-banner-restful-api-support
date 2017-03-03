@@ -1,16 +1,21 @@
 /* ****************************************************************************
-Copyright 2013 Ellucian Company L.P. and its affiliates.
+Copyright 2013-2016 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 package net.hedtech.banner.restfulapi
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 import net.hedtech.restfulapi.RestfulServiceAdapter
+import net.hedtech.restfulapi.UnsupportedMethodException
+
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
+import grails.util.Holders
+
 /**
- * An service adapter implementation for use with the 'restful-api' plugin.
+ * A service adapter implementation for use with the 'restful-api' plugin.
  * The RESTful API Grails Plugin delegates to transactional services,
  * however uses a slightly different contract with services than that
  * used within Banner XE (and specifically exposed by ServiceBase).
@@ -105,6 +110,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * Creates a new instance of the domain object.
      **/
     def create(def service, Map content, Map params) {
+        if (isReadOnlyAccess(params)) {
+            throw new UnsupportedMethodException()
+        }
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
@@ -127,6 +135,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * it only passes the 'content' map.
      **/
     def update(def service, Map content, Map params) {
+        if (isReadOnlyAccess(params)) {
+            throw new UnsupportedMethodException()
+        }
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
@@ -150,6 +161,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
      * it only passes the 'content' map.
      **/
     void delete(def service, Map content, Map params) {
+        if (isReadOnlyAccess(params)) {
+            throw new UnsupportedMethodException()
+        }
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
@@ -165,6 +179,39 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "delete", startDate, new Date())
         }
+    }
+
+    /**
+     * Return true if the user has read-only access to the resource.
+     */
+    def isReadOnlyAccess(Map params) {
+        // catch-all condition: allow full access if no user is defined
+        def user = SecurityContextHolder?.context?.authentication?.principal
+        if (!user) return false
+
+        // need to separately keep track of read-only and read-write access
+        boolean hasReadOnlyAccess = false
+        boolean hasReadWriteAccess = false
+
+        // locate all the granted authorities for the
+        // forms that are associated with this resource
+        def grantedAuthorities = []
+        Holders.config.formControllerMap[params.pluralizedResourceName]?.each { form ->
+            grantedAuthorities.addAll(user.formToRoleMap[form])
+        }
+
+        // determine if read-only or read-write access
+        // is specifically granted for this resource
+        grantedAuthorities.each { grantedAuthority ->
+            if (grantedAuthority.isReadOnly()) {
+                hasReadOnlyAccess = true
+            } else if (grantedAuthority.isReadWrite()) {
+                hasReadWriteAccess = true
+            }
+        }
+
+        // return read-only access if no read-write access found
+        return hasReadOnlyAccess && !hasReadWriteAccess
     }
 }
 
