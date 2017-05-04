@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2013-2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
 import grails.plugin.springsecurity.SecurityConfigType
@@ -39,6 +39,7 @@ grails {
                     '/login/**' : ['IS_AUTHENTICATED_ANONYMOUSLY'],
                     '/logout/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
                     '/index'    : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/api/resources' : ['IS_AUTHENTICATED_FULLY'],
                     '/**'       : ['ROLE_DETERMINED_DYNAMICALLY']
             ]
         }
@@ -69,6 +70,23 @@ restfulApiConfig = {
             }
             jsonExtractor {}
         }
+    }
+
+    resource 'resources' config {
+        serviceName = 'supportedResourceService'
+        methods = ['list']
+        representation {
+            mediaTypes = ["application/vnd.hedtech.v2+json", "application/vnd.hedtech.v1+json", "application/json", "application/xml"]
+            unsupportedMediaTypeMethods = ['application/vnd.hedtech.v1+json': ['list']]
+            marshallers {
+                jsonBeanMarshaller {
+                    supports net.hedtech.integration.resource.SupportedResource
+                    supports net.hedtech.integration.resource.SupportedRepresentation
+                    field 'mediaType' name 'X-Media-Type'
+                }
+            }
+        }
+
     }
 
 }
