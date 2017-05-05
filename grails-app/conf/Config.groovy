@@ -72,12 +72,22 @@ restfulApiConfig = {
         }
     }
 
+    resource 'fooTestSupportedResources' config {
+        serviceName = 'fooService'
+        representation {
+            mediaTypes = ["application/vnd.hedtech.v2+json", "application/vnd.hedtech.v1+json", "application/json", "application/xml"]
+            unsupportedMediaTypeMethods = ['application/vnd.hedtech.v1+json': ['create', 'update', 'delete']]
+            marshallers {
+            }
+            jsonExtractor {}
+        }
+    }
+
     resource 'resources' config {
         serviceName = 'supportedResourceService'
         methods = ['list']
         representation {
-            mediaTypes = ["application/vnd.hedtech.v2+json", "application/vnd.hedtech.v1+json", "application/json", "application/xml"]
-            unsupportedMediaTypeMethods = ['application/vnd.hedtech.v1+json': ['list']]
+            mediaTypes = ["application/json"]
             marshallers {
                 jsonBeanMarshaller {
                     supports net.hedtech.integration.resource.SupportedResource
@@ -86,7 +96,6 @@ restfulApiConfig = {
                 }
             }
         }
-
     }
 
 }
@@ -95,4 +104,10 @@ restfulapi.apiErrorCodes = [
         "Global.Internal.Error",
         "Global.SchemaValidation.Error",
         "Global.UnauthorizedOperation"
+]
+
+// resources excluded from the /resources api response
+supportedResource.excludedResources = [
+        // exclude administrative resources
+        "resources"
 ]

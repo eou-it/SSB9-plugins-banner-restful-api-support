@@ -36,17 +36,17 @@ class SupportedResourceServiceFunctionalSpec extends BaseFunctionalSpec {
         def representation1b = resource1.representations.find { it."X-Media-Type" == "application/vnd.hedtech.v1+json" }
         null != representation1b
         ["get","post","put","delete"] == representation1b.methods
-        def resource2 = resources.find { it.name == "resources" }
+        def resource2 = resources.find { it.name == "fooTestSupportedResources" }
         null != resource2
         3 == resource2.representations.size()
         def representation2a = resource2.representations.find { it."X-Media-Type" == "application/json" }
         null != representation2a
-        ["get"] == representation2a.methods
+        ["get","post","put","delete"] == representation2a.methods
         def representation2b = resource2.representations.find { it."X-Media-Type" == "application/vnd.hedtech.v1+json" }
         null != representation2b
-        [] == representation2b.methods
+        ["get"] == representation2b.methods
         def representation2c = resource2.representations.find { it."X-Media-Type" == "application/vnd.hedtech.v2+json" }
         null != representation2c
-        ["get"] == representation2c.methods
+        ["get","post","put","delete"] == representation2c.methods
     }
 }
