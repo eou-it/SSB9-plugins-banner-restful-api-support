@@ -1,11 +1,9 @@
 /******************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
-package net.hedtech.integration
+package net.hedtech.integration.resource
 
 import grails.util.Holders
-import net.hedtech.integration.resource.SupportedRepresentation
-import net.hedtech.integration.resource.SupportedResource
 import net.hedtech.restfulapi.Methods
 import net.hedtech.restfulapi.PagedResultArrayList
 import net.hedtech.restfulapi.ResourceDetail
@@ -14,7 +12,7 @@ import net.hedtech.restfulapi.ResourceDetailList
 /**
  * A service to return the list of resources supported by an application.
  **/
-class SupportedResourceService {
+public class SupportedResourceService {
 
 
     // custom sort order for listing http methods

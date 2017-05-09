@@ -2,7 +2,7 @@
 Copyright 2017 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 
-package net.hedtech.integration
+package net.hedtech.integration.resource
 
 import grails.converters.JSON
 import net.hedtech.banner.restfulapi.testing.BaseFunctionalSpec

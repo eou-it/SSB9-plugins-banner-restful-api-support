@@ -6,7 +6,7 @@ package net.hedtech.integration.resource
 /**
  * Representations supported by a resource.
  **/
-class SupportedRepresentation {
+public class SupportedRepresentation implements Serializable {
 
     String mediaType
     List<String> methods = []

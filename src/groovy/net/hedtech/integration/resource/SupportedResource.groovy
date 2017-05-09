@@ -6,7 +6,7 @@ package net.hedtech.integration.resource
 /**
  * Resources supported by an application.
  **/
-class SupportedResource {
+public class SupportedResource implements Serializable {
 
     String name
     List<SupportedRepresentation> representations = new ArrayList<>()
