@@ -21,8 +21,9 @@ grails.config.locations.each {
 }
 
 formControllerMap = [
-        'foo'       : ['API_TEST_FOO_SERVICE_API'],
-        'restfulapi': ['API_RESTFULAPI']
+        'foo'         : ['API_TEST_FOO_SERVICE_API'],
+        'diagnostics' : ['API_DIAGNOSTICS'],
+        'restfulapi'  : ['API_RESTFULAPI']
 ]
 
 grails {
@@ -98,6 +99,31 @@ restfulApiConfig = {
         }
     }
 
+    resource 'diagnostics' config {
+        serviceName = 'resourceDiagnosticService'
+        methods = ['list', 'create']
+        representation {
+            mediaTypes = ["application/json"]
+            marshallers {
+                jsonDomainMarshaller {
+                    includesId false
+                    includesVersion false
+                    supports net.hedtech.integration.diagnostic.ResourceDiagnosticMessage
+                    includesFields {
+                        field 'id'
+                        field 'resourceName'
+                        field 'messageLevel'
+                        field 'message'
+                        field 'lastModified'
+                    }
+                }
+            }
+            jsonExtractor {
+            }
+        }
+
+    }
+
 }
 
 restfulapi.apiErrorCodes = [
@@ -109,5 +135,6 @@ restfulapi.apiErrorCodes = [
 // resources excluded from the /resources api response
 supportedResource.excludedResources = [
         // exclude administrative resources
+        "diagnostics",
         "resources"
 ]

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation
  **/
 @Transactional
 public class ResourceDiagnosticService extends ServiceBase {
+
     boolean transactional = true
 
     private static final int MAX_DEFAULT = RestfulApiValidationUtility.MAX_DEFAULT
