@@ -6,25 +6,25 @@ package net.hedtech.integration.extension
 /**
  * Builder class to create a list of grouped Extension Definitions
  */
-class ExtensionDefinitionGroupBuilderService {
+class ExtensionDefinitionSourceGroupBuilderService {
 
     /**
      * Build a list of groups
      * @param extensionDefinitionList
      * @return
      */
-    List<ExtensionDefinitionGroup> build(def extensionDefinitionList){
-        List<ExtensionDefinitionGroup> extensionDefinitionGroupList = null;
+    List<ExtensionDefinitionSourceGroup> build(def extensionDefinitionList){
+        List<ExtensionDefinitionSourceGroup> extensionDefinitionGroupList = null;
 
         if (extensionDefinitionList)
         {
             extensionDefinitionGroupList = []
             for (ExtensionDefinition extensionDefinition : extensionDefinitionList) {
-                ExtensionDefinitionGroup extensionDefinitionGroup = this.getGroup(extensionDefinitionGroupList,extensionDefinition)
+                ExtensionDefinitionSourceGroup extensionDefinitionGroup = this.getGroup(extensionDefinitionGroupList,extensionDefinition)
                 if (extensionDefinitionGroup){
                     extensionDefinitionGroup.extensionDefinitionList.add(extensionDefinition)
                 }else{
-                    ExtensionDefinitionGroup newExtensionDefinitionGroup = buildGroup(extensionDefinition)
+                    ExtensionDefinitionSourceGroup newExtensionDefinitionGroup = buildGroup(extensionDefinition)
                     extensionDefinitionGroupList.add(newExtensionDefinitionGroup)
                 }
             }
@@ -40,10 +40,10 @@ class ExtensionDefinitionGroupBuilderService {
      * @param sqlRuleCode
      * @return
      */
-    private ExtensionDefinitionGroup getGroup(def extensionDefinitionGroupList, ExtensionDefinition extensionDefinition){
-        ExtensionDefinitionGroup extensionDefinitionGroup = null
+    private ExtensionDefinitionSourceGroup getGroup(def extensionDefinitionGroupList, ExtensionDefinition extensionDefinition){
+        ExtensionDefinitionSourceGroup extensionDefinitionGroup = null
         if (extensionDefinitionGroupList && extensionDefinition){
-            for (ExtensionDefinitionGroup item : extensionDefinitionGroupList) {
+            for (ExtensionDefinitionSourceGroup item : extensionDefinitionGroupList) {
                 if (item.sqlProcesCode == extensionDefinition.sqlProcessCode &&
                         item.sqlRuleCode == extensionDefinition.sqlRuleCode) {
                     extensionDefinitionGroup = item
@@ -59,10 +59,10 @@ class ExtensionDefinitionGroupBuilderService {
      * @param extensionDefinition
      * @return
      */
-    private ExtensionDefinitionGroup buildGroup(ExtensionDefinition extensionDefinition){
-        ExtensionDefinitionGroup extensionDefinitionGroup = null
+    private ExtensionDefinitionSourceGroup buildGroup(ExtensionDefinition extensionDefinition){
+        ExtensionDefinitionSourceGroup extensionDefinitionGroup = null
         if (extensionDefinition){
-            extensionDefinitionGroup = new ExtensionDefinitionGroup()
+            extensionDefinitionGroup = new ExtensionDefinitionSourceGroup()
             extensionDefinitionGroup.sqlProcesCode = extensionDefinition.sqlProcessCode
             extensionDefinitionGroup.sqlRuleCode = extensionDefinition.sqlRuleCode
             extensionDefinitionGroup.extensionDefinitionList = []

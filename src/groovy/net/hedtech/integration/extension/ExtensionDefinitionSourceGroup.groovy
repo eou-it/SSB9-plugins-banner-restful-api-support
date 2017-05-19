@@ -7,7 +7,7 @@ package net.hedtech.integration.extension
  * Class used to group Extension Definitions by a group so that we only should
  * call the database once per group vs for every extension definition
  */
-class ExtensionDefinitionGroup {
+class ExtensionDefinitionSourceGroup {
 
     String sqlProcesCode
     String sqlRuleCode

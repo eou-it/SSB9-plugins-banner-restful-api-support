@@ -22,15 +22,15 @@ class ExtensionReadCompositeService extends ServiceBase {
      * @param responseContent
      * @return
      */
-    ExtensionProcessResult read(String resourceName, String catalog, def request, Map requestParms, def responseContent) {
+    ExtensionProcessResult read(String resourceName, String extensionCode, def request, Map requestParms, def responseContent) {
         ExtensionProcessResult ethosExtensionResult = new ExtensionProcessResult()
         ethosExtensionResult.content = responseContent
 
         //Get a list of the extension meta data for the resource
-        def extensionDefinitionList = extensionDefinitionService.findByResourceNameAndCatalog(resourceName,catalog)
+        def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
             //Call a service to read from the datasource(s)
-            def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionList,responseContent)
+            def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionList,requestParms,responseContent)
             if (extensionProcessReadResultList){
                 //Call a service to apply the new extensions to the response
                 def extendedContent = extensionContentPatchingService.patchExtensions(extensionDefinitionList,responseContent)

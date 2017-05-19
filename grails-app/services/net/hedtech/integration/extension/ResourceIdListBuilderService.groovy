@@ -3,21 +3,51 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import groovy.json.JsonSlurper
 import net.hedtech.banner.service.ServiceBase
 
-
 /**
- * Created by sdorfmei on 5/16/17.
+ * Class that loops through the response content and builds a list of guids
  */
 class ResourceIdListBuilderService extends ServiceBase {
 
-    def buildFromCollection(def content){
+    /**
+     * Builds a list of guids from the request id
+     * @param content
+     * @return
+     */
+    def buildFromGuid(String guid) {
+        def guidList = null
+        if (guid){
+            guidList = []
+            guidList.add(guid)
+        }else{
+            log.error "GUID to build resource id list was null"
+        }
+        return guidList
+    }
 
-        //For the passed in content pull out a list of guids.
+    /**
+     * Builds a list of guids from the response contnet
+     * @param content
+     * @return
+     */
+    def buildFromContentList(def content) {
+        def guidList = null
+        if (content){
+            guidList = []
+            def parsedJson = new JsonSlurper().parseText(content)
+            if (parsedJson){
+                parsedJson.each {
+                    guidList.add(it.id)
+                }
+            }else{
+                log.error "Error parsing json content"
+            }
 
-        //If one (not an array) return the one guid, else return the list
-        def guidList = ['24c47f0a-0eb7-48a3-85a6-2c585691c6ce','26a2673f-9bc6-4649-a3e8-213d0ff4afbd','acc93569-9275-47d4-986a-313f52ff8044']
-
+        }else{
+            log.error "Content to build resource id list was null"
+        }
         return guidList
     }
 }

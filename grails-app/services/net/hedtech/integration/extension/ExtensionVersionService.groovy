@@ -7,17 +7,17 @@ import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
 
 @Transactional
-class ExtensionDefinitionService extends ServiceBase {
+class ExtensionVersionService extends ServiceBase {
 
     boolean transactional = true
 
     /**
-     * Return all the Extension Definitions for the requested resource name and extension code
+     * Return all the Extension Versions
      * @param resourceName
      * @param catalog
      * @return
      */
-    def findAllByResourceNameAndExtensionCode(String resourceName, String extensionCode){
-        return ExtensionDefinition.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
-    }
+    //def findAllByResourceNameAndExtensionCode(String resourceName, String extensionCode){
+     //   return ExtensionVersion.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
+   // }
 }

@@ -5,20 +5,26 @@ package net.hedtech.integration.extension.sql
 
 import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
-//import net.hedtech.banner.general.overall.SqlProcess
+import net.hedtech.banner.general.overall.SqlProcess
+import net.hedtech.integration.extension.ExtensionDefinitionSourceGroup
+import org.springframework.transaction.annotation.Propagation
 
-@Transactional
+@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 class ReadSqlBuilderService extends ServiceBase {
-
     boolean transactional = true
-
     /** Returns a list of SQL statements to aggregate and run **/
-    List build(String sqlProcessCode, String sqlRuleCode){
-        //def sqlStatements = SqlProcess.fetchSqlForExecutionByEntriesForSqlProcesssCodeAndEntriesForSqlCode(sqlProcessCode, sqlRuleCode)
-
-        def sqlStatements = []
-        String oneSql = "select gorguid_guid as guid, slbbldg_maximum_capacity from gorguid,slbbldg where gorguid_ldm_name = 'buildings' and gorguid_domain_surrogate_id = slbbldg_surrogate_id and gorguid_guid in (:GUID_LIST)"
-        sqlStatements.add(oneSql)
+    List build(ExtensionDefinitionSourceGroup extensionDefinitionSourceGroup){
+        def sqlStatements
+        if (extensionDefinitionSourceGroup){
+            //Only GORSQL code is supported today, but future could derive SQL, thus the check
+            if (extensionDefinitionSourceGroup.sqlProcesCode && extensionDefinitionSourceGroup.sqlRuleCode){
+                sqlStatements = SqlProcess.fetchSqlForExecutionByEntriesForSqlProcesssCodeAndEntriesForSqlCode(
+                        extensionDefinitionSourceGroup.sqlProcesCode,
+                        extensionDefinitionSourceGroup.sqlRuleCode)
+            }else{
+                log.debug "There is no sql process and/or rule code defined for the extension definition source group"
+            }
+        }
         return sqlStatements
     }
 }

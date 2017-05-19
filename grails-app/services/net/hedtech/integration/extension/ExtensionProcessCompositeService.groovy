@@ -28,6 +28,9 @@ class ExtensionProcessCompositeService extends ServiceBase {
     ExtensionProcessResult applyExtensions(String resourceName, String catalog, def request, Map requestParms, def responseContent) {
         ExtensionProcessResult extensionProcessResult = null
         String method = request.getMethod()
+
+
+        //Get the code for this
         if (method && method == "GET") {
             extensionProcessResult = extensionReadCompositeService.read(resourceName,catalog,request,requestParms,responseContent)
         }

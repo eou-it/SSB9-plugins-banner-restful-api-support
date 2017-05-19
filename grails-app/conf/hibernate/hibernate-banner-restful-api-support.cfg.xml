@@ -25,5 +25,8 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
        <property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
            <mapping class="net.hedtech.integration.diagnostic.ResourceDiagnosticMessage"/>
            <mapping class="net.hedtech.integration.extension.ExtensionDefinition"/>
+           <mapping class="net.hedtech.integration.extension.ExtensionVersion"/>
+           <mapping class="net.hedtech.integration.extension.ExtensionDefinitionCode"/>
+
        </session-factory>
    </hibernate-configuration>

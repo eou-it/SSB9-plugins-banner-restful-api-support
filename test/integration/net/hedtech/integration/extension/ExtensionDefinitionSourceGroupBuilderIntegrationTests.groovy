@@ -10,9 +10,9 @@ import org.junit.Test
 /**
  * Created by sdorfmei on 5/17/17.
  */
-class ExtensionDefinitionGroupBuilderIntegrationTests extends BaseIntegrationTestCase {
+class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrationTestCase {
 
-    def extensionDefinitionGroupBuilderService
+    def extensionDefinitionSourceGroupBuilderService
 
     @Before
     public void setUp() {
@@ -28,7 +28,7 @@ class ExtensionDefinitionGroupBuilderIntegrationTests extends BaseIntegrationTes
 
     @Test
     void givenNullParamExpectNull() {
-        def result = extensionDefinitionGroupBuilderService.build(null)
+        def result = extensionDefinitionSourceGroupBuilderService.build(null)
         assertNull result
     }
 
@@ -42,7 +42,7 @@ class ExtensionDefinitionGroupBuilderIntegrationTests extends BaseIntegrationTes
         def extensionDefintionList = []
         extensionDefintionList.add(extensionDefinition)
 
-        def result = extensionDefinitionGroupBuilderService.build(extensionDefintionList)
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefintionList)
         assertNotNull result
         assertTrue result.size == 1
 
@@ -75,7 +75,7 @@ class ExtensionDefinitionGroupBuilderIntegrationTests extends BaseIntegrationTes
         extensionDefintionList.add(extensionDefinition2)
         extensionDefintionList.add(extensionDefinition3)
 
-        def result = extensionDefinitionGroupBuilderService.build(extensionDefintionList)
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefintionList)
         assertNotNull result
         assertTrue result.size == 1
 
@@ -111,7 +111,7 @@ class ExtensionDefinitionGroupBuilderIntegrationTests extends BaseIntegrationTes
         extensionDefintionList.add(extensionDefinition2)
         extensionDefintionList.add(extensionDefinition3)
 
-        def result = extensionDefinitionGroupBuilderService.build(extensionDefintionList)
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefintionList)
         assertNotNull result
         assertTrue result.size == 2
 

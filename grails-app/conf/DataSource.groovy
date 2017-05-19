@@ -20,6 +20,8 @@ hibernate {
     dialect = "org.hibernate.dialect.Oracle10gDialect"
     config.location = ["classpath:hibernate-banner-core.cfg.xml",
                        "classpath:hibernate-banner-core.testing.cfg.xml",
+                       "classpath:hibernate-banner-general-common.cfg.xml",
+                       "classpath:hibernate-banner-general-validation-common.cfg.xml",
                        "classpath:hibernate-banner-restful-api-support.cfg.xml"]
 }
 

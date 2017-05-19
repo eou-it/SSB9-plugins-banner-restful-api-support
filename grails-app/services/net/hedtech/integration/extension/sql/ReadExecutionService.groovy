@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import net.hedtech.banner.service.ServiceBase
 
+/**
+ * Class used to execute the SQL to retrieve extended values
+ */
 @Transactional
 class ReadExecutionService extends ServiceBase {
 
@@ -18,7 +21,9 @@ class ReadExecutionService extends ServiceBase {
     private static final String SQL_PARAM_GUID_LIST = "GUID_LIST"
 
     /**
-     * Executes the passed in query SQL
+     * Executes the passed in query SQL give the passed in list of GUIDs
+     *
+     * The GUID list should be one GUID or many.
      * @param selectSQL
      * @param guidList
      * @return

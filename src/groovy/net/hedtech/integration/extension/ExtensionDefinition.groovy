@@ -28,11 +28,11 @@ class ExtensionDefinition implements Serializable {
     @Column(name = "GURAPEX_RESOURCE_NAME")
     String resourceName
 
-    @Column(name = "GURAPEX_RESOURCE_CATALOG")
-    String resourceCatalog
-
     @Column(name = "GURAPEX_DESC")
     String description
+
+    @Column(name = "GURAPEX_EXTENSION_CODE")
+    String extensionCode
 
     @Column(name = "GURAPEX_JSON_PATH")
     String jsonPath
@@ -86,7 +86,7 @@ class ExtensionDefinition implements Serializable {
         """ExtensionDefinition[
 					id=$id,
                     resourceName=$resourceName,
-                    resourceCatalog=$resourceCatalog,
+                    extensionCode=$extensionCode,
                     jsonLabel=$jsonLabel,
 					version=$version,
 					lastModified=$lastModified,
@@ -105,7 +105,7 @@ class ExtensionDefinition implements Serializable {
         ExtensionDefinition that = (ExtensionDefinition) o
         if (id != that.id) return false
         if (resourceName != that.resourceName) return false
-        if (resourceCatalog != that.resourceCatalog) return false
+        if (extensionCode != that.extensionCode) return false
         if (jsonLabel != that.jsonLabel) return false
         if (version != that.version) return false
         if (lastModified != that.lastModified) return false
@@ -123,6 +123,7 @@ class ExtensionDefinition implements Serializable {
         int result
         result = (id != null ? id.hashCode() : 0)
         result = 31 * result + (resourceName != null ? resourceName.hashCode() : 0)
+        result = 31 * result + (extensionCode != null ? extensionCode.hashCode() : 0)
         result = 31 * result + (version != null ? version.hashCode() : 0)
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
         result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
@@ -134,6 +135,7 @@ class ExtensionDefinition implements Serializable {
     static constraints = {
         selectColumnName(nullable:true)
         sqlProcessCode(nullable:true)
+        extensionCode(nullable:true)
         description(nullable:true)
         sqlRuleCode(nullable:true)
         lastModified(nullable: true)

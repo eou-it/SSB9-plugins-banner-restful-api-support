@@ -26,30 +26,33 @@ class ExtensionDefinitionServiceIntegrationTests extends BaseIntegrationTestCase
 
     @Test
     void testFindByResourceNameAndCatalog() {
-        def extensionDefinition1 = newExensionDefintion()
+
+        ExtensionDefinitionCode extensionDefinitionCode = newExtensionDefinitionCode()
+
+        def extensionDefinition1 = newExtensionDefinition(extensionDefinitionCode)
         save extensionDefinition1
 
-        def extensionDefinition2 = newExensionDefintion()
+        def extensionDefinition2 = newExtensionDefinition(extensionDefinitionCode)
         extensionDefinition2.jsonLabel = "abc456"
         save extensionDefinition2
 
-        def extensionDefinition3 = newExensionDefintion()
+        def extensionDefinition3 = newExtensionDefinition(extensionDefinitionCode)
         extensionDefinition3.resourceName = "def456"
         extensionDefinition3.jsonLabel = "abc789"
         save extensionDefinition3
 
-        def extensionDefinitionList = extensionDefinitionService.findByResourceNameAndCatalog("abc123","abc123")
+        def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode("abc123",extensionDefinitionCode.code)
         assertNotNull extensionDefinitionList
         assertTrue extensionDefinitionList.size == 2
 
     }
 
 
-    private def newExensionDefintion() {
+    private def newExtensionDefinition(ExtensionDefinitionCode extensionDefinitionCode) {
         def extensionDefinition = new ExtensionDefinition(
                 extensionType: "baseline",
+                extensionCode: extensionDefinitionCode.code,
                 resourceName: "abc123",
-                resourceCatalog: "abc123",
                 description: "Test data",
                 jsonPath: "/",
                 jsonType: "property",
@@ -61,6 +64,16 @@ class ExtensionDefinitionServiceIntegrationTests extends BaseIntegrationTestCase
                 dataOrigin: "Banner"
         )
         return extensionDefinition
+    }
+
+
+    private def newExtensionDefinitionCode() {
+        ExtensionDefinitionCode extensionDefinitionCode = new ExtensionDefinitionCode()
+        extensionDefinitionCode.code = "code123"
+        extensionDefinitionCode.description = "code123"
+
+        save extensionDefinitionCode
+        return extensionDefinitionCode
     }
 
 }

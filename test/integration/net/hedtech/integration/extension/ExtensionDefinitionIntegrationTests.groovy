@@ -27,7 +27,7 @@ class ExtensionDefinitionIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testRead() {
-        def extensionDefinition = newExensionDefintion()
+        def extensionDefinition = newExtensionDefinition()
         save extensionDefinition
 
         def readExtensionDefinition = ExtensionDefinition.get(extensionDefinition.id)
@@ -37,17 +37,24 @@ class ExtensionDefinitionIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testSave() {
-        def extensionDefinition = newExensionDefintion()
+        def extensionDefinition = newExtensionDefinition()
         save extensionDefinition
         assertNotNull extensionDefinition.id
 
     }
 
-    private def newExensionDefintion() {
+    private def newExtensionDefinition() {
+
+        ExtensionDefinitionCode extensionDefinitionCode = new ExtensionDefinitionCode()
+        extensionDefinitionCode.code = "code123"
+        extensionDefinitionCode.description = "code123"
+        save extensionDefinitionCode
+
+
         def extensionDefinition = new ExtensionDefinition(
                 extensionType: "baseline",
+                extensionCode: "code123",
                 resourceName: "abc123",
-                resourceCatalog: "abc123",
                 description: "Test data",
                 jsonPath: "/",
                 jsonType: "property",

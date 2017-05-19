@@ -18,13 +18,13 @@ class ReadResultBuilderService extends ServiceBase {
             //For each sql query result row
             sqlResults.each { row ->
                     //For each column definition
-                    extensionDefinitions.each { exdef->
+                    extensionDefinitions.each { extensionDefinition->
                         ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
-                        extensionProcessReadResult.jsonLabel = exdef.jsonLabel
-                        extensionProcessReadResult.jsonType = exdef.jsonType
-                        extensionProcessReadResult.jsonPath = exdef.jsonPath
+                        extensionProcessReadResult.jsonLabel = extensionDefinition.jsonLabel
+                        extensionProcessReadResult.jsonType = extensionDefinition.jsonType
+                        extensionProcessReadResult.jsonPath = extensionDefinition.jsonPath
                         extensionProcessReadResult.resourceId = row.GUID
-                        extensionProcessReadResult.value = row[exdef.selectColumnName]
+                        extensionProcessReadResult.value = row[extensionDefinition.selectColumnName]
                         extensionProcessReadResults.add(extensionProcessReadResult)
                     }
             }
