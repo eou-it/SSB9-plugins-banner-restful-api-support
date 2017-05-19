@@ -13,6 +13,7 @@ import net.hedtech.banner.service.ServiceBase
 class ExtensionProcessCompositeService extends ServiceBase {
 
     def extensionReadCompositeService
+    def extensionVersionService
 
     boolean transactional = true
 
@@ -29,11 +30,14 @@ class ExtensionProcessCompositeService extends ServiceBase {
         ExtensionProcessResult extensionProcessResult = null
         String method = request.getMethod()
 
-
-        //Get the code for this
-        if (method && method == "GET") {
-            extensionProcessResult = extensionReadCompositeService.read(resourceName,catalog,request,requestParms,responseContent)
+        ExtensionVersion extensionVersion = extensionVersionService.findByAliasAndResourceName(catalog,resourceName)
+        if (extensionVersion){
+            //Get the code for this
+            if (method && method == "GET") {
+                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
+            }
         }
+
         return extensionProcessResult
     }
 

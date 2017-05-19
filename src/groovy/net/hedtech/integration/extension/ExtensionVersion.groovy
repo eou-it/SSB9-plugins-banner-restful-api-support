@@ -3,36 +3,13 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
-import grails.persistence.Entity
-import javax.persistence.Column
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.NamedQueries
-import javax.persistence.NamedQuery
-import javax.persistence.SequenceGenerator
-import javax.persistence.Table
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
-import javax.persistence.Version
-
+import javax.persistence.*
 
 /**
  * API Extension Version  resolution table
  */
 @Entity
 @Table(name = "GURAPVR")
-@NamedQueries(value = [
-        @NamedQuery(name = "ExtensionVersion.fetchByKnownMaxSequence",
-                query = """FROM ExtensionVersion a
-       WHERE a.known = :known AND a.resource = :resource
-         AND a.sequence = (SELECT MAX(b.sequence)
-                                  FROM ResolvedVersion b
-                                 WHERE b.known = a.known)
-             )
-""")
-])
-
 class ExtensionVersion implements Serializable {
 
     /**

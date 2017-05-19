@@ -17,7 +17,8 @@ class ExtensionVersionService extends ServiceBase {
      * @param catalog
      * @return
      */
-    //def findAllByResourceNameAndExtensionCode(String resourceName, String extensionCode){
-     //   return ExtensionVersion.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
-   // }
+    def findByAliasAndResourceName(String alias, String resourceName){
+        def extensionVersionResult = ExtensionVersion.findByAliasAndResourceName(alias,resourceName)
+        return extensionVersionResult
+    }
 }
