@@ -33,7 +33,7 @@ class ExtensionReadCompositeService extends ServiceBase {
             def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionList,requestParms,responseContent)
             if (extensionProcessReadResultList){
                 //Call a service to apply the new extensions to the response
-                def extendedContent = extensionContentPatchingService.patchExtensions(extensionDefinitionList,responseContent)
+                def extendedContent = extensionContentPatchingService.patchExtensions(extensionProcessReadResultList,responseContent)
                 if (extendedContent){
                     ethosExtensionResult.content=extendedContent
                     ethosExtensionResult.wasExtended=true

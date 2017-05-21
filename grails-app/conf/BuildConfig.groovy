@@ -28,6 +28,7 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
+        compile "com.flipkart.zjsonpatch:zjsonpatch:0.2.4"
     }
 
     plugins {
@@ -35,6 +36,7 @@ grails.project.dependency.resolution = {
         //http://jira.grails.org/browse/GRAILS-9939
         compile ":inflector:0.2"
         compile ":cache-headers:1.1.7"
+
     }
 
 }
