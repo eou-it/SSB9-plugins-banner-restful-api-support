@@ -11,6 +11,13 @@ import com.flipkart.zjsonpatch.JsonPatch
  * Class that takes in a list of process results and adds them to the content
  */
 class ExtensionContentPatchingService {
+
+    /**
+     * Function that patches each resource in the list
+     * @param extensionProcessReadResultList
+     * @param content
+     * @return
+     */
     def patchExtensions(def extensionProcessReadResultList, def content){
         def resultContent = ''
         def ObjectMapper MAPPER = new ObjectMapper();
@@ -43,40 +50,76 @@ class ExtensionContentPatchingService {
     }
 
 
-    def patchExtensionToResource(JsonNode resource, extensionResultList){
+    /**
+     * Applies the all of the extensions in the passed in list to the passed in resource
+     */
+    public String patchExtensionToResource(JsonNode resource, extensionResultList){
         def ObjectMapper MAPPER = new ObjectMapper()
         JsonNode newContent = resource
         for (ExtensionProcessReadResult extensionProcessReadResult in extensionResultList){
-            String patch = buildPatchString(extensionProcessReadResult)
+            String patch = buildPatch(extensionProcessReadResult)
             JsonNode patchNode = MAPPER.readTree(patch)
             newContent = JsonPatch.apply(patchNode, newContent)
         }
         return  MAPPER.writeValueAsString(newContent)
     }
 
-    def getExtensionsForResourceId(String resourceId, extensionProcessReadResultList){
+    /**
+     * Return only the extension results for this resource
+     * @param resourceId
+     * @param extensionProcessReadResultList
+     * @return
+     */
+    public List<ExtensionProcessReadResult> getExtensionsForResourceId(String resourceId,
+                                                                       extensionProcessReadResultList){
         def extensionProcessReadResultListForResource = []
         if (extensionProcessReadResultList) {
             extensionProcessReadResultList.each{
-                if (it.resourceId){
-                    if (it.resourceId.equalsIgnoreCase(resourceId)){
-                        extensionProcessReadResultListForResource.add(it)
-                    }
+                if (it.resourceId && it.resourceId.equalsIgnoreCase(resourceId)){
+                    extensionProcessReadResultListForResource.add(it)
                 }
             }
         }
         return extensionProcessReadResultListForResource
     }
 
-    //Build a JSON Patch string for the work
-    def buildPatchString(ExtensionProcessReadResult extensionProcessReadResult){
+    /**
+     * Function to build a JSON Patch string used to modify the JSON resource
+     * This method only assumes an add operation and expects a path, label and value
+     *
+     *
+     * At some point to support adding a container...see this patch format
+     *
+                 { "foo": "bar" }
 
-        def patchedValue = extensionProcessReadResult.value
-        def patchString = '[{"op": "add","path": "' + extensionProcessReadResult.jsonPath +
-                extensionProcessReadResult.jsonLabel + '","value":"' + patchedValue + '"}]';
+                 A JSON Patch document:
 
+                 [
+                 { "op": "add", "path": "/child", "value": { "grandchild": { } } }
+                 ]
 
-        return patchString
+                 The resulting JSON document:
 
+                 {
+                 "foo": "bar",
+                 "child": {
+                 "grandchild": {
+                 }
+                 }
+                 }
+
+     */
+    public String buildPatch(ExtensionProcessReadResult extensionProcessReadResult){
+        String patch = null
+        if (extensionProcessReadResult
+                && extensionProcessReadResult.jsonPath
+                && extensionProcessReadResult.jsonLabel)
+        {
+            String patchedValue = extensionProcessReadResult.value
+            patch = '[{"op":"add","path": "' + extensionProcessReadResult.jsonPath +
+                    extensionProcessReadResult.jsonLabel + '","value":"' + patchedValue + '"}]';
+
+        }
+        return patch
     }
 }
