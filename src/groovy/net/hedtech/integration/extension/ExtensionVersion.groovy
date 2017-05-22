@@ -29,13 +29,6 @@ class ExtensionVersion implements Serializable {
     Long version
 
     /**
-     * Optimistic lock token for GURAPVR
-     */
-
-    @Column(name = "GURAPVR_SEQUENCE")
-    Long sequence
-
-    /**
      * RESOURCE NAME: This resource this map applies to
      */
     @Column(name = "GURAPVR_RESOURCE_NAME")
@@ -85,7 +78,6 @@ class ExtensionVersion implements Serializable {
                 resourceName=$resourceName,
                 alias=$alias,
                 known=$known,
-                sequence=$sequence,
                 lastModified=$lastModified,
                 lastModifiedBy=$lastModifiedBy,
                 dataOrigin=$dataOrigin"""
@@ -105,7 +97,6 @@ class ExtensionVersion implements Serializable {
         if (lastModified != that.lastModified) return false
         if (lastModifiedBy != that.lastModifiedBy) return false
         if (dataOrigin != that.dataOrigin) return false
-        if (sequence != that.sequence) return false
 
         return true
     }
@@ -117,7 +108,6 @@ class ExtensionVersion implements Serializable {
         result = 31 * result + (version != null ? version.hashCode() : 0)
         result = 31 * result + (alias != null ? alias.hashCode() : 0)
         result = 31 * result + (known != null ? known.hashCode() : 0)
-        result = 31 * result + (sequence != null ? sequence.hashCode() : 0)
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
         result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
@@ -137,11 +127,4 @@ class ExtensionVersion implements Serializable {
     //Read Only fields that should be protected against update
     public static readonlyProperties = []
 
-    public static ExtensionVersion fetchByKnownMaxSequence(String resource,String known) {
-        ExtensionVersion extensionVersion
-        ExtensionVersion.withSession { session ->
-            extensionVersion = session.getNamedQuery('ExtensionVersion.fetchByKnownMaxSequence').setString('resource', resource).setString('known', known).list()[0]
-        }
-        return extensionVersion
-    }
 }

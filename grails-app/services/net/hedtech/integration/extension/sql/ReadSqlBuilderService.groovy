@@ -5,7 +5,6 @@ package net.hedtech.integration.extension.sql
 
 import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
-import net.hedtech.banner.general.overall.SqlProcess
 import net.hedtech.integration.extension.ExtensionDefinitionSourceGroup
 import org.springframework.transaction.annotation.Propagation
 
@@ -18,7 +17,7 @@ class ReadSqlBuilderService extends ServiceBase {
         if (extensionDefinitionSourceGroup){
             //Only GORSQL code is supported today, but future could derive SQL, thus the check
             if (extensionDefinitionSourceGroup.sqlProcesCode && extensionDefinitionSourceGroup.sqlRuleCode){
-                sqlStatements = SqlProcess.fetchSqlForExecutionByEntriesForSqlProcesssCodeAndEntriesForSqlCode(
+                sqlStatements = ApiSqlProcess.fetchSqlForExecutionSqlProcesssCodeAndRuleCode(
                         extensionDefinitionSourceGroup.sqlProcesCode,
                         extensionDefinitionSourceGroup.sqlRuleCode)
             }else{

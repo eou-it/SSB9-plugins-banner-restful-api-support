@@ -27,6 +27,7 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
            <mapping class="net.hedtech.integration.extension.ExtensionDefinition"/>
            <mapping class="net.hedtech.integration.extension.ExtensionVersion"/>
            <mapping class="net.hedtech.integration.extension.ExtensionDefinitionCode"/>
+           <mapping class="net.hedtech.integration.extension.sql.ApiSqlProcess"/>
 
        </session-factory>
    </hibernate-configuration>

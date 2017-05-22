@@ -8,8 +8,6 @@ grails.project.test.reports.dir = "target/test-reports"
 
 grails.plugin.location.'banner-core' = '../banner_core.git'
 grails.plugin.location.'restful-api' = '../restful-api.git'
-grails.plugin.location.'banner-general-common' = '../banner_general_common.git'
-//grails.plugin.location.'banner_codenarc' = '../banner_codnarc.git'
 
 grails.project.dependency.resolver = "maven"
 

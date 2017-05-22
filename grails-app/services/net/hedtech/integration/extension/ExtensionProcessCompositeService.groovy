@@ -30,6 +30,8 @@ class ExtensionProcessCompositeService extends ServiceBase {
         ExtensionProcessResult extensionProcessResult = null
         String method = request.getMethod()
 
+        //This assumes only one response....for now that is probably ok, but there could be situations where a resource based version
+        //could override a baseline version map (when catalog type behavior is supported)
         ExtensionVersion extensionVersion = extensionVersionService.findByAliasAndResourceName(catalog,resourceName)
         if (extensionVersion){
             //Get the code for this

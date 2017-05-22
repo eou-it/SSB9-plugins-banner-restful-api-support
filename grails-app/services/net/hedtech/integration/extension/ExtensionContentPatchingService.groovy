@@ -101,11 +101,11 @@ class ExtensionContentPatchingService {
                  The resulting JSON document:
 
                  {
-                 "foo": "bar",
-                 "child": {
-                 "grandchild": {
-                 }
-                 }
+                   "foo": "bar",
+                   "child": {
+                        "grandchild": {
+                        }
+                   }
                  }
 
      */
