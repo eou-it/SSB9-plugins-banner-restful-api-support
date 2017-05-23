@@ -3,6 +3,8 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
 
@@ -12,6 +14,7 @@ class ExtensionReadCompositeService extends ServiceBase {
     def extensionContentPatchingService
     def extensionDefinitionService
     def readCompositeService
+    def resourceIdListBuilderService
 
     /**
      * Read function to apply content extensions
@@ -32,11 +35,14 @@ class ExtensionReadCompositeService extends ServiceBase {
         //to be added to the resource(s) in the response
         def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
+            JsonNode rootContent = getJSONNodeForContent(responseContent)
+            def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(rootContent)
+
             //Call a SQL based service to read from the datasource(s)
-            def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionList,requestParms,responseContent)
+            def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionList,resourceIdList)
             if (extensionProcessReadResultList){
                 //Call a service to apply the new extensions and values to the response
-                def extendedContent = extensionContentPatchingService.patchExtensions(extensionProcessReadResultList,responseContent)
+                def extendedContent = extensionContentPatchingService.patchExtensions(extensionProcessReadResultList,rootContent)
                 if (extendedContent){
                     ethosExtensionResult.content=extendedContent
                     ethosExtensionResult.wasExtended=true
@@ -48,6 +54,12 @@ class ExtensionReadCompositeService extends ServiceBase {
             }
         }
         return ethosExtensionResult
+    }
+
+    def getJSONNodeForContent(def responseContent){
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(responseContent);
+        return rootNode
     }
 
 }

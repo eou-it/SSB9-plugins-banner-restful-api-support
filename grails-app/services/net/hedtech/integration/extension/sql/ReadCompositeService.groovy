@@ -12,31 +12,25 @@ class ReadCompositeService extends ServiceBase {
     def readSqlBuilderService
     def readResultBuilderService
     def readExecutionService
-    def resourceIdListBuilderService
     def extensionDefinitionSourceGroupBuilderService
 
-
-    def read(def extensionDefinitionList, Map requestParms, def responseContent){
+    /**
+     * Reads the extensions and returns them as process results
+     * @param extensionDefinitionList
+     * @param resourceIdList
+     * @return
+     */
+    def read(def extensionDefinitionList, def resourceIdList){
         def processResults = []
-        //Get a list of GUIDs from the response
-        //This could be a single GUID (from a GET by GUID or many GET list)
-        //
-        //To do...really should not need the requestParams...just parse contents better
-        def guidList = null
-        if (requestParms && requestParms.id){
-            guidList = resourceIdListBuilderService.buildFromGuid(requestParms.id)
-        }else{
-            guidList = resourceIdListBuilderService.buildFromContentList(responseContent)
-        }
 
         //For each data source of the extensions
         def extensionDefinitionGroupList = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
-        if (extensionDefinitionGroupList){
+        if (extensionDefinitionGroupList && resourceIdList){
             extensionDefinitionGroupList.each { extensionDefinitionGroup ->
                 def sqlStatements = readSqlBuilderService.build(extensionDefinitionGroup)
                 if (sqlStatements){
                     sqlStatements.each { sqlStatement ->
-                        def executeResults = readExecutionService.execute(sqlStatement,guidList)
+                        def executeResults = readExecutionService.execute(sqlStatement,resourceIdList)
                         def executeProcessResults = readResultBuilderService.buildResults(extensionDefinitionGroup.extensionDefinitionList,executeResults)
                         if (executeProcessResults){
                             processResults.addAll(executeProcessResults)

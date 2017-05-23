@@ -33,23 +33,23 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
     }
 
     @Test
-    void givenOneValueExpectOneGroup() {
+    void givenOneExpectOneGroup() {
         ExtensionDefinition extensionDefinition = new ExtensionDefinition()
         extensionDefinition.sqlRuleCode = "abc"
         extensionDefinition.sqlProcessCode = "123"
         extensionDefinition.resourceName="foo"
 
-        def extensionDefintionList = []
-        extensionDefintionList.add(extensionDefinition)
+        def extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
 
-        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefintionList)
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
         assertNotNull result
         assertTrue result.size == 1
 
     }
 
     @Test
-    void givenThreeValuesExpectOneGroup() {
+    void givenThreeExpectOneGroup() {
 
         ExtensionDefinition extensionDefinition = new ExtensionDefinition()
         extensionDefinition.sqlRuleCode = "abc"
@@ -70,12 +70,12 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
         extensionDefinition3.selectColumnName = "bar3"
 
 
-        def extensionDefintionList = []
-        extensionDefintionList.add(extensionDefinition)
-        extensionDefintionList.add(extensionDefinition2)
-        extensionDefintionList.add(extensionDefinition3)
+        def extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+        extensionDefinitionList.add(extensionDefinition2)
+        extensionDefinitionList.add(extensionDefinition3)
 
-        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefintionList)
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
         assertNotNull result
         assertTrue result.size == 1
 
@@ -106,12 +106,45 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
         extensionDefinition3.selectColumnName = "bar3"
 
 
-        def extensionDefintionList = []
-        extensionDefintionList.add(extensionDefinition)
-        extensionDefintionList.add(extensionDefinition2)
-        extensionDefintionList.add(extensionDefinition3)
+        def extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+        extensionDefinitionList.add(extensionDefinition2)
+        extensionDefinitionList.add(extensionDefinition3)
 
-        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefintionList)
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
+        assertNotNull result
+        assertTrue result.size == 2
+
+    }
+
+    @Test
+    void givenTwoGroupsExpectTwoGroupsNullSQL() {
+
+        ExtensionDefinition extensionDefinition = new ExtensionDefinition()
+        extensionDefinition.sqlRuleCode = "abc"
+        extensionDefinition.sqlProcessCode = "123"
+        extensionDefinition.resourceName="foo"
+        extensionDefinition.selectColumnName = "bar"
+
+        ExtensionDefinition extensionDefinition2 = new ExtensionDefinition()
+        extensionDefinition2.sqlRuleCode = "abc"
+        extensionDefinition2.sqlProcessCode = "123"
+        extensionDefinition2.resourceName="foo"
+        extensionDefinition2.selectColumnName = "bar2"
+
+
+        //Have one that has a different rule
+        ExtensionDefinition extensionDefinition3 = new ExtensionDefinition()
+        extensionDefinition3.resourceName="foo"
+        extensionDefinition3.selectColumnName = "bar3"
+
+
+        def extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+        extensionDefinitionList.add(extensionDefinition2)
+        extensionDefinitionList.add(extensionDefinition3)
+
+        def result = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
         assertNotNull result
         assertTrue result.size == 2
 

@@ -9,7 +9,7 @@ package net.hedtech.integration.extension
  */
 class ExtensionDefinitionSourceGroup {
 
-    String sqlProcesCode
+    String sqlProcessCode
     String sqlRuleCode
 
     List<ExtensionDefinition> extensionDefinitionList

@@ -18,11 +18,9 @@ class ExtensionContentPatchingService {
      * @param content
      * @return
      */
-    def patchExtensions(def extensionProcessReadResultList, def content){
+    def patchExtensions(def extensionProcessReadResultList, JsonNode rootContent){
         def resultContent = ''
-        def ObjectMapper MAPPER = new ObjectMapper();
-        JsonNode rootNode = MAPPER.readTree(content);
-
+        JsonNode rootNode = rootContent
         if (rootNode.isArray()){
             resultContent = "["
             boolean isFirst = true

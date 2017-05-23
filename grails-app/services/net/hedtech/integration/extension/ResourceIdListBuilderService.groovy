@@ -3,7 +3,7 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
-import groovy.json.JsonSlurper
+import com.fasterxml.jackson.databind.JsonNode
 import net.hedtech.banner.service.ServiceBase
 
 /**
@@ -12,42 +12,38 @@ import net.hedtech.banner.service.ServiceBase
 class ResourceIdListBuilderService extends ServiceBase {
 
     /**
-     * Builds a list of guids from the request id
-     * @param content
+     * Given the root node of the content, build and return a list of guids for the resources.
+     * @param contentRoot
      * @return
      */
-    def buildFromGuid(String guid) {
-        def guidList = null
-        if (guid){
-            guidList = []
-            guidList.add(guid)
-        }else{
-            log.error "GUID to build resource id list was null"
+    def buildFromContentRoot(JsonNode contentRoot){
+        def returnIdList = null
+        if (contentRoot != null){
+            returnIdList = []
+            if (contentRoot.isArray()){
+                contentRoot.each {
+                    returnIdList = addIdToList(returnIdList,it)
+                }
+            }else{
+                returnIdList = addIdToList(returnIdList,contentRoot)
+            }
         }
-        return guidList
+        return returnIdList
     }
 
     /**
-     * Builds a list of guids from the response contnet
-     * @param content
+     * Add a nodes resource ID to the list
+     * @param resourceIdList
+     * @param resourceNode
      * @return
      */
-    def buildFromContentList(def content) {
-        def guidList = null
-        if (content){
-            guidList = []
-            def parsedJson = new JsonSlurper().parseText(content)
-            if (parsedJson){
-                parsedJson.each {
-                    guidList.add(it.id)
-                }
-            }else{
-                log.error "Error parsing json content"
+    private addIdToList(def resourceIdList, JsonNode resourceNode){
+        if (resourceIdList != null && resourceNode != null){
+            String currentResourceId = resourceNode.get("id")?.textValue()
+            if (currentResourceId ){
+                resourceIdList.add(currentResourceId)
             }
-
-        }else{
-            log.error "Content to build resource id list was null"
         }
-        return guidList
+        return resourceIdList
     }
 }

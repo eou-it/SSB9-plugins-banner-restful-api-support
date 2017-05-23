@@ -44,7 +44,7 @@ class ExtensionDefinitionSourceGroupBuilderService {
         ExtensionDefinitionSourceGroup extensionDefinitionGroup = null
         if (extensionDefinitionGroupList && extensionDefinition){
             for (ExtensionDefinitionSourceGroup item : extensionDefinitionGroupList) {
-                if (item.sqlProcesCode == extensionDefinition.sqlProcessCode &&
+                if (item.sqlProcessCode == extensionDefinition.sqlProcessCode &&
                         item.sqlRuleCode == extensionDefinition.sqlRuleCode) {
                     extensionDefinitionGroup = item
                     break
@@ -63,7 +63,7 @@ class ExtensionDefinitionSourceGroupBuilderService {
         ExtensionDefinitionSourceGroup extensionDefinitionGroup = null
         if (extensionDefinition){
             extensionDefinitionGroup = new ExtensionDefinitionSourceGroup()
-            extensionDefinitionGroup.sqlProcesCode = extensionDefinition.sqlProcessCode
+            extensionDefinitionGroup.sqlProcessCode = extensionDefinition.sqlProcessCode
             extensionDefinitionGroup.sqlRuleCode = extensionDefinition.sqlRuleCode
             extensionDefinitionGroup.extensionDefinitionList = []
             extensionDefinitionGroup.extensionDefinitionList.add(extensionDefinition)

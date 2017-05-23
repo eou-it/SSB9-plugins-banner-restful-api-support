@@ -11,14 +11,19 @@ import org.springframework.transaction.annotation.Propagation
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 class ReadSqlBuilderService extends ServiceBase {
     boolean transactional = true
-    /** Returns a list of SQL statements to aggregate and run **/
+
+    /**
+     * Returns a list of SQL Statements to execute to read extensions
+     * @param extensionDefinitionSourceGroup
+     * @return
+     */
     List build(ExtensionDefinitionSourceGroup extensionDefinitionSourceGroup){
         def sqlStatements
         if (extensionDefinitionSourceGroup){
             //Only GORSQL code is supported today, but future could derive SQL, thus the check
-            if (extensionDefinitionSourceGroup.sqlProcesCode && extensionDefinitionSourceGroup.sqlRuleCode){
+            if (extensionDefinitionSourceGroup.sqlProcessCode && extensionDefinitionSourceGroup.sqlRuleCode){
                 sqlStatements = ApiSqlProcess.fetchSqlForExecutionSqlProcesssCodeAndRuleCode(
-                        extensionDefinitionSourceGroup.sqlProcesCode,
+                        extensionDefinitionSourceGroup.sqlProcessCode,
                         extensionDefinitionSourceGroup.sqlRuleCode)
             }else{
                 log.debug "There is no sql process and/or rule code defined for the extension definition source group"

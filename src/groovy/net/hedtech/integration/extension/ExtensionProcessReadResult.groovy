@@ -1,7 +1,10 @@
+/******************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ ******************************************************************************/
 package net.hedtech.integration.extension
 
 /**
- * Created by sdorfmei on 5/15/17.
+ * Class used to capture the read results for when the Ethos extension read process returns extensions
  */
 class ExtensionProcessReadResult {
 
