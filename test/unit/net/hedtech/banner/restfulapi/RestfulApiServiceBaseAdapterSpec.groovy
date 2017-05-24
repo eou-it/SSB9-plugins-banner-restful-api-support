@@ -5,7 +5,7 @@ package net.hedtech.banner.restfulapi
 
 import net.hedtech.banner.service.ServiceBase
 
-
+import spock.lang.*
 
 class RestfulApiServiceBaseAdapterSpec extends Specification {
 
