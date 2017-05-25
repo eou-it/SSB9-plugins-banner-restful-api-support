@@ -1,5 +1,10 @@
+/*******************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ *******************************************************************************/
 package net.hedtech.integration.extension
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -76,7 +81,6 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
     @Test
     void extensionFilterResults_givenExpected(){
         given:
-        def resourceList= []
         ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
         extensionProcessReadResult.resourceId = "123"
         ExtensionProcessReadResult extensionProcessReadResult2 = new ExtensionProcessReadResult()
@@ -90,7 +94,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         extensions.add(extensionProcessReadResult3)
 
         when:
-        resourceList = extensionContentPatchingService.getExtensionsForResourceId("456", extensions)
+        def resourceList = extensionContentPatchingService.getExtensionsForResourceId("456", extensions)
 
         expect:
         resourceList != null
@@ -101,7 +105,6 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
     @Test
     void extensionFilterResults_givenMissing(){
         given:
-        def resourceList= []
         ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
         extensionProcessReadResult.resourceId = "123"
         ExtensionProcessReadResult extensionProcessReadResult2 = new ExtensionProcessReadResult()
@@ -115,7 +118,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         extensions.add(extensionProcessReadResult3)
 
         when:
-        resourceList = extensionContentPatchingService.getExtensionsForResourceId("ABC", extensions)
+        def resourceList = extensionContentPatchingService.getExtensionsForResourceId("ABC", extensions)
 
         expect:
         resourceList != null
@@ -131,9 +134,11 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
                 "property","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
 
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","newField":"500"}'''
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
 
         when:
-        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,oneResource)
+        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
 
         expect:
         result != null
@@ -153,9 +158,11 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
                 "property","99999","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
 
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","newField":"500","newField2":"99999"}'''
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
 
         when:
-        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,oneResource)
+        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
 
         expect:
         result != null
@@ -163,7 +170,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
 
     }
     @Test
-    public void testTwoResource() {
+    void testTwoResource() {
 
         given:
         def twoResources = '''[{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","foo":"bar","cat":"dog"},{"id": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd","foo":"bar","cat":"dog"}]'''
@@ -174,8 +181,11 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","foo":"bar","cat":"dog","newField":"500},
                                     "id": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd","foo":"bar","cat":"dog","newField":"600}'''
 
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(twoResources);
+
         when:
-        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,twoResources)
+        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
 
         expect:
         result != null

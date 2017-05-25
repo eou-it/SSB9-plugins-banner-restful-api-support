@@ -1,3 +1,6 @@
+/*******************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ *******************************************************************************/
 package net.hedtech.integration.extension.sql
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
