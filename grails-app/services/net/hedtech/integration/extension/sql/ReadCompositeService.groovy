@@ -6,13 +6,13 @@ package net.hedtech.integration.extension.sql
 import net.hedtech.banner.service.ServiceBase
 
 /**
- * Service to read the data sources for extensions and build a result
+ * Service to read the data sources for extensions and build a set of pojo results
  */
 class ReadCompositeService extends ServiceBase {
+
     def readSqlBuilderService
     def readResultBuilderService
     def readExecutionService
-    def extensionDefinitionSourceGroupBuilderService
 
     /**
      * Reads the extensions and returns them as process results
@@ -20,13 +20,16 @@ class ReadCompositeService extends ServiceBase {
      * @param resourceIdList
      * @return
      */
-    def read(def extensionDefinitionList, def resourceIdList){
+    def read(def extensionDefinitionGroupList, def resourceIdList){
         def processResults = []
 
-        //For each data source of the extensions
-        def extensionDefinitionGroupList = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
+        //Stopwatch start
+        def startTime = new Date()
+
+        //For each data source of the extension
         if (extensionDefinitionGroupList && resourceIdList){
             extensionDefinitionGroupList.each { extensionDefinitionGroup ->
+                //Get a list of sql statements from GORRSQL, note there can be many
                 def sqlStatements = readSqlBuilderService.build(extensionDefinitionGroup)
                 if (sqlStatements){
                     sqlStatements.each { sqlStatement ->
@@ -43,8 +46,11 @@ class ReadCompositeService extends ServiceBase {
         }else{
             log.warn "A read action was called when there are no extensions. This is unexpected."
         }
+        //Stopwatch stop
+        def endTime = new Date()
 
-       return processResults
+        log.debug("Ethos Extensions read from db and build results time ms: ${endTime.time - startTime.time}")
+        return processResults
     }
 
 }

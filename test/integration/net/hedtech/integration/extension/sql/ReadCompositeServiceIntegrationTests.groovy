@@ -17,6 +17,7 @@ import org.junit.Test
 class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def readCompositeService
+    def extensionDefinitionSourceGroupBuilderService
 
     @Before
     public void setUp() {
@@ -30,39 +31,29 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
-   /* @Test
-    void givenMany() {
-        Map requestParms
-
-        def resources = '''
-                [{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"},
-                 {"id": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd"}
-          
-                ]'''
-        def extensionDefinition1 = newExensionDefinition()
-        save extensionDefinition1
-        def resultList = readCompositeService.read([extensionDefinition1],requestParms,resources)
-
-        assertNotNull resultList
-    }
 
     @Test
     void givenOne() {
-        Map requestParms = [id: '24c47f0a-0eb7-48a3-85a6-2c585691c6ce']
 
-        def resources = '''
-                {"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        //Get a GUID by looking at GORGUID and grabbing one (support for every developers GUIDs)
+        def buildingGuidList = []
+        def guidQuery = "SELECT * FROM (select gorguid_guid from gorguid where gorguid_ldm_name = 'buildings') gorguid WHERE rownum <= 1 ORDER BY rownum"
+        def sqlQuery = sessionFactory.currentSession.createSQLQuery(guidQuery)
+        def guidResults = sqlQuery.list()
+        guidResults.each { row ->
+            buildingGuidList.add(row)
+        }
 
-        def extensionDefinition1 = newExensionDefinition()
-        save extensionDefinition1
-        def resultList = readCompositeService.read([extensionDefinition1],requestParms,resources)
+        def resultList = readCompositeService.read(newExensionDefinitionGroups(),buildingGuidList)
 
         assertNotNull resultList
     }
 
-*/
 
-    private def newExensionDefinition() {
+
+    private def newExensionDefinitionGroups() {
+        def extensionDefinitions = []
+
         def extensionDefinition = new ExtensionDefinition(
                 extensionType: "baseline",
                 resourceName: "buildings",
@@ -72,14 +63,16 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
                 jsonType: "property",
                 jsonlabel: "maxcapacity",
                 selectColumnName: "SLBBLDG_MAXIMUM_CAPACITY",
-                sqlRuleCode: "1232",
-                sqlProcessCode: "abc",
+                sqlRuleCode: "BUILDINGS",
+                sqlProcessCode: "HEDM_EXTENSIONS",
                 version: 0,
                 jsonLabel: "abc123",
                 lastModified: new Date(),
                 lastModifiedBy: "test",
                 dataOrigin: "Banner"
         )
-        return extensionDefinition
+
+        extensionDefinitions.add(extensionDefinition)
+        return extensionDefinitionSourceGroupBuilderService.build(extensionDefinitions)
     }
 }

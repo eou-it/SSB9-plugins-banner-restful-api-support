@@ -15,6 +15,7 @@ class ExtensionReadCompositeService extends ServiceBase {
     def extensionDefinitionService
     def readCompositeService
     def resourceIdListBuilderService
+    def extensionDefinitionSourceGroupBuilderService
 
     /**
      * Read function to apply content extensions
@@ -36,10 +37,15 @@ class ExtensionReadCompositeService extends ServiceBase {
         def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
             JsonNode rootContent = getJSONNodeForContent(responseContent)
+
+            //Get a list of resource IDs
             def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(rootContent)
 
+            //Get a list of extension Groups
+            def extensionDefinitionGroupList = extensionDefinitionSourceGroupBuilderService.build(extensionDefinitionList)
+
             //Call a SQL based service to read from the datasource(s)
-            def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionList,resourceIdList)
+            def extensionProcessReadResultList = readCompositeService.read(extensionDefinitionGroupList,resourceIdList)
             if (extensionProcessReadResultList){
                 //Call a service to apply the new extensions and values to the response
                 def extendedContent = extensionContentPatchingService.patchExtensions(extensionProcessReadResultList,rootContent)

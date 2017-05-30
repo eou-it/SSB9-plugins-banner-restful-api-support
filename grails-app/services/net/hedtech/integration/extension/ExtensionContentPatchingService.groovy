@@ -19,6 +19,10 @@ class ExtensionContentPatchingService {
      * @return
      */
     def patchExtensions(def extensionProcessReadResultList, JsonNode rootContent){
+
+        //Stopwatch start
+        def startTime = new Date()
+
         def resultContent = ''
         JsonNode rootNode = rootContent
         if (rootNode.isArray()){
@@ -44,6 +48,11 @@ class ExtensionContentPatchingService {
         }else{
             resultContent = patchExtensionToResource(rootNode,extensionProcessReadResultList)
         }
+
+        //Stopwatch stop
+        def endTime = new Date()
+
+        log.debug("Ethos Extensions apply json patch numOfItems: ${extensionProcessReadResultList.size}, ms: ${endTime.time - startTime.time}")
         return resultContent
     }
 

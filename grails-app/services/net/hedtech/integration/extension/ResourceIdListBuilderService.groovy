@@ -17,6 +17,10 @@ class ResourceIdListBuilderService extends ServiceBase {
      * @return
      */
     def buildFromContentRoot(JsonNode contentRoot){
+
+        //Stopwatch start
+        def startTime = new Date()
+
         def returnIdList = null
         if (contentRoot != null){
             returnIdList = []
@@ -28,6 +32,11 @@ class ResourceIdListBuilderService extends ServiceBase {
                 returnIdList = addIdToList(returnIdList,contentRoot)
             }
         }
+        //Stopwatch stop
+        def endTime = new Date()
+
+        log.debug("Ethos Extensions getting a list of guids took ms: ${endTime.time - startTime.time}")
+
         return returnIdList
     }
 

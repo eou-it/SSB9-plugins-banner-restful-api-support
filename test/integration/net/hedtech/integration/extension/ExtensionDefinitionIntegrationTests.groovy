@@ -59,6 +59,7 @@ class ExtensionDefinitionIntegrationTests extends BaseIntegrationTestCase {
                 jsonPath: "/",
                 jsonType: "property",
                 jsonlabel: "abc123",
+                selectColumnName: "selectColumn",
                 version: 0,
                 jsonLabel: "abc123",
                 lastModified: new Date(),
