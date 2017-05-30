@@ -30,7 +30,7 @@ class ReadExecutionService extends ServiceBase {
      */
     @Transactional(readOnly=true, propagation=Propagation.REQUIRED)
     def List execute(String selectSQL, def resourceIdList){
-        if (log.isDebugEnabled()) log.debug "extension.sqlStatement=${sqlQuery}"
+        if (log.isDebugEnabled()) log.debug "extension.sqlStatement=${selectSQL}"
         if (log.isTraceEnabled()) log.trace "extension.guidList=${resourceIdList}"
 
         def sqlQuery = sessionFactory.currentSession.createSQLQuery(selectSQL)
