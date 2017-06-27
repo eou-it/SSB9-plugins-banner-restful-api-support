@@ -14,6 +14,7 @@ class ExtensionProcessCompositeService extends ServiceBase {
 
     def extensionReadCompositeService
     def extensionVersionService
+    def representationResolutionService
 
     boolean transactional = true
 
@@ -26,21 +27,76 @@ class ExtensionProcessCompositeService extends ServiceBase {
      * @param responseContent
      * @return
      */
-    ExtensionProcessResult applyExtensions(String resourceName, String catalog, def request, Map requestParms, def responseContent) {
+    ExtensionProcessResult applyExtensions(String resourceName, def request, Map requestParms, def responseContent) {
         ExtensionProcessResult extensionProcessResult = null
         String method = request.getMethod()
 
-        //This assumes only one response....for now that is probably ok, but there could be situations where a resource based version
-        //could override a baseline version map (when catalog type behavior is supported)
-        ExtensionVersion extensionVersion = extensionVersionService.findByAliasAndResourceName(catalog,resourceName)
-        if (extensionVersion){
-            //Get the code for this
-            if (method && method == "GET") {
-                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
+        if (isRequestForCatalogResource(request)){
+            ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
+            if (extensionVersion){
+                //Get the code for this
+                if (method && method == "GET") {
+                    extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
+                    if (extensionProcessResult){
+                        extensionProcessResult.catalogId = extensionVersion.alias
+                        extensionProcessResult.catalogHeaderName = representationResolutionService.getCatalogResponseHeaderName()
+                    }
+
+                }
             }
         }
 
+
         return extensionProcessResult
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    boolean isRequestForCatalogResource(def request){
+        boolean result = true
+
+        //Has non versionless Accept
+        String requestAcceptHeader
+        Enumeration<String> values = request.getHeaders("Accept")
+        if (values) {
+            while (values.hasMoreElements()) {
+                requestAcceptHeader = values.nextElement()
+                if (requestAcceptHeader.contains("vnd.hedtech.integration")){
+                    result = false
+                    return result
+                }
+            }
+
+        } else {
+            requestAcceptHeader= request?.getHeader("Accept")
+        }
+
+        if (requestAcceptHeader.contains("vnd.hedtech.integration")){
+            result = false
+        }
+        return result
+    }
+
+    /**
+     *
+     * @param resourceName
+     * @param request
+     * @return
+     */
+    ExtensionVersion findExtensionVersionIfExists(String resourceName, def request){
+        ExtensionVersion extensionVersion = null;
+        String catalog = representationResolutionService.getRequestCatalog(request)
+        if (catalog){
+            //We were given a catalog so lookup to see if there is an extended version
+            extensionVersion = extensionVersionService.findByAliasAndResourceName(catalog,resourceName)
+        }else{
+
+            extensionVersion = extensionVersionService.findDefaultByResourceName(resourceName)
+        }
+        return extensionVersion
     }
 
 }

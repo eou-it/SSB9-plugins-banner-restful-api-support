@@ -51,7 +51,7 @@ class ExtensionReadCompositeService extends ServiceBase {
                 def extendedContent = extensionContentPatchingService.patchExtensions(extensionProcessReadResultList,rootContent)
                 if (extendedContent){
                     ethosExtensionResult.content=extendedContent
-                    ethosExtensionResult.wasExtended=true
+                    ethosExtensionResult.extensionsApplied=true
                 }else{
                     log.error "There was an error in applying all the patches to the resource."
                 }

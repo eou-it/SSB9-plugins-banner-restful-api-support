@@ -9,5 +9,7 @@ package net.hedtech.integration.extension
 class ExtensionProcessResult {
 
     def content
-    def wasExtended=false
+    def extensionsApplied=false
+    String catalogId
+    String catalogHeaderName
 }

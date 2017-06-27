@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Propagation
 class BannerContentExtensions implements ContentExtensions {
 
     def extensionProcessCompositeService
-    private static final String RESPONSE_REPRESENTATION = 'net.hedtech.restfulapi.RestfulApiController.response_representation'
 
     /**
      * Apply extension to content.
@@ -20,21 +19,20 @@ class BannerContentExtensions implements ContentExtensions {
     def ContentExtensionResult applyExtensions(String resourceName, def request, Map requestParams, def content) {
 
         ContentExtensionResult result = new ContentExtensionResult()
-        result.wasExtended=false
+        result.extensionsApplied=false
         result.content = content
-
-        def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
 
         //When we add the support for the version map this call needs to change....
         def ethosExtensionResult = extensionProcessCompositeService.applyExtensions(resourceName,
-                representationConfig.mediaType,
                 request,
                 requestParams,
                 content)
 
         if (ethosExtensionResult){
-            result.wasExtended = ethosExtensionResult.wasExtended
+            result.extensionsApplied = ethosExtensionResult.extensionsApplied
             result.content  = ethosExtensionResult.content
+            result.extensionResponseHeaderName = ethosExtensionResult.catalogHeaderName
+            result.extensionResponseHeaderValue = ethosExtensionResult.catalogId
         }
 
 
