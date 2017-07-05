@@ -18,6 +18,8 @@ class ExtensionDefinitionService extends ServiceBase {
      * @return
      */
     def findAllByResourceNameAndExtensionCode(String resourceName, String extensionCode){
-        return ExtensionDefinition.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
+        List<ExtensionDefinition> extensionDefinitionList = ExtensionDefinition.fetchAllByResourceNameAndExtensionCode(resourceName,extensionCode)
+        return extensionDefinitionList
     }
+
 }

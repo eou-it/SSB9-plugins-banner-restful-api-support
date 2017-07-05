@@ -3,15 +3,28 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import org.hibernate.CacheMode
+import org.hibernate.annotations.CacheConcurrencyStrategy
+
 import javax.persistence.*
 
 /**
  * Ethos API Extension Definition
  */
 
+@Cacheable(true)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "extensibilityCache")
 @Entity
 @Table(name = "GURAPEX")
+@NamedQueries(value = [
+        @NamedQuery(name = "ExtensionDefinition.fetchAllByResourceNameAndExtensionCode",
+                query = """FROM ExtensionDefinition a
+                              WHERE a.resourceName = :resourceName
+                                AND a.extensionCode = :extensionCode""")
+])
 class ExtensionDefinition implements Serializable {
+
+    public static final String EXT_CACHE_NAME = "extensibilityCache";
 
     /**
      * Surrogate ID for GURAPEX
@@ -146,4 +159,20 @@ class ExtensionDefinition implements Serializable {
 
     //Read Only fields that should be protected against update
     public static readonlyProperties = []
+
+
+    static List<ExtensionDefinition> fetchAllByResourceNameAndExtensionCode(String resourceName, String extensionCode) {
+        List<ExtensionDefinition> extensionDefinitionList = null
+        if( !resourceName  ||  !extensionCode ) {
+            return extensionDefinitionList
+        }
+
+        extensionDefinitionList = ExtensionDefinition.withSession { session ->
+            extensionDefinitionList = session.getNamedQuery('ExtensionDefinition.fetchAllByResourceNameAndExtensionCode').setCacheMode(CacheMode.GET)
+                    .setString('resourceName', resourceName).setString('extensionCode', extensionCode).setCacheable(true).setCacheRegion("extensibilityCache").list()
+        }
+        return extensionDefinitionList
+    }
+
+
 }

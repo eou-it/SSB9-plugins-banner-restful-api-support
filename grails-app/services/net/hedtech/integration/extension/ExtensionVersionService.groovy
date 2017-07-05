@@ -18,7 +18,7 @@ class ExtensionVersionService extends ServiceBase {
      * @return
      */
     def findByAliasAndResourceName(String alias, String resourceName){
-        def extensionVersionResult = ExtensionVersion.findByAliasAndResourceName(alias,resourceName)
+        def extensionVersionResult = ExtensionVersion.fetchByAliasAndResourceName(alias,resourceName)
         return extensionVersionResult
     }
 
@@ -29,9 +29,7 @@ class ExtensionVersionService extends ServiceBase {
      * @return
      */
     def findDefaultByResourceName(String resourceName){
-        def foundExtensionVersion =ExtensionVersion.findByResourceName(resourceName)
-
-
+        def foundExtensionVersion = ExtensionVersion.fetchDefaultByResourceName(resourceName)
         return foundExtensionVersion
 
     }
