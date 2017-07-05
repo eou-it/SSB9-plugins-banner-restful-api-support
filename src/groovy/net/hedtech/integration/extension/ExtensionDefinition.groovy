@@ -13,7 +13,7 @@ import javax.persistence.*
  */
 
 @Cacheable(true)
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "extensibilityCache")
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = ExtensionDefinition.EXT_CACHE_NAME)
 @Entity
 @Table(name = "GURAPEX")
 @NamedQueries(value = [
@@ -169,7 +169,7 @@ class ExtensionDefinition implements Serializable {
 
         extensionDefinitionList = ExtensionDefinition.withSession { session ->
             extensionDefinitionList = session.getNamedQuery('ExtensionDefinition.fetchAllByResourceNameAndExtensionCode').setCacheMode(CacheMode.GET)
-                    .setString('resourceName', resourceName).setString('extensionCode', extensionCode).setCacheable(true).setCacheRegion("extensibilityCache").list()
+                    .setString('resourceName', resourceName).setString('extensionCode', extensionCode).setCacheable(true).setCacheRegion(ExtensionDefinition.EXT_CACHE_NAME).list()
         }
         return extensionDefinitionList
     }

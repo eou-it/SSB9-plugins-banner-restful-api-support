@@ -12,7 +12,7 @@ import javax.persistence.*
  * API Extension Version  resolution table
  */
 @Cacheable(true)
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "extensibilityCache")
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = ExtensionVersion.EXT_CACHE_NAME)
 @Entity
 @Table(name = "GURAPVR")
 @NamedQueries(value = [
@@ -152,7 +152,7 @@ class ExtensionVersion implements Serializable {
 
         extensionVersionList = ExtensionVersion.withSession { session ->
             extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByAliasAndResourceName').setCacheMode(CacheMode.GET)
-                    .setString('alias', alias).setString('resourceName', resourceName).setCacheable(true).setCacheRegion("extensibilityCache").list()
+                    .setString('alias', alias).setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
         }
         return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
     }
@@ -166,7 +166,7 @@ class ExtensionVersion implements Serializable {
 
         extensionVersionList = ExtensionVersion.withSession { session ->
             extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchDefaultByResourceName').setCacheMode(CacheMode.GET)
-                    .setString('resourceName', resourceName).setCacheable(true).setCacheRegion("extensibilityCache").list()
+                    .setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
         }
         return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
     }
