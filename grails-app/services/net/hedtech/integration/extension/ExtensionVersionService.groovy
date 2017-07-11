@@ -12,13 +12,15 @@ class ExtensionVersionService extends ServiceBase {
     boolean transactional = true
 
     /**
-     * Return all the Extension Versions
+     * Find by the resource name and known version
      * @param resourceName
-     * @param catalog
+     * @param known
      * @return
      */
-    def findByKnownAndResourceName(String resourceName, String known){
-        def extensionVersionResult = ExtensionVersion.findByKnownAndResourceName(known,resourceName)
+    def findByResourceNameAndKnown(String resourceName, String known){
+        def extensionVersionResult = ExtensionVersion.fetchByResourceNameAndKnown(resourceName,known)
         return extensionVersionResult
     }
+
+
 }

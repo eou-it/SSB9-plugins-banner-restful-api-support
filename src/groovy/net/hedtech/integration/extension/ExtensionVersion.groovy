@@ -3,14 +3,34 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import org.hibernate.CacheMode
+import org.hibernate.annotations.CacheConcurrencyStrategy
+
 import javax.persistence.*
 
 /**
  * API Extension Version  resolution table
  */
+@Cacheable(true)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = ExtensionVersion.EXT_CACHE_NAME)
 @Entity
 @Table(name = "GURAPVR")
+@NamedQueries(value = [
+        @NamedQuery(name = "ExtensionVersion.fetchByAliasAndResourceName",
+                query = """FROM ExtensionVersion a
+                              WHERE a.alias = :alias
+                                AND a.resourceName = :resourceName"""),
+        @NamedQuery(name = "ExtensionVersion.fetchByResourceNameAndKnown",
+                query = """FROM ExtensionVersion a
+                              WHERE a.known = :known
+                                AND a.resourceName = :resourceName"""),
+        @NamedQuery(name = "ExtensionVersion.fetchDefaultByResourceName",
+                query = """FROM ExtensionVersion a
+                              WHERE a.resourceName = :resourceName""")
+])
 class ExtensionVersion implements Serializable {
+
+    public static final String EXT_CACHE_NAME = "extensibilityCache";
 
     /**
      * Surrogate ID for GURAPVR
@@ -126,5 +146,46 @@ class ExtensionVersion implements Serializable {
 
     //Read Only fields that should be protected against update
     public static readonlyProperties = []
+
+    static ExtensionVersion fetchByResourceNameAndKnown(String resourceName, String known) {
+        List<ExtensionVersion> extensionVersionList = null
+        if( !known  ||  !resourceName ) {
+            return extensionVersionList
+        }
+
+        extensionVersionList = ExtensionVersion.withSession { session ->
+            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByResourceNameAndKnown').setCacheMode(CacheMode.GET)
+                    .setString('resourceName', resourceName).setString('known', known).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
+        }
+        return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
+    }
+
+    static ExtensionVersion fetchByAliasAndResourceName(String alias, String resourceName) {
+        List<ExtensionVersion> extensionVersionList = null
+        if( !alias  ||  !resourceName ) {
+            return extensionVersionList
+        }
+
+        extensionVersionList = ExtensionVersion.withSession { session ->
+            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByAliasAndResourceName').setCacheMode(CacheMode.GET)
+                    .setString('alias', alias).setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
+        }
+        return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
+    }
+
+
+    static ExtensionVersion fetchDefaultByResourceName(String resourceName) {
+        List<ExtensionVersion> extensionVersionList = null
+        if( !resourceName ) {
+            return extensionVersionList
+        }
+
+        extensionVersionList = ExtensionVersion.withSession { session ->
+            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchDefaultByResourceName').setCacheMode(CacheMode.GET)
+                    .setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
+        }
+        return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
+    }
+
 
 }

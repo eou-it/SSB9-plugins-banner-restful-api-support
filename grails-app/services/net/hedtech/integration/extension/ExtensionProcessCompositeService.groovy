@@ -54,7 +54,7 @@ class ExtensionProcessCompositeService extends ServiceBase {
 
         def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
         if (representationConfig){
-            extensionVersion = extensionVersionService.findByKnownAndResourceName(resourceName,representationConfig.mediaType)
+            extensionVersion = extensionVersionService.findByResourceNameAndKnown(resourceName,representationConfig.mediaType)
         }
 
         return extensionVersion
