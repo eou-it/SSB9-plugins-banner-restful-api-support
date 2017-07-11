@@ -14,9 +14,10 @@ class ExtensionProcessCompositeService extends ServiceBase {
 
     def extensionReadCompositeService
     def extensionVersionService
-    def representationResolutionService
 
     boolean transactional = true
+
+    private static final String RESPONSE_REPRESENTATION = 'net.hedtech.restfulapi.RestfulApiController.response_representation'
 
     /**
      * Main process function that applies exentions to operations
@@ -31,53 +32,15 @@ class ExtensionProcessCompositeService extends ServiceBase {
         ExtensionProcessResult extensionProcessResult = null
         String method = request.getMethod()
 
-        if (isRequestForCatalogResource(request)){
-            ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
-            if (extensionVersion){
-                //Get the code for this
-                if (method && method == "GET") {
-                    extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
-                    if (extensionProcessResult){
-                        extensionProcessResult.catalogId = extensionVersion.alias
-                        extensionProcessResult.catalogHeaderName = representationResolutionService.getCatalogResponseHeaderName()
-                    }
-
-                }
+        //Determine if an extension has been defined for this resource
+        ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
+        if (extensionVersion){
+            if (method && method == "GET") {
+                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
             }
         }
-
 
         return extensionProcessResult
-    }
-
-    /**
-     *
-     * @param request
-     * @return
-     */
-    boolean isRequestForCatalogResource(def request){
-        boolean result = true
-
-        //Has non versionless Accept
-        String requestAcceptHeader
-        Enumeration<String> values = request.getHeaders("Accept")
-        if (values) {
-            while (values.hasMoreElements()) {
-                requestAcceptHeader = values.nextElement()
-                if (requestAcceptHeader.contains("vnd.hedtech.integration")){
-                    result = false
-                    return result
-                }
-            }
-
-        } else {
-            requestAcceptHeader= request?.getHeader("Accept")
-        }
-
-        if (requestAcceptHeader.contains("vnd.hedtech.integration")){
-            result = false
-        }
-        return result
     }
 
     /**
@@ -88,14 +51,12 @@ class ExtensionProcessCompositeService extends ServiceBase {
      */
     ExtensionVersion findExtensionVersionIfExists(String resourceName, def request){
         ExtensionVersion extensionVersion = null;
-        String catalog = representationResolutionService.getRequestCatalog(request)
-        if (catalog){
-            //We were given a catalog so lookup to see if there is an extended version
-            extensionVersion = extensionVersionService.findByAliasAndResourceName(catalog,resourceName)
-        }else{
 
-            extensionVersion = extensionVersionService.findDefaultByResourceName(resourceName)
+        def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
+        if (representationConfig){
+            extensionVersion = extensionVersionService.findByKnownAndResourceName(resourceName,representationConfig.mediaType)
         }
+
         return extensionVersion
     }
 

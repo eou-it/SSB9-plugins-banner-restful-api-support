@@ -31,8 +31,6 @@ class BannerContentExtensions implements ContentExtensions {
         if (ethosExtensionResult){
             result.extensionsApplied = ethosExtensionResult.extensionsApplied
             result.content  = ethosExtensionResult.content
-            result.extensionResponseHeaderName = ethosExtensionResult.catalogHeaderName
-            result.extensionResponseHeaderValue = ethosExtensionResult.catalogId
         }
 
 
