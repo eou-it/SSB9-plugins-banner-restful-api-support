@@ -61,8 +61,8 @@ class ExtensionProcessCompositeService extends ServiceBase {
             responseMediaType = representationConfig.mediaType
         }
 
-        def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
-        if (representationConfig){
+        //If a media type was found, then look up to see if there are extensions defined for it.
+        if (responseMediaType){
             extensionVersion = extensionVersionService.findByResourceNameAndKnown(resourceName,responseMediaType)
         }
 
