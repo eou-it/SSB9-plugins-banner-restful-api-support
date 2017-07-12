@@ -54,7 +54,7 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
         ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName,testVersion,
                 null,null,null)
         assertNotNull extensionProcessResult
-        assertFalse extensionProcessResult.wasExtended
+        assertFalse extensionProcessResult.extensionsApplied
     }
 
 

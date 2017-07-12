@@ -32,7 +32,7 @@ class ExtensionVersionServiceIntegrationTests extends BaseIntegrationTestCase {
         def extensionVersion = newExtensionVersion()
         save extensionVersion
 
-        def readExtensionVersion = extensionVersionService.findByAliasAndResourceName("alias","baseline")
+        def readExtensionVersion = extensionVersionService.findByResourceNameAndKnown("baseline","test")
         assertNotNull readExtensionVersion
         assertNotNull readExtensionVersion.id
 
