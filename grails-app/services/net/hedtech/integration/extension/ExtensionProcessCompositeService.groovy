@@ -52,9 +52,18 @@ class ExtensionProcessCompositeService extends ServiceBase {
     ExtensionVersion findExtensionVersionIfExists(String resourceName, def request){
         ExtensionVersion extensionVersion = null;
 
+        //First see if the overwritten media type is there.
+        //This is ONLY set when application\json is passed in. The API services code puts the REAL latest media
+        //type in this attribute. If it is null, then look at the representation config attached.
+        String responseMediaType = request.getAttribute("overwriteMediaTypeHeader");
+        if (!responseMediaType){
+            def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
+            responseMediaType = representationConfig.mediaType
+        }
+
         def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
         if (representationConfig){
-            extensionVersion = extensionVersionService.findByResourceNameAndKnown(resourceName,representationConfig.mediaType)
+            extensionVersion = extensionVersionService.findByResourceNameAndKnown(resourceName,responseMediaType)
         }
 
         return extensionVersion
