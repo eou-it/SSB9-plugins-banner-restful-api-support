@@ -13,6 +13,8 @@ import net.hedtech.banner.service.ServiceBase
 class ExtensionProcessCompositeService extends ServiceBase {
 
     def extensionReadCompositeService
+    def extensionInsertCompositeService
+    def extensionUpdateCompositeService
     def extensionVersionService
 
     boolean transactional = true
@@ -34,10 +36,20 @@ class ExtensionProcessCompositeService extends ServiceBase {
 
         //Determine if an extension has been defined for this resource
         ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
-        if (extensionVersion){
-            if (method && method == "GET") {
-                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
+        if (extensionVersion && method){
+
+            if (method == "POST"){
+                extensionProcessResult = extensionInsertCompositeService.insert(resourceName,extensionVersion.extensionCode,
+                request,requestParms,responseContent)
+            }else if (method == "PUT"){
+                extensionProcessResult = extensionUpdateCompositeService.update(resourceName,extensionVersion.extensionCode,
+                        request,requestParms,responseContent)
             }
+
+
+            //if (method == "GET") {
+                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
+            //}
         }
 
         return extensionProcessResult

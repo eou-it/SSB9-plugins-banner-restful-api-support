@@ -27,6 +27,7 @@ grails.project.dependency.resolution = {
 
     dependencies {
         compile "com.flipkart.zjsonpatch:zjsonpatch:0.2.4"
+        compile "com.jayway.jsonpath:json-path:2.3.0"
     }
 
     plugins {
