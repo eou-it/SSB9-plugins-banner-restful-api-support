@@ -3,6 +3,8 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
 
@@ -12,6 +14,8 @@ class ExtensionUpdateCompositeService extends ServiceBase {
     def extensionDefinitionService
     def updateCompositeService
     def extensionValueExtractionService
+    def extractedExtensionPropertyGroupBuilderService
+    def resourceIdListBuilderService
 
     ExtensionProcessResult update(String resourceName, String extensionCode,
                                   def request, Map requestParms, def responseContent) {
@@ -24,10 +28,32 @@ class ExtensionUpdateCompositeService extends ServiceBase {
         //to be extracted from the resource(s) in the response
         def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
-            def extensionDefinitionsList = extensionValueExtractionService.extractExtensions(request,extensionDefinitionList)
+            def extractedExtensionPropertyList = extensionValueExtractionService.extractExtensions(request,extensionDefinitionList)
+
+            //Get a list of resource IDs
+            def resourceId
+            JsonNode rootContent = getJSONNodeForContent(responseContent)
+            def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(rootContent)
+            if (resourceIdList){
+                resourceId = resourceIdList[0]
+            }
+
+            //Now group the properties together to save calls
+            def extractedExtensionPropertyGroupList = extractedExtensionPropertyGroupBuilderService.build(extractedExtensionPropertyList)
+            if (extractedExtensionPropertyList){
+                //Need to deal with results
+                updateCompositeService.update(resourceId, extractedExtensionPropertyGroupList)
+            }
         }
 
         return extensionProcessResult
     }
+
+    def getJSONNodeForContent(def responseContent){
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(responseContent);
+        return rootNode
+    }
+
 
 }

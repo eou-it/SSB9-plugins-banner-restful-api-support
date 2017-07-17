@@ -12,6 +12,7 @@ class ExtensionInsertCompositeService extends ServiceBase {
     def extensionDefinitionService
     def insertCompositeService
     def extensionValueExtractionService
+    def extractedExtensionPropertyGroupBuilderService
 
     ExtensionProcessResult insert(String resourceName, String extensionCode,
                                   def request, Map requestParms, def responseContent) {
@@ -24,7 +25,10 @@ class ExtensionInsertCompositeService extends ServiceBase {
         //to be extracted from the resource(s) in the response
         def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
-            def extensionDefinitionsList = extensionValueExtractionService.extractExtensions(request,extensionDefinitionList)
+            def extractedExtensionPropertyList = extensionValueExtractionService.extractExtensions(request,extensionDefinitionList)
+
+            //Now group the properties together to save calls
+            def extractedExtensionPropertyGroupList = extractedExtensionPropertyGroupBuilderService.build(extractedExtensionPropertyList)
         }
 
         return extensionProcessResult

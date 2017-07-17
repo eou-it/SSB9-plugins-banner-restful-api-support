@@ -5,6 +5,7 @@ package net.hedtech.integration.extension
 
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
+import grails.converters.JSON
 
 class ExtensionValueExtractionService {
 
@@ -21,7 +22,8 @@ class ExtensionValueExtractionService {
         if (request && extensionDefinitionList && extensionDefinitionList.size > 0){
 
             //Parse the JSON request body one time, only
-            ReadContext requestReadContext = JsonPath.parse(request);
+            def jsonContent = JSON.parse(request);
+            ReadContext requestReadContext = JsonPath.parse( jsonContent);
 
             //Loop through the Extension Definition and extract the values in the request by path
             for (ExtensionDefinition extensionDefinition : extensionDefinitionList) {
