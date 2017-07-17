@@ -16,17 +16,13 @@ import javax.persistence.*
 @Entity
 @Table(name = "GURAPVR")
 @NamedQueries(value = [
-        @NamedQuery(name = "ExtensionVersion.fetchByAliasAndResourceName",
+        @NamedQuery(name = "ExtensionVersion.fetchByResourceName",
                 query = """FROM ExtensionVersion a
-                              WHERE a.alias = :alias
-                                AND a.resourceName = :resourceName"""),
-        @NamedQuery(name = "ExtensionVersion.fetchByResourceNameAndKnown",
+                              WHERE a.resourceName = :resourceName"""),
+        @NamedQuery(name = "ExtensionVersion.fetchByResourceNameAndKnownMediaType",
                 query = """FROM ExtensionVersion a
-                              WHERE a.known = :known
-                                AND a.resourceName = :resourceName"""),
-        @NamedQuery(name = "ExtensionVersion.fetchDefaultByResourceName",
-                query = """FROM ExtensionVersion a
-                              WHERE a.resourceName = :resourceName""")
+                              WHERE a.knownMediaType = :knownMediaType
+                                AND a.resourceName = :resourceName""")
 ])
 class ExtensionVersion implements Serializable {
 
@@ -61,16 +57,10 @@ class ExtensionVersion implements Serializable {
     String extensionCode
 
     /**
-     * KNOWN: This field has the known api version.
+     * KNOWN MEDIATYPE: This field has the known api version.
      */
-    @Column(name = "GURAPVR_KNOWN")
-    String known
-
-    /**
-     * ALIAS: This field indicates alias version.
-     */
-    @Column(name = "GURAPVR_ALIAS")
-    String alias
+    @Column(name = "GURAPVR_KNOWN_MEDIATYPE")
+    String knownMediaType
 
     /**
      * ACTIVITY DATE: The date that the information for the row was inserted or updated in the GOBINTL table.
@@ -96,8 +86,7 @@ class ExtensionVersion implements Serializable {
                 id=$id,
                 version=$version,
                 resourceName=$resourceName,
-                alias=$alias,
-                known=$known,
+                knownMediaType=$knownMediaType,
                 lastModified=$lastModified,
                 lastModifiedBy=$lastModifiedBy,
                 dataOrigin=$dataOrigin"""
@@ -111,8 +100,7 @@ class ExtensionVersion implements Serializable {
         if (id != that.id) return false
         if (version != that.version) return false
         if (resourceName != that.resourceName) return false
-        if (alias != that.alias) return false
-        if (known != that.known) return false
+        if (knownMediaType != that.knownMediaType) return false
 
         if (lastModified != that.lastModified) return false
         if (lastModifiedBy != that.lastModifiedBy) return false
@@ -126,8 +114,7 @@ class ExtensionVersion implements Serializable {
         int result
         result = (id != null ? id.hashCode() : 0)
         result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (alias != null ? alias.hashCode() : 0)
-        result = 31 * result + (known != null ? known.hashCode() : 0)
+        result = 31 * result + (knownMediaType != null ? knownMediaType.hashCode() : 0)
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
         result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
@@ -147,41 +134,27 @@ class ExtensionVersion implements Serializable {
     //Read Only fields that should be protected against update
     public static readonlyProperties = []
 
-    static ExtensionVersion fetchByResourceNameAndKnown(String resourceName, String known) {
+    static ExtensionVersion fetchByResourceNameAndKnownMediaType(String resourceName, String knownMediaType) {
         List<ExtensionVersion> extensionVersionList = null
-        if( !known  ||  !resourceName ) {
+        if( !knownMediaType  ||  !resourceName ) {
             return extensionVersionList
         }
 
         extensionVersionList = ExtensionVersion.withSession { session ->
-            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByResourceNameAndKnown').setCacheMode(CacheMode.GET)
-                    .setString('resourceName', resourceName).setString('known', known).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
+            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByResourceNameAndKnownMediaType').setCacheMode(CacheMode.GET)
+                    .setString('resourceName', resourceName).setString('knownMediaType', knownMediaType).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
         }
         return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
     }
 
-    static ExtensionVersion fetchByAliasAndResourceName(String alias, String resourceName) {
-        List<ExtensionVersion> extensionVersionList = null
-        if( !alias  ||  !resourceName ) {
-            return extensionVersionList
-        }
-
-        extensionVersionList = ExtensionVersion.withSession { session ->
-            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByAliasAndResourceName').setCacheMode(CacheMode.GET)
-                    .setString('alias', alias).setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
-        }
-        return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
-    }
-
-
-    static ExtensionVersion fetchDefaultByResourceName(String resourceName) {
+    static ExtensionVersion fetchByResourceName(String resourceName) {
         List<ExtensionVersion> extensionVersionList = null
         if( !resourceName ) {
             return extensionVersionList
         }
 
         extensionVersionList = ExtensionVersion.withSession { session ->
-            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchDefaultByResourceName').setCacheMode(CacheMode.GET)
+            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByResourceName').setCacheMode(CacheMode.GET)
                     .setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
         }
         return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null

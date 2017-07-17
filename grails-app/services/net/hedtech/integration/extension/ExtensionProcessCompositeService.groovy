@@ -63,7 +63,7 @@ class ExtensionProcessCompositeService extends ServiceBase {
 
         //If a media type was found, then look up to see if there are extensions defined for it.
         if (responseMediaType){
-            extensionVersion = extensionVersionService.findByResourceNameAndKnown(resourceName,responseMediaType)
+            extensionVersion = extensionVersionService.findByResourceNameAndKnownMediaType(resourceName,responseMediaType)
         }
 
         return extensionVersion

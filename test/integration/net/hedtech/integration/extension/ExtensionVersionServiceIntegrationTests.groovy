@@ -32,7 +32,7 @@ class ExtensionVersionServiceIntegrationTests extends BaseIntegrationTestCase {
         def extensionVersion = newExtensionVersion()
         save extensionVersion
 
-        def readExtensionVersion = extensionVersionService.findByResourceNameAndKnown("baseline","test")
+        def readExtensionVersion = extensionVersionService.findByResourceNameAndKnownMediaType("baseline","test")
         assertNotNull readExtensionVersion
         assertNotNull readExtensionVersion.id
 
@@ -48,8 +48,7 @@ class ExtensionVersionServiceIntegrationTests extends BaseIntegrationTestCase {
         def extensionVersion = new ExtensionVersion(
                 resourceName: "baseline",
                 extensionCode: "code123",
-                known: "test",
-                alias: "alias",
+                knownMediaType: "test",
                 lastModified: new Date(),
                 lastModifiedBy: "test",
                 dataOrigin: "Banner"

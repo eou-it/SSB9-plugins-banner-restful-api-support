@@ -53,8 +53,7 @@ class ExtensionVersionIntegrationTests  extends BaseIntegrationTestCase {
         def extensionVersion = new ExtensionVersion(
                 resourceName: "baseline",
                 extensionCode: "code123",
-                known: "test",
-                alias: "alias",
+                knownMediaType: "test",
                 lastModified: new Date(),
                 lastModifiedBy: "test",
                 dataOrigin: "Banner"
