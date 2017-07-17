@@ -17,8 +17,8 @@ class ExtensionVersionService extends ServiceBase {
      * @param known
      * @return
      */
-    def findByResourceNameAndKnown(String resourceName, String known){
-        def extensionVersionResult = ExtensionVersion.fetchByResourceNameAndKnown(resourceName,known)
+    def findByResourceNameAndKnownMediaType(String resourceName, String knownMediaType){
+        def extensionVersionResult = ExtensionVersion.fetchByResourceNameAndKnownMediaType(resourceName,knownMediaType)
         return extensionVersionResult
     }
 

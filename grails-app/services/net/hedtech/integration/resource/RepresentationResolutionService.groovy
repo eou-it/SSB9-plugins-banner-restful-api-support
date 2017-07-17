@@ -40,9 +40,9 @@ public class RepresentationResolutionService {
             String responseCatalog = request.getHeader(catalogHeaderName)
             if (responseCatalog){
                 if (extensionVersionService){
-                    ExtensionVersion extensionVersion = extensionVersionService.findByAliasAndResourceName(responseCatalog,pluralizedResourceName)
+                    ExtensionVersion extensionVersion = extensionVersionService.findByResourceName(pluralizedResourceName)
                     if (extensionVersion){
-                            representation=extensionVersion.known
+                            representation=extensionVersion.knownMediaType
 
                     }else{
                         representation=responseCatalog
