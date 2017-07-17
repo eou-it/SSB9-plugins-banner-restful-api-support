@@ -45,4 +45,24 @@ class ReadExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
         assertNotNull resultList
         assertTrue resultList.size == 5
     }
+
+    @Test
+    void when1000Guids() {
+        //Get 1000 GUIDs to test limitations of SQL statement
+        def largeGuidList = []
+        def guidQuery = "SELECT * FROM (select gorguid_guid from gorguid where gorguid_ldm_name = 'persons') gorguid WHERE rownum <= 1000 ORDER BY rownum"
+        def sqlQuery = sessionFactory.currentSession.createSQLQuery(guidQuery)
+        def guidResults = sqlQuery.list()
+        guidResults.each { row ->
+            largeGuidList.add(row)
+        }
+        assertEquals 1000, largeGuidList.size()
+
+        def querySQL = "select * from gorguid where gorguid_guid in (:GUID_LIST)"
+        def resultList = readExecutionService.execute(querySQL,largeGuidList)
+
+        assertNotNull resultList
+        assertEquals largeGuidList.size(), resultList.size
+        assertEquals largeGuidList.sort(), resultList.GORGUID_GUID.sort()
+    }
 }
