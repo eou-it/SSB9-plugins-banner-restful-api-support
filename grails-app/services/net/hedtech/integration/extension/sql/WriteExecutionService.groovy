@@ -3,7 +3,6 @@
  ******************************************************************************/
 package net.hedtech.integration.extension.sql
 
-import org.hibernate.transform.AliasToEntityMapResultTransformer
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import net.hedtech.banner.service.ServiceBase
@@ -33,7 +32,6 @@ class WriteExecutionService extends ServiceBase {
         if (log.isTraceEnabled()) log.trace "extension.guid=${resourceId}"
 
         def sqlQuery = sessionFactory.currentSession.createSQLQuery(updateSql)
-        sqlQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
         sqlQuery.setString(SQL_PARAM_GUID, resourceId)
         parameterList.each { parameter ->
             String parameterName = parameter.key
@@ -44,6 +42,8 @@ class WriteExecutionService extends ServiceBase {
                 sqlQuery.setBigDecimal(parameterName, parameterValue)
             } else if (parameterValue instanceof Date) {
                 sqlQuery.setDate(parameterName, parameterValue)
+            } else if (parameterValue instanceof Character) {
+                sqlQuery.setCharacter(parameterName, parameterValue)
             } else if (parameterValue == null) {
                 sqlQuery.setNull(parameterName)
             }
