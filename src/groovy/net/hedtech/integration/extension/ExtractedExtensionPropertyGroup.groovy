@@ -24,7 +24,7 @@ class ExtractedExtensionPropertyGroup {
                 ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
                 if (extensionDefinition) {
                     //That select column name should be update
-                    resultMap.put(extensionDefinition.selectColumnName,extractedExtensionProperty.value)
+                    resultMap.put(extensionDefinition.columnName,extractedExtensionProperty.value)
                 }
             }
         }

@@ -47,7 +47,7 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
                 jsonPath: "/",
                 jsonType: "property",
                 jsonlabel: "abc123",
-                selectColumnName: "selectColumn",
+                columnName: "columnName",
                 version: 0,
                 jsonLabel: "abc123",
                 lastModified: new Date(),
@@ -59,7 +59,7 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         def mockSQLResults = []
         def sqlResult = new MockExtensionSQLResult()
         sqlResult.GUID = "ASFsaf"
-        sqlResult.selectColumn = "1232"
+        sqlResult.columnName = "1232"
 
         mockSQLResults.add(sqlResult)
 
@@ -86,7 +86,7 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
                 jsonPath: "/",
                 jsonType: "property",
                 jsonlabel: "abc123",
-                selectColumnName: "selectColumn",
+                columnName: "columnName",
                 version: 0,
                 jsonLabel: "abc123",
                 lastModified: new Date(),
@@ -98,11 +98,11 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         def mockSQLResults = []
         def sqlResult = new MockExtensionSQLResult()
         sqlResult.GUID = "aaaaaa"
-        sqlResult.selectColumn = "1232"
+        sqlResult.columnName = "1232"
 
         def sqlResult2 = new MockExtensionSQLResult()
         sqlResult2.GUID = "bbbbb"
-        sqlResult2.selectColumn = "44444"
+        sqlResult2.columnName = "44444"
 
         mockSQLResults.add(sqlResult)
         mockSQLResults.add(sqlResult2)

@@ -56,14 +56,17 @@ class ExtensionDefinition implements Serializable {
     @Column(name = "GURAPEX_JSON_TYPE")
     String jsonType
 
-    @Column(name = "GURAPEX_SELECT_COLUMN_NAME")
-    String selectColumnName
+    @Column(name = "GURAPEX_COLUMN_NAME")
+    String columnName
 
     @Column(name = "GURAPEX_SQL_PROCESS_CODE")
     String sqlProcessCode
 
-    @Column(name = "GURAPEX_SQL_RULE_CODE")
-    String sqlRuleCode
+    @Column(name = "GURAPEX_READ_SQL_RULE_CODE")
+    String sqlReadRuleCode
+
+    @Column(name = "GURAPEX_WRITE_SQL_RULE_CODE")
+    String sqlWriteRuleCode
 
     /**
      * Optimistic lock token for GURAPEX
@@ -146,11 +149,12 @@ class ExtensionDefinition implements Serializable {
     }
 
     static constraints = {
-        selectColumnName(nullable:true)
+        columnName(nullable:true)
         sqlProcessCode(nullable:true)
         extensionCode(nullable:true)
         description(nullable:true)
-        sqlRuleCode(nullable:true)
+        sqlReadRuleCode(nullable:true)
+        sqlWriteRuleCode(nullable:true)
         lastModified(nullable: true)
         lastModifiedBy(nullable: true, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 30)

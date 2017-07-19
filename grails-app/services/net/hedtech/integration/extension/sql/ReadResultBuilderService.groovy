@@ -32,9 +32,9 @@ class ReadResultBuilderService extends ServiceBase {
                     //Check the jsonType if its a property make sure we have a value from the db
                     String jsonType = extensionProcessReadResult.jsonType
                     if (jsonType && jsonType.equalsIgnoreCase("property")){
-                        if (row[extensionDefinition.selectColumnName]){
+                        if (row[extensionDefinition.columnName]){
                             extensionProcessReadResult.resourceId = row.GUID
-                            extensionProcessReadResult.value = row[extensionDefinition.selectColumnName]
+                            extensionProcessReadResult.value = row[extensionDefinition.columnName]
 
                             extensionProcessReadResults.add(extensionProcessReadResult)
                         }

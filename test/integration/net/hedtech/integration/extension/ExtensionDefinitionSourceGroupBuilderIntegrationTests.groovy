@@ -35,7 +35,7 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
     @Test
     void givenOneExpectOneGroup() {
         ExtensionDefinition extensionDefinition = new ExtensionDefinition()
-        extensionDefinition.sqlRuleCode = "abc"
+        extensionDefinition.sqlReadRuleCode = "abc"
         extensionDefinition.sqlProcessCode = "123"
         extensionDefinition.resourceName="foo"
 
@@ -52,22 +52,22 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
     void givenThreeExpectOneGroup() {
 
         ExtensionDefinition extensionDefinition = new ExtensionDefinition()
-        extensionDefinition.sqlRuleCode = "abc"
+        extensionDefinition.sqlReadRuleCode = "abc"
         extensionDefinition.sqlProcessCode = "123"
         extensionDefinition.resourceName="foo"
-        extensionDefinition.selectColumnName = "bar"
+        extensionDefinition.columnName = "bar"
 
         ExtensionDefinition extensionDefinition2 = new ExtensionDefinition()
-        extensionDefinition2.sqlRuleCode = "abc"
+        extensionDefinition2.sqlReadRuleCode = "abc"
         extensionDefinition2.sqlProcessCode = "123"
         extensionDefinition2.resourceName="foo"
-        extensionDefinition2.selectColumnName = "bar2"
+        extensionDefinition2.columnName = "bar2"
 
         ExtensionDefinition extensionDefinition3 = new ExtensionDefinition()
-        extensionDefinition3.sqlRuleCode = "abc"
+        extensionDefinition3.sqlReadRuleCode = "abc"
         extensionDefinition3.sqlProcessCode = "123"
         extensionDefinition3.resourceName="foo"
-        extensionDefinition3.selectColumnName = "bar3"
+        extensionDefinition3.columnName = "bar3"
 
 
         def extensionDefinitionList = []
@@ -86,24 +86,24 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
     void givenTwoGroupsExpectTwoGroups() {
 
         ExtensionDefinition extensionDefinition = new ExtensionDefinition()
-        extensionDefinition.sqlRuleCode = "abc"
+        extensionDefinition.sqlReadRuleCode = "abc"
         extensionDefinition.sqlProcessCode = "123"
         extensionDefinition.resourceName="foo"
-        extensionDefinition.selectColumnName = "bar"
+        extensionDefinition.columnName = "bar"
 
         ExtensionDefinition extensionDefinition2 = new ExtensionDefinition()
-        extensionDefinition2.sqlRuleCode = "abc"
+        extensionDefinition2.sqlReadRuleCode = "abc"
         extensionDefinition2.sqlProcessCode = "123"
         extensionDefinition2.resourceName="foo"
-        extensionDefinition2.selectColumnName = "bar2"
+        extensionDefinition2.columnName = "bar2"
 
 
         //Have one that has a different rule
         ExtensionDefinition extensionDefinition3 = new ExtensionDefinition()
-        extensionDefinition3.sqlRuleCode = "def"
+        extensionDefinition3.sqlReadRuleCode = "def"
         extensionDefinition3.sqlProcessCode = "123"
         extensionDefinition3.resourceName="foo"
-        extensionDefinition3.selectColumnName = "bar3"
+        extensionDefinition3.columnName = "bar3"
 
 
         def extensionDefinitionList = []
@@ -121,22 +121,22 @@ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrat
     void givenTwoGroupsExpectTwoGroupsNullSQL() {
 
         ExtensionDefinition extensionDefinition = new ExtensionDefinition()
-        extensionDefinition.sqlRuleCode = "abc"
+        extensionDefinition.sqlReadRuleCode = "abc"
         extensionDefinition.sqlProcessCode = "123"
         extensionDefinition.resourceName="foo"
-        extensionDefinition.selectColumnName = "bar"
+        extensionDefinition.columnName = "bar"
 
         ExtensionDefinition extensionDefinition2 = new ExtensionDefinition()
-        extensionDefinition2.sqlRuleCode = "abc"
+        extensionDefinition2.sqlReadRuleCode = "abc"
         extensionDefinition2.sqlProcessCode = "123"
         extensionDefinition2.resourceName="foo"
-        extensionDefinition2.selectColumnName = "bar2"
+        extensionDefinition2.columnName = "bar2"
 
 
         //Have one that has a different rule
         ExtensionDefinition extensionDefinition3 = new ExtensionDefinition()
         extensionDefinition3.resourceName="foo"
-        extensionDefinition3.selectColumnName = "bar3"
+        extensionDefinition3.columnName = "bar3"
 
 
         def extensionDefinitionList = []

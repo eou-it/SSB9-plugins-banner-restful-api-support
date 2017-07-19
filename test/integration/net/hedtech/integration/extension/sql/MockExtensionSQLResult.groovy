@@ -8,5 +8,5 @@ package net.hedtech.integration.extension.sql
  */
 class MockExtensionSQLResult {
     String GUID
-    String selectColumn
+    String columnName
 }

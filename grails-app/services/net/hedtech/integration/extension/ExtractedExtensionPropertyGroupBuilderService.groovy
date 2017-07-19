@@ -31,9 +31,8 @@ class ExtractedExtensionPropertyGroupBuilderService {
 
     /**
      * Function to look for a group on in the list
-     * @param extractedExtensionPropertyList
-     * @param sqlProcessCode
-     * @param sqlRuleCode
+     * @param extractedExtensionPropertyGroupList
+     * @param extractedExtensionProperty
      * @return
      */
     private ExtractedExtensionPropertyGroup getGroup(def extractedExtensionPropertyGroupList, ExtractedExtensionProperty extractedExtensionProperty){
@@ -43,7 +42,7 @@ class ExtractedExtensionPropertyGroupBuilderService {
                 ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
                 if (extensionDefinition){
                     if (item.sqlProcessCode == extensionDefinition.sqlProcessCode &&
-                            item.sqlRuleCode == extensionDefinition.sqlRuleCode) {
+                            item.sqlRuleCode == extensionDefinition.sqlReadRuleCode) {
                         extractedExtensionPropertyGroup = item
                         break
                     }
@@ -65,7 +64,7 @@ class ExtractedExtensionPropertyGroupBuilderService {
                 ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
                 extractedExtensionPropertyGroup = new ExtractedExtensionPropertyGroup()
                 extractedExtensionPropertyGroup.sqlProcessCode = extensionDefinition.sqlProcessCode
-                extractedExtensionPropertyGroup.sqlRuleCode = extensionDefinition.sqlRuleCode
+                extractedExtensionPropertyGroup.sqlRuleCode = extensionDefinition.sqlReadRuleCode
                 extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
                 extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(extractedExtensionProperty)
             }

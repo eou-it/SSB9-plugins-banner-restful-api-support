@@ -36,8 +36,7 @@ class ExtensionDefinitionSourceGroupBuilderService {
     /**
      * Function to look for a group on in the list
      * @param extensionDefinitionGroupList
-     * @param sqlProcessCode
-     * @param sqlRuleCode
+     * @param extensionDefinition
      * @return
      */
     private ExtensionDefinitionSourceGroup getGroup(def extensionDefinitionGroupList, ExtensionDefinition extensionDefinition){
@@ -45,7 +44,7 @@ class ExtensionDefinitionSourceGroupBuilderService {
         if (extensionDefinitionGroupList && extensionDefinition){
             for (ExtensionDefinitionSourceGroup item : extensionDefinitionGroupList) {
                 if (item.sqlProcessCode == extensionDefinition.sqlProcessCode &&
-                        item.sqlRuleCode == extensionDefinition.sqlRuleCode) {
+                        item.sqlRuleCode == extensionDefinition.sqlReadRuleCode) {
                     extensionDefinitionGroup = item
                     break
                 }
@@ -64,7 +63,7 @@ class ExtensionDefinitionSourceGroupBuilderService {
         if (extensionDefinition){
             extensionDefinitionGroup = new ExtensionDefinitionSourceGroup()
             extensionDefinitionGroup.sqlProcessCode = extensionDefinition.sqlProcessCode
-            extensionDefinitionGroup.sqlRuleCode = extensionDefinition.sqlRuleCode
+            extensionDefinitionGroup.sqlRuleCode = extensionDefinition.sqlReadRuleCode
             extensionDefinitionGroup.extensionDefinitionList = []
             extensionDefinitionGroup.extensionDefinitionList.add(extensionDefinition)
         }

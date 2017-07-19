@@ -118,7 +118,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
                 jsonPath: jsonPath,
                 jsonType: "property",
                 jsonLabel: jsonLabel,
-                selectColumnName: "selectColumn",
+                columnName: "columnName",
                 version: 0,
                 lastModified: new Date(),
                 lastModifiedBy: "test",
