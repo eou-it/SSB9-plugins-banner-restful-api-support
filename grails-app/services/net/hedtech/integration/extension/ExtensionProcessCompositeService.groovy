@@ -13,8 +13,7 @@ import net.hedtech.banner.service.ServiceBase
 class ExtensionProcessCompositeService extends ServiceBase {
 
     def extensionReadCompositeService
-    def extensionInsertCompositeService
-    def extensionUpdateCompositeService
+    def extensionWriteCompositeService
     def extensionVersionService
 
     boolean transactional = true
@@ -32,24 +31,19 @@ class ExtensionProcessCompositeService extends ServiceBase {
      */
     ExtensionProcessResult applyExtensions(String resourceName, def request, Map requestParms, def responseContent) {
         ExtensionProcessResult extensionProcessResult = null
-        String method = request.getMethod()
 
         //Determine if an extension has been defined for this resource
         ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
-        if (extensionVersion && method){
-
-            if (method == "POST"){
-                extensionProcessResult = extensionInsertCompositeService.insert(resourceName,extensionVersion.extensionCode,
-                request,requestParms,responseContent)
-            }else if (method == "PUT"){
-                extensionProcessResult = extensionUpdateCompositeService.update(resourceName,extensionVersion.extensionCode,
+        if (extensionVersion && request){
+            if (isWriteMethod(request)){
+                extensionProcessResult = extensionWriteCompositeService.write(resourceName,extensionVersion.extensionCode,
                         request,requestParms,responseContent)
             }
 
-
-            //if (method == "GET") {
+            //After the writable operations are done, we need to apply extensions to the response
+            if (isWriteMethod(request) || isReadMethod(request)){
                 extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
-            //}
+            }
         }
 
         return extensionProcessResult
@@ -81,4 +75,35 @@ class ExtensionProcessCompositeService extends ServiceBase {
         return extensionVersion
     }
 
+    /**
+     * Returns bool if the request operation is a write operation of some sort
+     * @param request
+     * @return
+     */
+    boolean isWriteMethod(def request){
+        boolean result = false
+        if (request){
+            String method = request.getMethod()
+            if (method && method == "POST" || method == "PUT" || method == "DELETE"){
+                result = true
+            }
+        }
+        return result
+    }
+
+    /**
+     * Returns boolean if the request is a read operation
+     * @param request
+     * @return
+     */
+    boolean isReadMethod(def request){
+        boolean result = false
+        if (request){
+            String method = request.getMethod()
+            if (method && method == "GET"){
+                result = true
+            }
+        }
+        return result
+    }
 }

@@ -1,20 +1,22 @@
-/******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
- ******************************************************************************/
 package net.hedtech.integration.extension.sql
 
 import net.hedtech.banner.service.ServiceBase
+import org.springframework.transaction.annotation.Transactional
 
-/**
- * Created by sdorfmei on 7/14/17.
- */
-class UpdateCompositeService extends ServiceBase {
+@Transactional
+class WriteCompositeService extends ServiceBase {
 
     def writeSqlBuilderService
 
     def writeExecutionService
 
-    def update(def resourceId, def extractedExtensionPropertyGroupList) {
+    /**
+     * Update method to apply update from the extension values found
+     * @param resourceId
+     * @param extractedExtensionPropertyGroupList
+     * @return
+     */
+    def write(def resourceId, def httpMethod, def extractedExtensionPropertyGroupList) {
 
         //Stopwatch start
         def startTime = new Date()
@@ -26,8 +28,9 @@ class UpdateCompositeService extends ServiceBase {
                 //Get a list of sql statements from GORRSQL, note there can be many
                 def sqlStatements = writeSqlBuilderService.build(extractedExtensionPropertyGroup)
                 if (sqlStatements){
+                    Map parameterMap = extractedExtensionPropertyGroup.buildParameterMap()
                     sqlStatements.each { sqlStatement ->
-                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,extractedExtensionPropertyGroup.buildParameterMap())
+                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,parameterMap)
                         //Handle results?
                     }
                 }else{
@@ -35,12 +38,12 @@ class UpdateCompositeService extends ServiceBase {
                 }
             }
         }else{
-            log.warn "A update/save action was called when there are no extensions. This is unexpected."
+            log.warn "A write action was called when there are no extensions. This is unexpected."
         }
         //Stopwatch stop
         def endTime = new Date()
 
-        log.debug("Ethos Extensions save from db and build results time ms: ${endTime.time - startTime.time}")
-       // return processResults
+        log.debug("Ethos Extensions write from db and build results time ms: ${endTime.time - startTime.time}")
+        // return processResults
     }
 }

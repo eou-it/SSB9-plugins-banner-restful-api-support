@@ -1,6 +1,3 @@
-/******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
- ******************************************************************************/
 package net.hedtech.integration.extension
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -9,15 +6,15 @@ import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
 
 @Transactional
-class ExtensionUpdateCompositeService extends ServiceBase {
+class ExtensionWriteCompositeService extends ServiceBase {
 
     def extensionDefinitionService
-    def updateCompositeService
+    def writeCompositeService
     def extensionValueExtractionService
     def extractedExtensionPropertyGroupBuilderService
     def resourceIdListBuilderService
 
-    ExtensionProcessResult update(String resourceName, String extensionCode,
+    ExtensionProcessResult write(String resourceName, String extensionCode,
                                   def request, Map requestParms, def responseContent) {
 
         //Create a process result and default the content to be the current response
@@ -30,7 +27,7 @@ class ExtensionUpdateCompositeService extends ServiceBase {
         if(extensionDefinitionList){
             def extractedExtensionPropertyList = extensionValueExtractionService.extractExtensions(request,extensionDefinitionList)
 
-            //Get a list of resource IDs
+            //We need to extract the GUID from the New or Updated resource in the response
             def resourceId
             JsonNode rootContent = getJSONNodeForContent(responseContent)
             def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(rootContent)
@@ -42,7 +39,7 @@ class ExtensionUpdateCompositeService extends ServiceBase {
             def extractedExtensionPropertyGroupList = extractedExtensionPropertyGroupBuilderService.build(extractedExtensionPropertyList)
             if (extractedExtensionPropertyList){
                 //Need to deal with results
-                updateCompositeService.update(resourceId, extractedExtensionPropertyGroupList)
+                writeCompositeService.write(resourceId, request.getMethod(),extractedExtensionPropertyGroupList)
             }
         }
 
@@ -54,6 +51,5 @@ class ExtensionUpdateCompositeService extends ServiceBase {
         JsonNode rootNode = MAPPER.readTree(responseContent);
         return rootNode
     }
-
 
 }

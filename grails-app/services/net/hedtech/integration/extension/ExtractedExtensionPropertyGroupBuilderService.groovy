@@ -42,7 +42,7 @@ class ExtractedExtensionPropertyGroupBuilderService {
                 ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
                 if (extensionDefinition){
                     if (item.sqlProcessCode == extensionDefinition.sqlProcessCode &&
-                            item.sqlRuleCode == extensionDefinition.sqlReadRuleCode) {
+                            item.sqlRuleCode == extensionDefinition.sqlWriteRuleCode) {
                         extractedExtensionPropertyGroup = item
                         break
                     }
@@ -64,7 +64,7 @@ class ExtractedExtensionPropertyGroupBuilderService {
                 ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
                 extractedExtensionPropertyGroup = new ExtractedExtensionPropertyGroup()
                 extractedExtensionPropertyGroup.sqlProcessCode = extensionDefinition.sqlProcessCode
-                extractedExtensionPropertyGroup.sqlRuleCode = extensionDefinition.sqlReadRuleCode
+                extractedExtensionPropertyGroup.sqlRuleCode = extensionDefinition.sqlWriteRuleCode
                 extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
                 extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(extractedExtensionProperty)
             }
