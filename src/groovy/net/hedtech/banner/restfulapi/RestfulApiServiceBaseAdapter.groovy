@@ -197,7 +197,9 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         // forms that are associated with this resource
         def grantedAuthorities = []
         Holders.config.formControllerMap[params.pluralizedResourceName]?.each { form ->
-            grantedAuthorities.addAll(user.formToRoleMap[form])
+            if (form && user.formToRoleMap[form]) {
+                grantedAuthorities.addAll(user.formToRoleMap[form])
+            }
         }
 
         // determine if read-only or read-write access
