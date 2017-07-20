@@ -31,22 +31,18 @@ class ExtensionValueExtractionService {
                 def jsonPathToValue = buildJsonPathFromPatchPath(buildJsonPatchPath(extensionDefinition))
                 def value
 
+                //Set new property
+                ExtractedExtensionProperty extractedExtensionProperty = new ExtractedExtensionProperty()
+                extractedExtensionProperty.extendedDefinition = extensionDefinition
+
                 try {
                     value = requestReadContext.read(jsonPathToValue)
                 }catch (Exception exc){
                     //Really nothing to do here now...just swallow it and move on (the value) will not be saved
+                    extractedExtensionProperty.valueWasMissing = true
                 }
-
-                //Only add a value if its found in the request
-                if (value)
-                {
-                    ExtractedExtensionProperty extractedExtensionProperty = new ExtractedExtensionProperty()
-                    extractedExtensionProperty.extendedDefinition = extensionDefinition
-                    extractedExtensionProperty.value = value
-
-                    extractedExtensionPropertyList.add(extractedExtensionProperty)
-                }
-
+                extractedExtensionProperty.value = value
+                extractedExtensionPropertyList.add(extractedExtensionProperty)
             }
         }
         return extractedExtensionPropertyList

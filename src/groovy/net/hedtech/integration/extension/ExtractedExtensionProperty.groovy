@@ -12,4 +12,5 @@ class ExtractedExtensionProperty {
 
     ExtensionDefinition extendedDefinition
     def value
+    boolean valueWasMissing = false
 }

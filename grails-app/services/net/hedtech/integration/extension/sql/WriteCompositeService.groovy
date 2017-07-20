@@ -28,9 +28,8 @@ class WriteCompositeService extends ServiceBase {
                 //Get a list of sql statements from GORRSQL, note there can be many
                 def sqlStatements = writeSqlBuilderService.build(extractedExtensionPropertyGroup)
                 if (sqlStatements){
-                    Map parameterMap = extractedExtensionPropertyGroup.buildParameterMap()
                     sqlStatements.each { sqlStatement ->
-                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,httpMethod,parameterMap)
+                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,httpMethod,extractedExtensionPropertyGroup)
                         //Handle results?
                     }
                 }else{
