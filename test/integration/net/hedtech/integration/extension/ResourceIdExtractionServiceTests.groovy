@@ -1,6 +1,3 @@
-/******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
- ******************************************************************************/
 package net.hedtech.integration.extension
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -9,12 +6,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import net.hedtech.banner.testing.BaseIntegrationTestCase
-/**
- * Created by sdorfmei on 5/19/17.
- */
-class ResourceIdListBuilderServiceIntegrationTests extends BaseIntegrationTestCase {
 
-    def resourceIdListBuilderService
+class ResourceIdExtractionServiceTests extends BaseIntegrationTestCase {
+
+    def resourceIdExtractionService
+
 
     @Before
     public void setUp() {
@@ -28,26 +24,31 @@ class ResourceIdListBuilderServiceIntegrationTests extends BaseIntegrationTestCa
         super.tearDown()
     }
 
-     @Test
-     void whenNullExpectNull() {
-         def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(null)
-         assertNull resourceIdList
-
-     }
+    @Test
+    void extractId_whenNullExpectNull() {
+        def resourceId = resourceIdExtractionService.extractIdFromNode(null)
+        assertNull resourceId
+    }
 
     @Test
-    void testOneResourceContent() {
+    void extractList_whenNullExpectNull() {
+        def resourceIdList = resourceIdExtractionService.extractIdListFromNode(null)
+        assertNull resourceIdList
+    }
+
+    @Test
+    void extractId_testOneResourceContent() {
         def oneResource = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
 
         def ObjectMapper MAPPER = new ObjectMapper();
         JsonNode rootNode = MAPPER.readTree(oneResource);
-        def resultList = resourceIdListBuilderService.buildFromContentRoot(rootNode)
-        assertNotNull resultList
-        assertTrue resultList.size == 1
+        def resourceId = resourceIdExtractionService.extractIdFromNode(rootNode)
+        assertNotNull resourceId
+        assertTrue resourceId == '24c47f0a-0eb7-48a3-85a6-2c585691c6ce'
     }
 
     @Test
-    void testManyResourceContent() {
+    void extractList_testManyResourceContent() {
         def arrayOfResources = '''
                 [{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"},
                  {"id": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd"},
@@ -56,13 +57,13 @@ class ResourceIdListBuilderServiceIntegrationTests extends BaseIntegrationTestCa
 
         def ObjectMapper MAPPER = new ObjectMapper();
         JsonNode rootNode = MAPPER.readTree(arrayOfResources);
-        def resultList = resourceIdListBuilderService.buildFromContentRoot(rootNode)
+        def resultList = resourceIdExtractionService.extractIdListFromNode(rootNode)
         assertNotNull resultList
         assertTrue resultList.size == 3
     }
 
     @Test
-    void testManyResourceContentNoIds() {
+    void extractList_testManyResourceContentNoIds() {
         def arrayOfResources = '''
                 [{"fff": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"},
                  {"bbb": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd"},
@@ -71,7 +72,7 @@ class ResourceIdListBuilderServiceIntegrationTests extends BaseIntegrationTestCa
 
         def ObjectMapper MAPPER = new ObjectMapper();
         JsonNode rootNode = MAPPER.readTree(arrayOfResources);
-        def resultList = resourceIdListBuilderService.buildFromContentRoot(rootNode)
+        def resultList = resourceIdExtractionService.extractIdListFromNode(rootNode)
         assertNotNull resultList
         assertTrue resultList.size == 0
     }

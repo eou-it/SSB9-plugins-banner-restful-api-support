@@ -12,7 +12,8 @@ class ExtensionWriteCompositeService extends ServiceBase {
     def writeCompositeService
     def extensionValueExtractionService
     def extractedExtensionPropertyGroupBuilderService
-    def resourceIdListBuilderService
+    def resourceIdExtractionService
+    def responseJsonNodeBuilderService
 
     ExtensionProcessResult write(String resourceName, String extensionCode,
                                   def request, Map requestParms, def responseContent) {
@@ -26,18 +27,11 @@ class ExtensionWriteCompositeService extends ServiceBase {
         def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
             def extractedExtensionPropertyList = extensionValueExtractionService.extractExtensions(request,extensionDefinitionList)
-
-            //We need to extract the GUID from the New or Updated resource in the response
-            def resourceId
-            JsonNode rootContent = getJSONNodeForContent(responseContent)
-            def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(rootContent)
-            if (resourceIdList){
-                resourceId = resourceIdList[0]
-            }
+            def resourceId = getResourceIdFromResponse(responseContent)
 
             //Now group the properties together to save calls
             def extractedExtensionPropertyGroupList = extractedExtensionPropertyGroupBuilderService.build(extractedExtensionPropertyList)
-            if (extractedExtensionPropertyList){
+            if (extractedExtensionPropertyGroupList){
                 //Need to deal with results
                 writeCompositeService.write(resourceId, request.getMethod(),extractedExtensionPropertyGroupList)
             }
@@ -46,10 +40,15 @@ class ExtensionWriteCompositeService extends ServiceBase {
         return extensionProcessResult
     }
 
-    def getJSONNodeForContent(def responseContent){
-        def ObjectMapper MAPPER = new ObjectMapper();
-        JsonNode rootNode = MAPPER.readTree(responseContent);
-        return rootNode
+    /**
+     * Get the ResourceID from the response content
+     * @param responseContent
+     * @return
+     */
+    def getResourceIdFromResponse(def responseContent){
+        //We need to extract the GUID from the New or Updated resource in the response
+        JsonNode rootContent = responseJsonNodeBuilderService.build(responseContent)
+        return resourceIdExtractionService.extractIdFromNode(rootContent)
     }
 
 }

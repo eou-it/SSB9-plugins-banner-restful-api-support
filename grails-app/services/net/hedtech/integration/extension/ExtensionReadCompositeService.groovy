@@ -16,6 +16,7 @@ class ExtensionReadCompositeService extends ServiceBase {
     def readCompositeService
     def resourceIdListBuilderService
     def extensionDefinitionSourceGroupBuilderService
+    def responseJsonNodeBuilderService
 
     /**
      * Read function to apply content extensions
@@ -36,7 +37,9 @@ class ExtensionReadCompositeService extends ServiceBase {
         //to be added to the resource(s) in the response
         def extensionDefinitionList = extensionDefinitionService.findAllByResourceNameAndExtensionCode(resourceName,extensionCode)
         if(extensionDefinitionList){
-            JsonNode rootContent = getJSONNodeForContent(responseContent)
+
+            //Should parse the JSON once if possible to save time
+            JsonNode rootContent = responseJsonNodeBuilderService.build(responseContent)
 
             //Get a list of resource IDs
             def resourceIdList = resourceIdListBuilderService.buildFromContentRoot(rootContent)
@@ -60,12 +63,6 @@ class ExtensionReadCompositeService extends ServiceBase {
             }
         }
         return ethosExtensionResult
-    }
-
-    def getJSONNodeForContent(def responseContent){
-        def ObjectMapper MAPPER = new ObjectMapper();
-        JsonNode rootNode = MAPPER.readTree(responseContent);
-        return rootNode
     }
 
 }
