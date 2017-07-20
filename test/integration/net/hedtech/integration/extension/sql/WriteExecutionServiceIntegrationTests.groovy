@@ -41,17 +41,19 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
 
         def writeSql =
             """begin
-                 update stvmrtl
-                    set stvmrtl_fa_conv_code = :STVMRTL_FA_CONV_CODE,
-                        stvmrtl_edi_equiv = :STVMRTL_EDI_EQUIV,
-                        stvmrtl_version = stvmrtl_version + 1,
-                        stvmrtl_activity_date = SYSDATE
-                  where stvmrtl_surrogate_id = (select gorguid_domain_surrogate_id
-                                                  from gorguid
-                                                 where gorguid_ldm_name = 'marital-status'
-                                                   and gorguid_guid = :GUID);
+                 if (:HTTP_METHOD = 'PUT') then
+                     update stvmrtl
+                        set stvmrtl_fa_conv_code = :STVMRTL_FA_CONV_CODE,
+                            stvmrtl_edi_equiv = :STVMRTL_EDI_EQUIV,
+                            stvmrtl_version = stvmrtl_version + 1,
+                            stvmrtl_activity_date = SYSDATE
+                      where stvmrtl_surrogate_id = (select gorguid_domain_surrogate_id
+                                                      from gorguid
+                                                     where gorguid_ldm_name = 'marital-status'
+                                                       and gorguid_guid = :GUID);
+                  end if;                       
                end;"""
-        writeExecutionService.execute(writeSql, maritalStatusGuidList[0], [STVMRTL_FA_CONV_CODE:'A', STVMRTL_EDI_EQUIV:'B'])
+        writeExecutionService.execute(writeSql, maritalStatusGuidList[0], "PUT",[STVMRTL_FA_CONV_CODE:'A', STVMRTL_EDI_EQUIV:'B'])
 
         def verifyQuery = "select stvmrtl_fa_conv_code, stvmrtl_edi_equiv from stvmrtl where stvmrtl_code = 'S'"
         sqlQuery = sessionFactory.currentSession.createSQLQuery(verifyQuery)
@@ -77,20 +79,22 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
 
         def writeSql =
                 """begin
-                 if :GUID != 'test' then
-                   raise_application_error (-20001,'Missing GUID parameter');
-                 end if;
-                 if :UNSPECIFIED_STRING != dml_common.unspecified_string then
-                   raise_application_error (-20001,'Expected unspecified string '||dml_common.unspecified_string||', but was '||:UNSPECIFIED_STRING);
-                 end if;
-                 if :UNSPECIFIED_NUMBER != dml_common.unspecified_number then
-                   raise_application_error (-20001,'Expected unspecified number '||dml_common.unspecified_number||', but was '||:UNSPECIFIED_NUMBER);
-                 end if;
-                 if :UNSPECIFIED_DATE != dml_common.unspecified_date then
-                   raise_application_error (-20001,'Expected unspecified date '||dml_common.unspecified_date||', but was '||:UNSPECIFIED_DATE);
-                 end if;
+                    if (:HTTP_METHOD = 'PUT') then
+                         if :GUID != 'test' then
+                           raise_application_error (-20001,'Missing GUID parameter');
+                         end if;
+                         if :UNSPECIFIED_STRING != dml_common.unspecified_string then
+                           raise_application_error (-20001,'Expected unspecified string '||dml_common.unspecified_string||', but was '||:UNSPECIFIED_STRING);
+                         end if;
+                         if :UNSPECIFIED_NUMBER != dml_common.unspecified_number then
+                           raise_application_error (-20001,'Expected unspecified number '||dml_common.unspecified_number||', but was '||:UNSPECIFIED_NUMBER);
+                         end if;
+                         if :UNSPECIFIED_DATE != dml_common.unspecified_date then
+                           raise_application_error (-20001,'Expected unspecified date '||dml_common.unspecified_date||', but was '||:UNSPECIFIED_DATE);
+                         end if;
+                     end if;
                end;"""
-        writeExecutionService.execute(writeSql, "test", [
+        writeExecutionService.execute(writeSql, "test", "PUT",[
                 UNSPECIFIED_STRING: BannerSqlConstants.UNSPECIFIED_STRING,
                 UNSPECIFIED_NUMBER: BannerSqlConstants.UNSPECIFIED_NUMBER,
                 UNSPECIFIED_DATE: BannerSqlConstants.UNSPECIFIED_DATE])

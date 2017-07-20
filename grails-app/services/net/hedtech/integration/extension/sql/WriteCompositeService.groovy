@@ -30,7 +30,7 @@ class WriteCompositeService extends ServiceBase {
                 if (sqlStatements){
                     Map parameterMap = extractedExtensionPropertyGroup.buildParameterMap()
                     sqlStatements.each { sqlStatement ->
-                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,parameterMap)
+                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,httpMethod,parameterMap)
                         //Handle results?
                     }
                 }else{

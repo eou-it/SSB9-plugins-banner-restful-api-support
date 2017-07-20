@@ -19,6 +19,9 @@ class WriteExecutionService extends ServiceBase {
     /* Known parameter name for the GUID */
     private static final String SQL_PARAM_GUID = "GUID"
 
+    /* Known parameter name for the HTTP method */
+    private static final String SQL_PARAM_HTTPMETHOD = "HTTP_METHOD"
+
     /**
      * Executes the passed in query SQL give the passed in GUID
      *
@@ -27,12 +30,14 @@ class WriteExecutionService extends ServiceBase {
      * @return
      */
     @Transactional(readOnly=false, propagation=Propagation.REQUIRED)
-    def void execute(String updateSql, def resourceId, Map parameterList){
+    def void execute(String updateSql, def resourceId, def httpMethod, Map parameterList){
         if (log.isDebugEnabled()) log.debug "extension.sqlStatement=${updateSql}"
         if (log.isTraceEnabled()) log.trace "extension.guid=${resourceId}"
 
         def sqlQuery = sessionFactory.currentSession.createSQLQuery(updateSql)
         sqlQuery.setString(SQL_PARAM_GUID, resourceId)
+        sqlQuery.setString(SQL_PARAM_HTTPMETHOD, httpMethod)
+
         parameterList.each { parameter ->
             String parameterName = parameter.key
             def parameterValue = parameter.value
