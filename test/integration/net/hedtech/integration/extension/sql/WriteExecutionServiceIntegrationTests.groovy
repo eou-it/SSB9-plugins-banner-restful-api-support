@@ -29,7 +29,7 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
     public void tearDown() {
         super.tearDown()
     }
-/*
+
     @Test
     void whenValidExpectResults() {
         //Get a GUID by looking at GORGUID and grabbing one (support for every developers GUIDs)
@@ -56,7 +56,34 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
                                                        and gorguid_guid = :GUID);
                   end if;                       
                end;"""
-        writeExecutionService.execute(writeSql, maritalStatusGuidList[0], "PUT",[STVMRTL_FA_CONV_CODE:'A', STVMRTL_EDI_EQUIV:'B'])
+
+
+        ExtractedExtensionPropertyGroup extractedExtensionPropertyGroup = new ExtractedExtensionPropertyGroup()
+
+        ExtractedExtensionProperty faExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty ediExtractedExtensionProperty = new ExtractedExtensionProperty()
+
+
+        ExtensionDefinition faExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition ediExtensionDefinition = new ExtensionDefinition()
+
+        faExtensionDefinition.columnName = "STVMRTL_FA_CONV_CODE"
+        faExtensionDefinition.jsonPropertyType ="S"
+        faExtractedExtensionProperty.value= "A"
+
+        ediExtensionDefinition.columnName = "STVMRTL_EDI_EQUIV"
+        ediExtensionDefinition.jsonPropertyType ="S"
+        ediExtractedExtensionProperty.value ="B"
+
+        faExtractedExtensionProperty.extendedDefinition=faExtensionDefinition
+        ediExtractedExtensionProperty.extendedDefinition=ediExtensionDefinition
+
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(faExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(ediExtractedExtensionProperty)
+
+
+        writeExecutionService.execute(writeSql, maritalStatusGuidList[0], "PUT",extractedExtensionPropertyGroup)
 
         def verifyQuery = "select stvmrtl_fa_conv_code, stvmrtl_edi_equiv from stvmrtl where stvmrtl_code = 'S'"
         sqlQuery = sessionFactory.currentSession.createSQLQuery(verifyQuery)
@@ -130,5 +157,5 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
 
         writeExecutionService.execute(writeSql, "test", "PUT",extractedExtensionPropertyGroup)
     }
-    */
+
 }
