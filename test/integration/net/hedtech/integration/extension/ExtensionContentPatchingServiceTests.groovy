@@ -131,7 +131,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         def oneResource = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
         def extensionProcessReadResults = []
         extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField",
-                "property","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+                "SS","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
 
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","newField":"500"}'''
         def ObjectMapper MAPPER = new ObjectMapper();
@@ -153,9 +153,9 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         def oneResource = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
         def extensionProcessReadResults = []
         extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField",
-                "property","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+                "S","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
         extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField2",
-                "property","99999","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+                "S","99999","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
 
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","newField":"500","newField2":"99999"}'''
         def ObjectMapper MAPPER = new ObjectMapper();
@@ -175,8 +175,8 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         given:
         def twoResources = '''[{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","foo":"bar","cat":"dog"},{"id": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd","foo":"bar","cat":"dog"}]'''
         def extensionProcessReadResults = []
-        extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField","property","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
-        extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField","property","600","26a2673f-9bc6-4649-a3e8-213d0ff4afbd"))
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField","S","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField","S","600","26a2673f-9bc6-4649-a3e8-213d0ff4afbd"))
 
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","foo":"bar","cat":"dog","newField":"500},
                                     "id": "26a2673f-9bc6-4649-a3e8-213d0ff4afbd","foo":"bar","cat":"dog","newField":"600}'''
@@ -201,7 +201,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         def oneResource = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
         def extensionProcessReadResults = []
         extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField",
-                "property","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+                "S","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
 
         String expectedResult = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce","newField":"500"}'''
         def ObjectMapper MAPPER = new ObjectMapper();
@@ -218,13 +218,13 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
 
     private ExtensionProcessReadResult newExtensionProcessReadResult(String p_jsonPath,
                                                                      String p_jsonLabel,
-                                                                     String p_jsonType,
+                                                                     String p_jsonPropertyType,
                                                                      String p_value,
                                                                      String p_resourceId){
         ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
         extensionProcessReadResult.jsonPath = p_jsonPath
         extensionProcessReadResult.jsonLabel= p_jsonLabel
-        extensionProcessReadResult.jsonType = p_jsonType
+        extensionProcessReadResult.jsonPropertyType = p_jsonPropertyType
         extensionProcessReadResult.value = p_value
         extensionProcessReadResult.resourceId = p_resourceId
 

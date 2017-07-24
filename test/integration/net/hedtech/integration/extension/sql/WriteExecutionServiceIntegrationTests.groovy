@@ -4,6 +4,9 @@
 package net.hedtech.integration.extension.sql
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import net.hedtech.integration.extension.ExtensionDefinition
+import net.hedtech.integration.extension.ExtractedExtensionProperty
+import net.hedtech.integration.extension.ExtractedExtensionPropertyGroup
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +29,7 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
     public void tearDown() {
         super.tearDown()
     }
-
+/*
     @Test
     void whenValidExpectResults() {
         //Get a GUID by looking at GORGUID and grabbing one (support for every developers GUIDs)
@@ -94,9 +97,38 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
                          end if;
                      end if;
                end;"""
-        writeExecutionService.execute(writeSql, "test", "PUT",[
-                UNSPECIFIED_STRING: BannerSqlConstants.UNSPECIFIED_STRING,
-                UNSPECIFIED_NUMBER: BannerSqlConstants.UNSPECIFIED_NUMBER,
-                UNSPECIFIED_DATE: BannerSqlConstants.UNSPECIFIED_DATE])
+
+
+        ExtractedExtensionPropertyGroup extractedExtensionPropertyGroup = new ExtractedExtensionPropertyGroup()
+
+        ExtractedExtensionProperty stringExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty numberExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty dateExtractedExtensionProperty = new ExtractedExtensionProperty()
+
+        ExtensionDefinition stringExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition numberExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition dateExtensionDefinition = new ExtensionDefinition()
+
+        stringExtensionDefinition.columnName = "UNSPECIFIED_STRING"
+        stringExtensionDefinition.jsonPropertyType ="S"
+        numberExtensionDefinition.columnName = "UNSPECIFIED_NUMBER"
+        numberExtensionDefinition.jsonPropertyType = "N"
+        dateExtensionDefinition.columnName = "UNSPECIFIED_DATE"
+        dateExtensionDefinition.jsonPropertyType = "D"
+        stringExtractedExtensionProperty.extendedDefinition=stringExtensionDefinition
+        numberExtractedExtensionProperty.extendedDefinition=numberExtensionDefinition
+        dateExtractedExtensionProperty.extendedDefinition=dateExtensionDefinition
+
+        stringExtractedExtensionProperty.valueWasMissing = true
+        numberExtractedExtensionProperty.valueWasMissing = true
+        dateExtractedExtensionProperty.valueWasMissing = true
+
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(stringExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(numberExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(dateExtractedExtensionProperty)
+
+        writeExecutionService.execute(writeSql, "test", "PUT",extractedExtensionPropertyGroup)
     }
+    */
 }

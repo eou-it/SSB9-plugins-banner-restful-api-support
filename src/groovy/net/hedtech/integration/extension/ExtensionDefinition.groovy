@@ -35,9 +35,6 @@ class ExtensionDefinition implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GURAPEX_SEQ_GEN")
     Long id
 
-    @Column(name = "GURAPEX_EXTENSION_TYPE")
-    String extensionType
-
     @Column(name = "GURAPEX_RESOURCE_NAME")
     String resourceName
 
@@ -53,8 +50,8 @@ class ExtensionDefinition implements Serializable {
     @Column(name = "GURAPEX_JSON_LABEL")
     String jsonLabel
 
-    @Column(name = "GURAPEX_JSON_TYPE")
-    String jsonType
+    @Column(name = "GURAPEX_JSON_PROPERTY_TYPE")
+    String jsonPropertyType
 
     @Column(name = "GURAPEX_COLUMN_NAME")
     String columnName

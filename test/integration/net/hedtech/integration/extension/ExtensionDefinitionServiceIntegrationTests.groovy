@@ -50,12 +50,11 @@ class ExtensionDefinitionServiceIntegrationTests extends BaseIntegrationTestCase
 
     private def newExtensionDefinition(ExtensionDefinitionCode extensionDefinitionCode) {
         def extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
                 extensionCode: extensionDefinitionCode.code,
                 resourceName: "abc123",
                 description: "Test data",
                 jsonPath: "/",
-                jsonType: "property",
+                jsonPropertyType: "S",
                 jsonlabel: "abc123",
                 version: 0,
                 jsonLabel: "abc123",

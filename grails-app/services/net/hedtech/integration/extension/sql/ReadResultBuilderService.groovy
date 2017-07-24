@@ -26,20 +26,13 @@ class ReadResultBuilderService extends ServiceBase {
                 extensionDefinitions.each { extensionDefinition->
                     ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
                     extensionProcessReadResult.jsonLabel = extensionDefinition.jsonLabel
-                    extensionProcessReadResult.jsonType = extensionDefinition.jsonType
+                    extensionProcessReadResult.jsonPropertyType = extensionDefinition.jsonPropertyType
                     extensionProcessReadResult.jsonPath = extensionDefinition.jsonPath
 
-                    //Check the jsonType if its a property make sure we have a value from the db
-                    String jsonType = extensionProcessReadResult.jsonType
-                    if (jsonType && jsonType.equalsIgnoreCase("property")){
-                        if (row[extensionDefinition.columnName]){
-                            extensionProcessReadResult.resourceId = row.GUID
-                            extensionProcessReadResult.value = row[extensionDefinition.columnName]
+                    if (row[extensionDefinition.columnName]){
+                        extensionProcessReadResult.resourceId = row.GUID
+                        extensionProcessReadResult.value = row[extensionDefinition.columnName]
 
-                            extensionProcessReadResults.add(extensionProcessReadResult)
-                        }
-                    }else{
-                        //Its not a property (thus no value from the db just add it
                         extensionProcessReadResults.add(extensionProcessReadResult)
                     }
 

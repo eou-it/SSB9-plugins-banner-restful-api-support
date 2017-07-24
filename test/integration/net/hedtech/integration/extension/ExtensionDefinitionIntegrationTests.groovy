@@ -52,12 +52,11 @@ class ExtensionDefinitionIntegrationTests extends BaseIntegrationTestCase {
 
 
         def extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
                 extensionCode: "code123",
                 resourceName: "abc123",
                 description: "Test data",
                 jsonPath: "/",
-                jsonType: "property",
+                jsonPropertyType: "S",
                 jsonlabel: "abc123",
                 columnName: "columnName",
                 version: 0,

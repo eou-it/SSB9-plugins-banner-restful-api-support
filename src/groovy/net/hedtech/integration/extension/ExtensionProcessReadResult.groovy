@@ -11,6 +11,6 @@ class ExtensionProcessReadResult {
     String resourceId
     String jsonLabel
     String jsonPath
-    String jsonType
+    String jsonPropertyType
     String value
 }

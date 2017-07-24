@@ -123,8 +123,16 @@ class ExtensionContentPatchingService {
                 && extensionProcessReadResult.jsonLabel)
         {
             String patchedValue = extensionProcessReadResult.value
-            patch = '[{"op":"add","path": "' + extensionProcessReadResult.jsonPath +
-                    extensionProcessReadResult.jsonLabel + '","value":"' + patchedValue + '"}]';
+
+            //Build a patch for a number if the type is number, else default to a string
+            if (extensionProcessReadResult.jsonPropertyType && extensionProcessReadResult.jsonPropertyType == "N"){
+                patch = '[{"op":"add","path": "' + extensionProcessReadResult.jsonPath +
+                        extensionProcessReadResult.jsonLabel + '","value":' + patchedValue + '}]';
+            }else{
+                patch = '[{"op":"add","path": "' + extensionProcessReadResult.jsonPath +
+                        extensionProcessReadResult.jsonLabel + '","value":"' + patchedValue + '"}]';
+            }
+
 
         }
         return patch

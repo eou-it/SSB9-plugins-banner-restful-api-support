@@ -51,11 +51,11 @@ class WriteExecutionService extends ServiceBase {
         extractedExtensionPropertyList.each { extractedExtensionProperty ->
             ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
             if (extensionDefinition) {
-                def parameterType = "STRING"
+                def parameterType = extensionDefinition.jsonPropertyType
                 def parameterName = extensionDefinition.columnName
                 def parameterValue = extractedExtensionProperty.value
 
-                if (parameterType=="STRING") {
+                if (parameterType=="S") {
                    if (extractedExtensionProperty.valueWasMissing){
                        parameterValue = SQL_UNSPECIFIED_STRING
                        sqlQuery.setCharacter(parameterName, parameterValue)
@@ -63,17 +63,17 @@ class WriteExecutionService extends ServiceBase {
                        sqlQuery.setString(parameterName, parameterValue)
                    }
 
-                } else if (parameterType=="NUMBER") {
+                } else if (parameterType=="N") {
                     if (extractedExtensionProperty.valueWasMissing){
                         parameterValue = SQL_UNSPECIFIED_NUMBER
                     }
                     sqlQuery.setBigDecimal(parameterName, parameterValue)
-                } else if (parameterType=="DATE") {
+                } else if (parameterType=="D") {
                     if (extractedExtensionProperty.valueWasMissing){
                         parameterValue = SQL_UNSPECIFIED_DATE
                     }
                     sqlQuery.setDate(parameterName, parameterValue)
-                } else if (parameterType=="CHAR") {
+                } else if (parameterType=="C") {
                     if (extractedExtensionProperty.valueWasMissing){
                         parameterValue = SQL_UNSPECIFIED_STRING
                     }
