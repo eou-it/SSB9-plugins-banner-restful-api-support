@@ -38,6 +38,27 @@ class ExtensionVersionServiceIntegrationTests extends BaseIntegrationTestCase {
 
     }
 
+    @Test
+    void givenValidCount() {
+        def extensionVersion = newExtensionVersion()
+        save extensionVersion
+
+        def count = extensionVersionService.count()
+        assertNotNull count
+        assertTrue count >= 1
+
+    }
+
+    @Test
+    void givenValidList() {
+        def extensionVersion = newExtensionVersion()
+        save extensionVersion
+
+        def resultList = extensionVersionService.list()
+        assertNotNull resultList
+        assertTrue resultList.size >= 1
+
+    }
 
     private def newExtensionVersion() {
         ExtensionDefinitionCode extensionDefinitionCode = new ExtensionDefinitionCode()

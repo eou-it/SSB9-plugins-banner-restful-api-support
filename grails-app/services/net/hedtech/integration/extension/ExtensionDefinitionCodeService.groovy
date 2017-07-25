@@ -9,27 +9,16 @@ import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.NotFoundException
 
 @Transactional
-class ExtensionVersionService extends ServiceBase {
+class ExtensionDefinitionCodeService extends ServiceBase {
 
     boolean transactional = true
-
-    /**
-     * Find by the resource name and known version
-     * @param resourceName
-     * @param known
-     * @return
-     */
-    def findByResourceNameAndKnownMediaType(String resourceName, String knownMediaType){
-        def extensionVersionResult = ExtensionVersion.fetchByResourceNameAndKnownMediaType(resourceName,knownMediaType)
-        return extensionVersionResult
-    }
 
     /**
      * Returns a count of the resources
      * @return
      */
     def count(){
-        return ExtensionVersion.countAll()
+        return ExtensionDefinitionCode.countAll()
     }
 
     /**
@@ -37,8 +26,9 @@ class ExtensionVersionService extends ServiceBase {
      * @return
      */
     def list(){
-        return ExtensionVersion.fetchAll()
+        return ExtensionDefinitionCode.fetchAll()
     }
+
 
     /**
      * Returns a given resource by id
@@ -46,18 +36,21 @@ class ExtensionVersionService extends ServiceBase {
      * @return
      */
     def getById(def id) {
-        return ExtensionVersion.findById(id)
+        return ExtensionDefinitionCode.findById(id)
     }
 
+    /**
+     * Delete a resource by ID
+     * @param id
+     * @return
+     */
     def delete(def id){
-
-        ExtensionVersion extensionVersion = getById(id)
-        if (extensionVersion){
-            extensionVersion.delete(flush: true, failOnError: true)
+        ExtensionDefinitionCode extensionDefinitionCode = getById(id)
+        if (extensionDefinitionCode){
+            extensionDefinitionCode.delete(flush: true, failOnError: true)
         }else{
-            throw new ApplicationException("extension-versions", new NotFoundException())
+            throw new ApplicationException("extension-codes", new NotFoundException())
         }
-        return extensionVersion
+        return extensionDefinitionCode
     }
-
 }

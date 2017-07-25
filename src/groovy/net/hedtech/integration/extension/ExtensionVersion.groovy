@@ -22,7 +22,11 @@ import javax.persistence.*
         @NamedQuery(name = "ExtensionVersion.fetchByResourceNameAndKnownMediaType",
                 query = """FROM ExtensionVersion a
                               WHERE a.knownMediaType = :knownMediaType
-                                AND a.resourceName = :resourceName""")
+                                AND a.resourceName = :resourceName"""),
+        @NamedQuery(name = "ExtensionVersion.countAll",
+                query = """select count(*) FROM ExtensionVersion a"""),
+        @NamedQuery(name = "ExtensionVersion.fetchAll",
+                query = """FROM ExtensionVersion a""")
 ])
 class ExtensionVersion implements Serializable {
 
@@ -158,6 +162,25 @@ class ExtensionVersion implements Serializable {
                     .setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
         }
         return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
+    }
+
+    static long countAll(){
+        def result
+        ExtensionVersion.withSession { session ->
+            result = session.getNamedQuery('ExtensionVersion.countAll').setCacheMode(CacheMode.IGNORE)
+                    .setCacheable(false).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).uniqueResult()
+        }
+        return result
+    }
+
+    static def fetchAll(){
+        List<ExtensionVersion> extensionVersionList = null
+
+        extensionVersionList = ExtensionVersion.withSession { session ->
+            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchAll').setCacheMode(CacheMode.IGNORE)
+                    .setCacheable(false).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
+        }
+        return extensionVersionList
     }
 
 

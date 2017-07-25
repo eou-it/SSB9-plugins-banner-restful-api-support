@@ -3,6 +3,8 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import org.hibernate.CacheMode
+
 import javax.persistence.*
 
 /**
@@ -11,7 +13,15 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GTVAPEC")
+@NamedQueries(value = [
+        @NamedQuery(name = "ExtensionDefinitionCode.countAll",
+                query = """select count(*) FROM ExtensionDefinitionCode a"""),
+        @NamedQuery(name = "ExtensionDefinitionCode.fetchAll",
+                query = """FROM ExtensionDefinitionCode a""")
+])
 class ExtensionDefinitionCode {
+
+    public static final String EXT_CACHE_NAME = "extensibilityCache";
 
     @Id
     @Column(name = "GTVAPEC_SURROGATE_ID")
@@ -112,4 +122,24 @@ class ExtensionDefinitionCode {
 
     //Read Only fields that should be protected against update
     public static readonlyProperties = []
+
+
+    static long countAll(){
+        def result
+        ExtensionDefinitionCode.withSession { session ->
+            result = session.getNamedQuery('ExtensionDefinitionCode.countAll').setCacheMode(CacheMode.IGNORE)
+                    .setCacheable(false).setCacheRegion(ExtensionDefinitionCode.EXT_CACHE_NAME).uniqueResult()
+        }
+        return result
+    }
+
+    static def fetchAll(){
+        List<ExtensionDefinitionCode> extensionDefinitionCodeList = null
+
+        extensionDefinitionCodeList = ExtensionDefinitionCode.withSession { session ->
+            extensionDefinitionCodeList = session.getNamedQuery('ExtensionDefinitionCode.fetchAll').setCacheMode(CacheMode.IGNORE)
+                    .setCacheable(false).setCacheRegion(ExtensionDefinitionCode.EXT_CACHE_NAME).list()
+        }
+        return extensionDefinitionCodeList
+    }
 }

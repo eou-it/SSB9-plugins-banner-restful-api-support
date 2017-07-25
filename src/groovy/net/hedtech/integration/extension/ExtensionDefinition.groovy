@@ -20,7 +20,11 @@ import javax.persistence.*
         @NamedQuery(name = "ExtensionDefinition.fetchAllByResourceNameAndExtensionCode",
                 query = """FROM ExtensionDefinition a
                               WHERE a.resourceName = :resourceName
-                                AND a.extensionCode = :extensionCode""")
+                                AND a.extensionCode = :extensionCode"""),
+        @NamedQuery(name = "ExtensionDefinition.countAll",
+                        query = """select count(*) FROM ExtensionDefinition a"""),
+        @NamedQuery(name = "ExtensionDefinition.fetchAll",
+                       query = """FROM ExtensionDefinition a""")
 ])
 class ExtensionDefinition implements Serializable {
 
@@ -175,5 +179,24 @@ class ExtensionDefinition implements Serializable {
         return extensionDefinitionList
     }
 
+
+    static long countAll(){
+        def result
+        ExtensionDefinition.withSession { session ->
+            result = session.getNamedQuery('ExtensionDefinition.countAll').setCacheMode(CacheMode.IGNORE)
+                    .setCacheable(false).setCacheRegion(ExtensionDefinition.EXT_CACHE_NAME).uniqueResult()
+        }
+        return result
+    }
+
+    static def fetchAll(){
+        List<ExtensionDefinition> extensionDefinitionList = null
+
+        extensionDefinitionList = ExtensionDefinition.withSession { session ->
+            extensionDefinitionList = session.getNamedQuery('ExtensionDefinition.fetchAll').setCacheMode(CacheMode.IGNORE)
+                    .setCacheable(false).setCacheRegion(ExtensionDefinition.EXT_CACHE_NAME).list()
+        }
+        return extensionDefinitionList
+    }
 
 }
