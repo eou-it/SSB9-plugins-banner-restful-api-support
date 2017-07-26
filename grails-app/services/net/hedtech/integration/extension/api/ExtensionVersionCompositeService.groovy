@@ -7,11 +7,11 @@ import grails.transaction.Transactional
 import net.hedtech.banner.exceptions.NotFoundException
 import net.hedtech.integration.extension.ExtensionVersion
 import net.hedtech.integration.utility.RestfulApiValidationUtility
-import net.hedtech.banner.general.overall.ldm.LdmService
+import net.hedtech.integration.controller.ApiController
 import net.hedtech.banner.exceptions.ApplicationException
 import org.springframework.transaction.annotation.Propagation
 
-class ExtensionVersionCompositeService extends LdmService {
+class ExtensionVersionCompositeService extends ApiController {
 
     boolean transactional = true
 

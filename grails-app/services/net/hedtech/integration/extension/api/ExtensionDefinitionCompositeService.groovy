@@ -9,9 +9,9 @@ import net.hedtech.integration.extension.ExtensionDefinition
 import net.hedtech.integration.utility.RestfulApiValidationUtility
 import org.springframework.transaction.annotation.Propagation
 import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.general.overall.ldm.LdmService
+import net.hedtech.integration.controller.ApiController
 
-class ExtensionDefinitionCompositeService extends LdmService {
+class ExtensionDefinitionCompositeService extends ApiController {
 
     boolean transactional = true
 

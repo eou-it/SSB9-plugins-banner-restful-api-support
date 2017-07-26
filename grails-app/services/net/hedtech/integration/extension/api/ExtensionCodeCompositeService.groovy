@@ -4,15 +4,12 @@
 package net.hedtech.integration.extension.api
 
 import grails.transaction.Transactional
-import net.hedtech.banner.exceptions.NotFoundException
+import net.hedtech.integration.controller.ApiController
 import net.hedtech.integration.extension.ExtensionDefinitionCode
-import net.hedtech.integration.extension.ExtensionVersion
 import net.hedtech.integration.utility.RestfulApiValidationUtility
 import org.springframework.transaction.annotation.Propagation
-import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.general.overall.ldm.LdmService
 
-class ExtensionCodeCompositeService extends LdmService {
+class ExtensionCodeCompositeService extends ApiController {
 
     boolean transactional = true
 
@@ -52,10 +49,7 @@ class ExtensionCodeCompositeService extends LdmService {
      * @param params
      */
     void delete(Map params) {
-        if (!params?.id) {
-            throw new ApplicationException("extension-codes", new NotFoundException())
-        }
-
+        extensionDefinitionCodeService.delete(params?.id)
     }
 
     /**
@@ -79,7 +73,7 @@ class ExtensionCodeCompositeService extends LdmService {
         ExtensionDefinitionCode extensionDefinitionCode = extensionDefinitionCodeService.getById(idInURI)
         if (extensionDefinitionCode){
             bindData(extensionDefinitionCode, content, [:])
-            return extensionDefinitionCodeService.createOrUpdate(extensionDefinitionCode)
+            return extensionDefinitionCodeService.createOrUpdate(content)
         }
     }
 
