@@ -73,7 +73,7 @@ class ExtensionDefinitionCompositeService extends LdmService {
      * @return
      */
     def update(Map content) {
-        String idInURI = content?.id?.trim()?.toLowerCase()
+        String idInURI = content?.id
         ExtensionDefinition extensionDefinition = extensionDefinitionService.getById(idInURI)
         if (extensionDefinition){
             bindData(extensionDefinition, content, [:])
