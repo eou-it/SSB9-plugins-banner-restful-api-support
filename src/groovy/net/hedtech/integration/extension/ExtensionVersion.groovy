@@ -67,6 +67,12 @@ class ExtensionVersion implements Serializable {
     String knownMediaType
 
     /**
+     * COMMENT: A general comment about the version
+     */
+    @Column(name = "GURAPVR_COMMENT")
+    String comment
+
+    /**
      * ACTIVITY DATE: The date that the information for the row was inserted or updated in the GOBINTL table.
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -105,7 +111,7 @@ class ExtensionVersion implements Serializable {
         if (version != that.version) return false
         if (resourceName != that.resourceName) return false
         if (knownMediaType != that.knownMediaType) return false
-
+        if (comment != that.comment) return false
         if (lastModified != that.lastModified) return false
         if (lastModifiedBy != that.lastModifiedBy) return false
         if (dataOrigin != that.dataOrigin) return false
