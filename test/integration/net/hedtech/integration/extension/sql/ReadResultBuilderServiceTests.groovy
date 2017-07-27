@@ -31,7 +31,8 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         def result = readResultBuilderService.buildResults(null,null)
 
         expect:
-        result == null
+        assertNotNull result
+        assertEquals 0, result.size
     }
 
     @Test
@@ -68,8 +69,8 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         def result = readResultBuilderService.buildResults(extensionDefinitions,mockSQLResults)
 
         expect:
-        result != null
-        result.size == 1
+        assertNotNull result
+        assertEquals 1, result.size
     }
 
 
@@ -112,8 +113,8 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         def result = readResultBuilderService.buildResults(extensionDefinitions,mockSQLResults)
 
         expect:
-        result != null
-        result.size == 1
+        assertNotNull result
+        assertEquals 2, result.size
     }
 
 

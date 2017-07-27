@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.flipkart.zjsonpatch.JsonPatch
 
+import java.text.SimpleDateFormat
+
 /**
  * Class that takes in a list of process results and adds them to the content
  */
@@ -122,15 +124,28 @@ class ExtensionContentPatchingService {
                 && extensionProcessReadResult.jsonPath
                 && extensionProcessReadResult.jsonLabel)
         {
-            String patchedValue = extensionProcessReadResult.value
+            def patchedValue = extensionProcessReadResult.value
+            String jsonPathLabel = extensionProcessReadResult.jsonPath +
+                    (extensionProcessReadResult.jsonPath?.endsWith("/") ? "" : "/") +
+                    extensionProcessReadResult.jsonLabel
 
             //Build a patch for a number if the type is number, else default to a string
-            if (extensionProcessReadResult.jsonPropertyType && extensionProcessReadResult.jsonPropertyType == "N"){
-                patch = '[{"op":"add","path": "' + extensionProcessReadResult.jsonPath +
-                        extensionProcessReadResult.jsonLabel + '","value":' + patchedValue + '}]';
+            // - we also check for date and timestamp which will be formatted as a string
+            if (extensionProcessReadResult.jsonPropertyType == "N") {
+                patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":' + patchedValue + '}]';
             }else{
-                patch = '[{"op":"add","path": "' + extensionProcessReadResult.jsonPath +
-                        extensionProcessReadResult.jsonLabel + '","value":"' + patchedValue + '"}]';
+                // check for dates
+                if (extensionProcessReadResult.jsonPropertyType == "D" && patchedValue instanceof Date) {
+                    patchedValue = new SimpleDateFormat("yyyy-MM-dd").format(patchedValue)
+                }
+                // check for timestamps
+                if (extensionProcessReadResult.jsonPropertyType == "T" && patchedValue instanceof Date) {
+                    def dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    dateFormatter.setTimeZone(TimeZone.getTimeZone('UTC'))
+                    patchedValue = dateFormatter.format(patchedValue)+"+00:00"
+                }
+                // default to string formatting
+                patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":"' + patchedValue + '"}]';
             }
 
 

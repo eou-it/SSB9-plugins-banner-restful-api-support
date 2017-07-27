@@ -36,7 +36,8 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         result = extensionValueExtractionService.extractExtensions(null,null)
 
         expect:
-        result == null
+        assertNotNull result
+        assertEquals 0, result.size
 
     }
 
@@ -56,8 +57,9 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         result = extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
 
         expect:
-        result != null
-        result.size == 1
+        assertNotNull result
+        assertEquals 1, result.size
+        assertFalse result[0].valueWasMissing
 
     }
 
@@ -78,8 +80,9 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         result = extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
 
         expect:
-        result != null
-        result.size == 1
+        assertNotNull result
+        assertEquals 1, result.size
+        assertFalse result[0].valueWasMissing
 
     }
 
@@ -99,7 +102,9 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         result = extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
 
         expect:
-        result == null
+        assertNotNull result
+        assertEquals 1, result.size
+        assertTrue result[0].valueWasMissing
 
     }
 
