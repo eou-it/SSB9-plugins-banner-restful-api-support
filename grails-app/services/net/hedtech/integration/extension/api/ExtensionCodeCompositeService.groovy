@@ -8,6 +8,8 @@ import net.hedtech.integration.controller.ApiController
 import net.hedtech.integration.extension.ExtensionDefinitionCode
 import net.hedtech.integration.utility.RestfulApiValidationUtility
 import org.springframework.transaction.annotation.Propagation
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.exceptions.NotFoundException
 
 class ExtensionCodeCompositeService extends ApiController {
 
@@ -15,6 +17,8 @@ class ExtensionCodeCompositeService extends ApiController {
 
     private static final int MAX_DEFAULT = RestfulApiValidationUtility.MAX_DEFAULT
     private static final int MAX_UPPER_LIMIT = RestfulApiValidationUtility.MAX_UPPER_LIMIT
+
+    private static final String RESOURCE_NAME = 'extension-codes'
 
     def extensionDefinitionCodeService
 
@@ -49,7 +53,13 @@ class ExtensionCodeCompositeService extends ApiController {
      * @param params
      */
     void delete(Map params) {
-        extensionDefinitionCodeService.delete(params?.id)
+        ExtensionDefinitionCode extensionDefinitionCode =  extensionDefinitionCodeService.getById(params?.id)
+        if (extensionDefinitionCode){
+            extensionDefinitionCodeService.delete(extensionDefinitionCode.id)
+        }else{
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
+        }
+
     }
 
     /**
@@ -69,12 +79,15 @@ class ExtensionCodeCompositeService extends ApiController {
      * @return
      */
     def update(Map content) {
-        String idInURI = content?.id
-        ExtensionDefinitionCode extensionDefinitionCode = extensionDefinitionCodeService.getById(idInURI)
+        ExtensionDefinitionCode extensionDefinitionCode = extensionDefinitionCodeService.getById(content?.id)
         if (extensionDefinitionCode){
             bindData(extensionDefinitionCode, content, [:])
-            return extensionDefinitionCodeService.createOrUpdate(content)
+            extensionDefinitionCode= extensionDefinitionCodeService.createOrUpdate(content)
+        }else{
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
         }
+
+        return extensionDefinitionCode
     }
 
     /**
@@ -83,7 +96,11 @@ class ExtensionCodeCompositeService extends ApiController {
      * @return
      */
     def get(def id) {
-        return extensionDefinitionCodeService.getById(id)
+        ExtensionDefinitionCode extensionDefinitionCode = extensionDefinitionCodeService.getById(id)
+        if (!extensionDefinitionCode){
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
+        }
+        return extensionDefinitionCode
     }
 
 }

@@ -5,8 +5,6 @@ package net.hedtech.integration.extension
 
 import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
-import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.exceptions.NotFoundException
 
 @Transactional
 class ExtensionDefinitionCodeService extends ServiceBase {
@@ -29,7 +27,6 @@ class ExtensionDefinitionCodeService extends ServiceBase {
         return ExtensionDefinitionCode.fetchAll()
     }
 
-
     /**
      * Returns a given resource by id
      * @param id
@@ -48,8 +45,6 @@ class ExtensionDefinitionCodeService extends ServiceBase {
         ExtensionDefinitionCode extensionDefinitionCode = getById(id)
         if (extensionDefinitionCode){
             extensionDefinitionCode.delete(flush: true, failOnError: true)
-        }else{
-            throw new ApplicationException("extension-codes", new NotFoundException())
         }
         return extensionDefinitionCode
     }

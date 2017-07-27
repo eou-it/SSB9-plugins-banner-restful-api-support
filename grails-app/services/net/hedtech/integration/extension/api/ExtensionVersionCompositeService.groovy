@@ -17,6 +17,7 @@ class ExtensionVersionCompositeService extends ApiController {
 
     private static final int MAX_DEFAULT = RestfulApiValidationUtility.MAX_DEFAULT
     private static final int MAX_UPPER_LIMIT = RestfulApiValidationUtility.MAX_UPPER_LIMIT
+    private static final String RESOURCE_NAME = 'extension-versions'
 
     def extensionVersionService
 
@@ -50,10 +51,12 @@ class ExtensionVersionCompositeService extends ApiController {
      * @param params
      */
     void delete(Map params) {
-        if (!params?.id) {
-            throw new ApplicationException("extension-versions", new NotFoundException())
+        ExtensionVersion extensionVersion = extensionVersionService.getById(params?.id)
+        if (extensionVersion){
+            extensionVersionService.delete(extensionVersion.id)
+        }else{
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
         }
-        extensionVersionService.delete(params?.id)
     }
 
     /**
@@ -73,12 +76,15 @@ class ExtensionVersionCompositeService extends ApiController {
      * @return
      */
     def update(Map content) {
-        String idInURI = content?.id
-        ExtensionVersion extensionVersion = extensionVersionService.getById(idInURI)
+        ExtensionVersion extensionVersion = extensionVersionService.getById(content?.id)
         if (extensionVersion){
             bindData(extensionVersion, content, [:])
-            return extensionVersionService.createOrUpdate(extensionVersion)
+            extensionVersion =  extensionVersionService.createOrUpdate(extensionVersion)
+        }else{
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
         }
+
+        return extensionVersion
     }
 
     /**
@@ -87,6 +93,10 @@ class ExtensionVersionCompositeService extends ApiController {
      * @return
      */
     def get(def id) {
-        return extensionVersionService.getById(id)
+        ExtensionVersion extensionVersion = extensionVersionService.getById(id)
+        if (!extensionVersion){
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
+        }
+        return extensionVersion
     }
 }

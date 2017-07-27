@@ -18,6 +18,8 @@ class ExtensionDefinitionCompositeService extends ApiController {
     private static final int MAX_DEFAULT = RestfulApiValidationUtility.MAX_DEFAULT
     private static final int MAX_UPPER_LIMIT = RestfulApiValidationUtility.MAX_UPPER_LIMIT
 
+    private static final String RESOURCE_NAME = 'extension-definitions'
+
     def extensionDefinitionService
     /**
      * GET LIST
@@ -50,10 +52,13 @@ class ExtensionDefinitionCompositeService extends ApiController {
      * @param params
      */
     void delete(Map params) {
-        if (!params?.id) {
-            throw new ApplicationException("extension-definitions", new NotFoundException())
+        ExtensionDefinition extensionDefinition = extensionDefinitionService.getById(params?.id)
+        if (extensionDefinition) {
+            extensionDefinitionService.delete(extensionDefinition.id)
         }
-        extensionDefinitionService.delete(params?.id)
+        else{
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
+        }
     }
 
     /**
@@ -73,12 +78,14 @@ class ExtensionDefinitionCompositeService extends ApiController {
      * @return
      */
     def update(Map content) {
-        String idInURI = content?.id
-        ExtensionDefinition extensionDefinition = extensionDefinitionService.getById(idInURI)
+        ExtensionDefinition extensionDefinition = extensionDefinitionService.getById(content?.id)
         if (extensionDefinition){
             bindData(extensionDefinition, content, [:])
-            return extensionDefinitionService.createOrUpdate(extensionDefinition)
+            extensionDefinition = extensionDefinitionService.createOrUpdate(extensionDefinition)
+        }else{
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
         }
+        return extensionDefinition
     }
 
     /**
@@ -87,6 +94,10 @@ class ExtensionDefinitionCompositeService extends ApiController {
      * @return
      */
     def get(def id) {
-        return extensionDefinitionService.getById(id)
+        ExtensionDefinition extensionDefinition = extensionDefinitionService.getById(id)
+        if (!extensionDefinition){
+            throw new ApplicationException(RESOURCE_NAME, new NotFoundException())
+        }
+        return extensionDefinition
     }
 }
