@@ -96,7 +96,9 @@ class ExtensionVersion implements Serializable {
                 id=$id,
                 version=$version,
                 resourceName=$resourceName,
+                extensionCode=$extensionCode,
                 knownMediaType=$knownMediaType,
+                comment=$comment,
                 lastModified=$lastModified,
                 lastModifiedBy=$lastModifiedBy,
                 dataOrigin=$dataOrigin"""
@@ -110,6 +112,7 @@ class ExtensionVersion implements Serializable {
         if (id != that.id) return false
         if (version != that.version) return false
         if (resourceName != that.resourceName) return false
+        if (extensionCode != that.extensionCode) return false
         if (knownMediaType != that.knownMediaType) return false
         if (comment != that.comment) return false
         if (lastModified != that.lastModified) return false
@@ -124,7 +127,10 @@ class ExtensionVersion implements Serializable {
         int result
         result = (id != null ? id.hashCode() : 0)
         result = 31 * result + (version != null ? version.hashCode() : 0)
+        result = 31 * result + (resourceName != null ? resourceName.hashCode() : 0)
+        result = 31 * result + (extensionCode != null ? extensionCode.hashCode() : 0)
         result = 31 * result + (knownMediaType != null ? knownMediaType.hashCode() : 0)
+        result = 31 * result + (comment != null ? comment.hashCode() : 0)
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
         result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
@@ -135,6 +141,7 @@ class ExtensionVersion implements Serializable {
 
     static constraints = {
 
+        comment(nullable: true)
         lastModified(nullable: true)
         lastModifiedBy(nullable: true, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 30)
