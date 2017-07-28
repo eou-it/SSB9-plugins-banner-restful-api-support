@@ -57,19 +57,13 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         def extensionDefinition = new ExtensionDefinition(
                 extensionType: "baseline",
                 resourceName: "buildings",
-                resourceCatalog: "abc123",
                 description: "Test data",
                 jsonPath: "/",
-                jsonType: "property",
                 jsonlabel: "maxcapacity",
-                columnName: "SLBBLDG_MAXIMUM_CAPACITY",
-                sqlReadRuleCode: "BUILDINGS_READ",
+                jsonPropertyType: "N",
                 sqlProcessCode: "HEDM_EXTENSIONS",
-                version: 0,
-                jsonLabel: "abc123",
-                lastModified: new Date(),
-                lastModifiedBy: "test",
-                dataOrigin: "Banner"
+                sqlReadRuleCode: "BUILDINGS_READ",
+                columnName: "SLBBLDG_MAXIMUM_CAPACITY"
         )
 
         extensionDefinitions.add(extensionDefinition)

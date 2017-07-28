@@ -39,7 +39,7 @@ class ExtractedExtensionPropertyGroupBuilderService {
         ExtractedExtensionPropertyGroup extractedExtensionPropertyGroup = null
         if (extractedExtensionPropertyGroupList && extractedExtensionProperty){
             for (ExtractedExtensionPropertyGroup item : extractedExtensionPropertyGroupList) {
-                ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
+                ExtensionDefinition extensionDefinition = extractedExtensionProperty.extensionDefinition
                 if (extensionDefinition){
                     if (item.sqlProcessCode == extensionDefinition.sqlProcessCode &&
                             item.sqlRuleCode == extensionDefinition.sqlWriteRuleCode) {
@@ -60,8 +60,8 @@ class ExtractedExtensionPropertyGroupBuilderService {
     private ExtractedExtensionPropertyGroup buildGroup(ExtractedExtensionProperty extractedExtensionProperty){
         ExtractedExtensionPropertyGroup extractedExtensionPropertyGroup = null
         if (extractedExtensionProperty){
-            if (extractedExtensionProperty.extendedDefinition){
-                ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
+            if (extractedExtensionProperty.extensionDefinition){
+                ExtensionDefinition extensionDefinition = extractedExtensionProperty.extensionDefinition
                 extractedExtensionPropertyGroup = new ExtractedExtensionPropertyGroup()
                 extractedExtensionPropertyGroup.sqlProcessCode = extensionDefinition.sqlProcessCode
                 extractedExtensionPropertyGroup.sqlRuleCode = extensionDefinition.sqlWriteRuleCode

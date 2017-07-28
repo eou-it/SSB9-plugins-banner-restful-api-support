@@ -33,7 +33,7 @@ class ExtensionValueExtractionService {
 
                 //Set new property
                 ExtractedExtensionProperty extractedExtensionProperty = new ExtractedExtensionProperty()
-                extractedExtensionProperty.extendedDefinition = extensionDefinition
+                extractedExtensionProperty.extensionDefinition = extensionDefinition
 
                 try {
                     value = requestReadContext.read(jsonPathToValue)

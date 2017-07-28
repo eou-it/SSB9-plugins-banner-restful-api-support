@@ -11,6 +11,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import java.text.SimpleDateFormat
+
 /**
  * WriteExecutionService tests.
  */
@@ -48,8 +50,8 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
                      update stvmrtl
                         set stvmrtl_fa_conv_code = :STVMRTL_FA_CONV_CODE,
                             stvmrtl_edi_equiv = :STVMRTL_EDI_EQUIV,
-                            stvmrtl_version = stvmrtl_version + 1,
-                            stvmrtl_activity_date = SYSDATE
+                            stvmrtl_version = :STVMRTL_VERSION,
+                            stvmrtl_activity_date = nvl(nvl(:STVMRTL_ACTIVITY_DATE,:STVMRTL_ACTIVITY_TIMESTAMP),sysdate)
                       where stvmrtl_surrogate_id = (select gorguid_domain_surrogate_id
                                                       from gorguid
                                                      where gorguid_ldm_name = 'marital-status'
@@ -62,36 +64,62 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
 
         ExtractedExtensionProperty faExtractedExtensionProperty = new ExtractedExtensionProperty()
         ExtractedExtensionProperty ediExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty numberExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty dateExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty timestampExtractedExtensionProperty = new ExtractedExtensionProperty()
 
 
         ExtensionDefinition faExtensionDefinition = new ExtensionDefinition()
         ExtensionDefinition ediExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition numberExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition dateExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition timestampExtensionDefinition = new ExtensionDefinition()
 
         faExtensionDefinition.columnName = "STVMRTL_FA_CONV_CODE"
         faExtensionDefinition.jsonPropertyType ="S"
-        faExtractedExtensionProperty.value= "A"
+        faExtractedExtensionProperty.value = "A"
 
         ediExtensionDefinition.columnName = "STVMRTL_EDI_EQUIV"
         ediExtensionDefinition.jsonPropertyType ="S"
-        ediExtractedExtensionProperty.value ="B"
+        ediExtractedExtensionProperty.value = "B"
 
-        faExtractedExtensionProperty.extendedDefinition=faExtensionDefinition
-        ediExtractedExtensionProperty.extendedDefinition=ediExtensionDefinition
+        numberExtensionDefinition.columnName = "STVMRTL_VERSION"
+        numberExtensionDefinition.jsonPropertyType ="N"
+        numberExtractedExtensionProperty.value = 999999
+
+        dateExtensionDefinition.columnName = "STVMRTL_ACTIVITY_DATE"
+        dateExtensionDefinition.jsonPropertyType ="D"
+        dateExtractedExtensionProperty.value = new SimpleDateFormat("yyyy-MM-dd").parse("2017-06-25")
+
+        timestampExtensionDefinition.columnName = "STVMRTL_ACTIVITY_TIMESTAMP"
+        timestampExtensionDefinition.jsonPropertyType ="T"
+        timestampExtractedExtensionProperty.value = new SimpleDateFormat("yyyy-MM-dd").parse("2016-04-29")
+
+        faExtractedExtensionProperty.extensionDefinition=faExtensionDefinition
+        ediExtractedExtensionProperty.extensionDefinition=ediExtensionDefinition
+        numberExtractedExtensionProperty.extensionDefinition=numberExtensionDefinition
+        dateExtractedExtensionProperty.extensionDefinition=dateExtensionDefinition
+        timestampExtractedExtensionProperty.extensionDefinition=timestampExtensionDefinition
 
         extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
         extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(faExtractedExtensionProperty)
         extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(ediExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(numberExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(dateExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(timestampExtractedExtensionProperty)
 
 
-        writeExecutionService.execute(writeSql, maritalStatusGuidList[0], "PUT",extractedExtensionPropertyGroup)
+        writeExecutionService.execute(writeSql, maritalStatusGuidList[0], "PUT", extractedExtensionPropertyGroup)
 
-        def verifyQuery = "select stvmrtl_fa_conv_code, stvmrtl_edi_equiv from stvmrtl where stvmrtl_code = 'S'"
+        def verifyQuery = "select stvmrtl_fa_conv_code, stvmrtl_edi_equiv, stvmrtl_version, stvmrtl_activity_date from stvmrtl where stvmrtl_code = 'S'"
         sqlQuery = sessionFactory.currentSession.createSQLQuery(verifyQuery)
         def verifyResults = sqlQuery.list()
         assertEquals 1, verifyResults.size()
         verifyResults.each { row ->
             assertEquals 'A', row[0]
             assertEquals 'B', row[1]
+            assertEquals 999999, row[2].toInteger()
+            assertEquals "2017-06-25", new SimpleDateFormat("yyyy-MM-dd").format(row[3])
         }
     }
 
@@ -122,6 +150,9 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
                          if :UNSPECIFIED_DATE != dml_common.unspecified_date then
                            raise_application_error (-20001,'Expected unspecified date '||dml_common.unspecified_date||', but was '||:UNSPECIFIED_DATE);
                          end if;
+                         if :UNSPECIFIED_TIMESTAMP != dml_common.unspecified_date then
+                           raise_application_error (-20001,'Expected unspecified timestamp '||dml_common.unspecified_date||', but was '||:UNSPECIFIED_TIMESTAMP);
+                         end if;
                      end if;
                end;"""
 
@@ -131,10 +162,12 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
         ExtractedExtensionProperty stringExtractedExtensionProperty = new ExtractedExtensionProperty()
         ExtractedExtensionProperty numberExtractedExtensionProperty = new ExtractedExtensionProperty()
         ExtractedExtensionProperty dateExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty timestampExtractedExtensionProperty = new ExtractedExtensionProperty()
 
         ExtensionDefinition stringExtensionDefinition = new ExtensionDefinition()
         ExtensionDefinition numberExtensionDefinition = new ExtensionDefinition()
         ExtensionDefinition dateExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition timestampExtensionDefinition = new ExtensionDefinition()
 
         stringExtensionDefinition.columnName = "UNSPECIFIED_STRING"
         stringExtensionDefinition.jsonPropertyType ="S"
@@ -142,20 +175,25 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
         numberExtensionDefinition.jsonPropertyType = "N"
         dateExtensionDefinition.columnName = "UNSPECIFIED_DATE"
         dateExtensionDefinition.jsonPropertyType = "D"
-        stringExtractedExtensionProperty.extendedDefinition=stringExtensionDefinition
-        numberExtractedExtensionProperty.extendedDefinition=numberExtensionDefinition
-        dateExtractedExtensionProperty.extendedDefinition=dateExtensionDefinition
+        timestampExtensionDefinition.columnName = "UNSPECIFIED_TIMESTAMP"
+        timestampExtensionDefinition.jsonPropertyType = "T"
+        stringExtractedExtensionProperty.extensionDefinition=stringExtensionDefinition
+        numberExtractedExtensionProperty.extensionDefinition=numberExtensionDefinition
+        dateExtractedExtensionProperty.extensionDefinition=dateExtensionDefinition
+        timestampExtractedExtensionProperty.extensionDefinition=timestampExtensionDefinition
 
         stringExtractedExtensionProperty.valueWasMissing = true
         numberExtractedExtensionProperty.valueWasMissing = true
         dateExtractedExtensionProperty.valueWasMissing = true
+        timestampExtractedExtensionProperty.valueWasMissing = true
 
         extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
         extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(stringExtractedExtensionProperty)
         extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(numberExtractedExtensionProperty)
         extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(dateExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(timestampExtractedExtensionProperty)
 
-        writeExecutionService.execute(writeSql, "test", "PUT",extractedExtensionPropertyGroup)
+        writeExecutionService.execute(writeSql, "test", "PUT", extractedExtensionPropertyGroup)
     }
 
 }

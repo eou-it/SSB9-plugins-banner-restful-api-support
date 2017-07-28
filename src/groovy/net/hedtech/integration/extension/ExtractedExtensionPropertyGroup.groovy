@@ -21,7 +21,7 @@ class ExtractedExtensionPropertyGroup {
         if (extractedExtensionPropertyList) {
             resultMap =[:]
             extractedExtensionPropertyList.each { extractedExtensionProperty ->
-                ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
+                ExtensionDefinition extensionDefinition = extractedExtensionProperty.extensionDefinition
                 if (extensionDefinition) {
                     //That select column name should be update
                     resultMap.put(extensionDefinition.columnName,extractedExtensionProperty.value)

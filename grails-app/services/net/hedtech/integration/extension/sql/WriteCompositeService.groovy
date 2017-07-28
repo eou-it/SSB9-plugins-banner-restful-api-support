@@ -29,8 +29,7 @@ class WriteCompositeService extends ServiceBase {
                 def sqlStatements = writeSqlBuilderService.build(extractedExtensionPropertyGroup)
                 if (sqlStatements){
                     sqlStatements.each { sqlStatement ->
-                        def executeResults = writeExecutionService.execute(sqlStatement,resourceId,httpMethod,extractedExtensionPropertyGroup)
-                        //Handle results?
+                        writeExecutionService.execute(sqlStatement,resourceId,httpMethod,extractedExtensionPropertyGroup)
                     }
                 }else{
                     log.warn "There where no SQL Statements to run."

@@ -10,7 +10,7 @@ import net.hedtech.integration.extension.ExtensionDefinition
  */
 class ExtractedExtensionProperty {
 
-    ExtensionDefinition extendedDefinition
+    ExtensionDefinition extensionDefinition
     def value
     boolean valueWasMissing = false
 }

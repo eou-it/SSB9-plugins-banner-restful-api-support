@@ -42,10 +42,9 @@ class WriteExecutionService extends ServiceBase {
         sqlQuery.setString(SQL_PARAM_GUID, resourceId)
         sqlQuery.setString(SQL_PARAM_HTTPMETHOD, httpMethod)
 
-
         def extractedExtensionPropertyList = extractedExtensionPropertyGroup.extractedExtensionPropertyList
         extractedExtensionPropertyList.each { extractedExtensionProperty ->
-            ExtensionDefinition extensionDefinition = extractedExtensionProperty.extendedDefinition
+            ExtensionDefinition extensionDefinition = extractedExtensionProperty.extensionDefinition
             if (extensionDefinition) {
                 def parameterName = extensionDefinition.columnName
                 def jsonPropertyType = extensionDefinition.jsonPropertyType
@@ -74,7 +73,7 @@ class WriteExecutionService extends ServiceBase {
                         }
                         sqlQuery.setBigDecimal(parameterName, parameterValue)
 
-                    } else if (jsonPropertyType == "D") {
+                    } else if (jsonPropertyType in ["D","T"]) {
                         if (extractedExtensionProperty.valueWasMissing) {
                             parameterValue = BannerSqlConstants.UNSPECIFIED_DATE
                         }
