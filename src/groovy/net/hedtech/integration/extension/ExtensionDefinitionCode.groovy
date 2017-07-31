@@ -3,6 +3,8 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import org.hibernate.CacheMode
 
 import javax.persistence.*
@@ -19,6 +21,8 @@ import javax.persistence.*
         @NamedQuery(name = "ExtensionDefinitionCode.fetchAll",
                 query = """FROM ExtensionDefinitionCode a""")
 ])
+@EqualsAndHashCode(includeFields = true)
+@ToString(includeNames = true, includeFields = true)
 class ExtensionDefinitionCode {
 
     public static final String EXT_CACHE_NAME = "extensibilityCache";
@@ -61,56 +65,6 @@ class ExtensionDefinitionCode {
      */
     @Column(name = "GTVAPEC_DATA_ORIGIN")
     String dataOrigin
-
-
-    /**
-     * Return a string represenation
-     * @return
-     */
-    public String toString() {
-        """ExtensionDefinitionCode[
-					code=$code,
-                    description=$description,
-					version=$version,
-					lastModified=$lastModified,
-					lastModifiedBy=$lastModifiedBy,
-					dataOrigin=$dataOrigin"""
-    }
-
-    /**
-     * Equals operator
-     * @param o
-     * @return
-     */
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (!(o instanceof ExtensionDefinitionCode)) return false
-        ExtensionDefinitionCode that = (ExtensionDefinitionCode) o
-        if (code != that.code) return false
-        if (description != that.description) return false
-        if (version != that.version) return false
-        if (lastModified != that.lastModified) return false
-        if (lastModifiedBy != that.lastModifiedBy) return false
-        if (dataOrigin != that.dataOrigin) return false
-
-        return true
-    }
-
-    /**
-     * Return a hash summary of this instance
-     * @return
-     */
-    int hashCode() {
-        int result
-        result = (code != null ? code.hashCode() : 0)
-        result = 31 * result + (description != null ? description.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
-        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
-
-        return result
-    }
 
     static constraints = {
 

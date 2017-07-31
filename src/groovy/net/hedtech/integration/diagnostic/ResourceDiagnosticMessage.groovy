@@ -21,8 +21,8 @@ import javax.persistence.*
 @SqlResultSetMappings(value = [
         @SqlResultSetMapping(name = "ResourceDiagnosticMessage.void")
 ])
-@ToString(includeFields = true, includeNames = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(includeFields = true)
+@ToString(includeNames = true, includeFields = true)
 public class ResourceDiagnosticMessage implements Serializable {
 
     @Id

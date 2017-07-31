@@ -3,6 +3,9 @@
  **********************************************************************************/
 package net.hedtech.integration.extension.sql
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -36,6 +39,8 @@ import org.hibernate.annotations.Type
            ORDER BY a.sequenceNumber
        """)
 ])
+@EqualsAndHashCode(includeFields = true)
+@ToString(includeNames = true, includeFields = true)
 class ApiSqlProcess implements Serializable {
 
     /**
@@ -143,94 +148,6 @@ class ApiSqlProcess implements Serializable {
 
     @Column(name = "GORRSQL_SQRU_CODE", length = 30)
     String sqlRuleCode
-
-    /**
-     * Foreign Key : FKV_GORRSQL_INV_GTVSQPR_CODE
-     */
-   // @ManyToOne
-   // @JoinColumns([
-   //         @JoinColumn(name = "GORRSQL_SQPR_CODE", referencedColumnName = "GTVSQPR_CODE")
-   // ])
-   // EntriesForSqlProcesss entriesForSqlProcess
-
-    /**
-     * Foreign Key : FKV_GORRSQL_INV_GTVSQRU_CODE
-     */
-    //@ManyToOne
-    //@JoinColumns([
-    //        @JoinColumn(name = "GORRSQL_SQRU_CODE", referencedColumnName = "GTVSQRU_CODE")
-    //])
-    //EntriesForSql entriesForSql
-
-
-    public String toString() {
-        """ApiSqlProcess[
-					id=$id,
-					version=$version,
-					sequenceNumber=$sequenceNumber,
-					activeIndicator=$activeIndicator,
-					validatedIndicator=$validatedIndicator,
-					startDate=$startDate,
-					selectFrom=$selectFrom,
-					selectValue=$selectValue,
-					whereClause=$whereClause,
-					endDate=$endDate,
-					parsedSql=$parsedSql,
-					systemRequiredIndicator=$systemRequiredIndicator,
-					lastModified=$lastModified,
-					lastModifiedBy=$lastModifiedBy,
-					dataOrigin=$dataOrigin,
-					sqlProcessCode=$sqlProcessCode,
-					sqlRuleCode=$sqlRuleCode]"""
-    }
-
-
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (!(o instanceof ApiSqlProcess)) return false
-        ApiSqlProcess that = (ApiSqlProcess) o
-        if (id != that.id) return false
-        if (version != that.version) return false
-        if (sequenceNumber != that.sequenceNumber) return false
-        if (activeIndicator != that.activeIndicator) return false
-        if (validatedIndicator != that.validatedIndicator) return false
-        if (startDate != that.startDate) return false
-        if (selectFrom != that.selectFrom) return false
-        if (selectValue != that.selectValue) return false
-        if (whereClause != that.whereClause) return false
-        if (endDate != that.endDate) return false
-        if (parsedSql != that.parsedSql) return false
-        if (systemRequiredIndicator != that.systemRequiredIndicator) return false
-        if (lastModified != that.lastModified) return false
-        if (lastModifiedBy != that.lastModifiedBy) return false
-        if (dataOrigin != that.dataOrigin) return false
-        if (sqlProcessCode != that.sqlProcessCode) return false
-        if (sqlRuleCode != that.sqlRuleCode) return false
-        return true
-    }
-
-
-    int hashCode() {
-        int result
-        result = (id != null ? id.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (sequenceNumber != null ? sequenceNumber.hashCode() : 0)
-        result = 31 * result + (activeIndicator != null ? activeIndicator.hashCode() : 0)
-        result = 31 * result + (validatedIndicator != null ? validatedIndicator.hashCode() : 0)
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0)
-        result = 31 * result + (selectFrom != null ? selectFrom.hashCode() : 0)
-        result = 31 * result + (selectValue != null ? selectValue.hashCode() : 0)
-        result = 31 * result + (whereClause != null ? whereClause.hashCode() : 0)
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0)
-        result = 31 * result + (parsedSql != null ? parsedSql.hashCode() : 0)
-        result = 31 * result + (systemRequiredIndicator != null ? systemRequiredIndicator.hashCode() : 0)
-        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
-        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
-        result = 31 * result + (sqlProcessCode != null ? sqlProcessCode.hashCode() : 0)
-        result = 31 * result + (sqlRuleCode != null ? sqlRuleCode.hashCode() : 0)
-        return result
-    }
 
 
     static constraints = {

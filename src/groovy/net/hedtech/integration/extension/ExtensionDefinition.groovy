@@ -3,6 +3,8 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import org.hibernate.CacheMode
 import org.hibernate.annotations.CacheConcurrencyStrategy
 
@@ -26,6 +28,8 @@ import javax.persistence.*
         @NamedQuery(name = "ExtensionDefinition.fetchAll",
                        query = """FROM ExtensionDefinition a""")
 ])
+@EqualsAndHashCode(includeFields = true)
+@ToString(includeNames = true, includeFields = true)
 class ExtensionDefinition implements Serializable {
 
     public static final String EXT_CACHE_NAME = "extensibilityCache";
@@ -94,60 +98,6 @@ class ExtensionDefinition implements Serializable {
      */
     @Column(name = "GURAPEX_DATA_ORIGIN")
     String dataOrigin
-
-    /**
-     * Return a string represenation
-     * @return
-     */
-    public String toString() {
-        """ExtensionDefinition[
-					id=$id,
-                    resourceName=$resourceName,
-                    extensionCode=$extensionCode,
-                    jsonLabel=$jsonLabel,
-					version=$version,
-					lastModified=$lastModified,
-					lastModifiedBy=$lastModifiedBy,
-					dataOrigin=$dataOrigin"""
-    }
-
-    /**
-     * Equals operator
-     * @param o
-     * @return
-     */
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (!(o instanceof ExtensionDefinition)) return false
-        ExtensionDefinition that = (ExtensionDefinition) o
-        if (id != that.id) return false
-        if (resourceName != that.resourceName) return false
-        if (extensionCode != that.extensionCode) return false
-        if (jsonLabel != that.jsonLabel) return false
-        if (version != that.version) return false
-        if (lastModified != that.lastModified) return false
-        if (lastModifiedBy != that.lastModifiedBy) return false
-        if (dataOrigin != that.dataOrigin) return false
-
-        return true
-    }
-
-    /**
-     * Return a hash summary of this instance
-     * @return
-     */
-    int hashCode() {
-        int result
-        result = (id != null ? id.hashCode() : 0)
-        result = 31 * result + (resourceName != null ? resourceName.hashCode() : 0)
-        result = 31 * result + (extensionCode != null ? extensionCode.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
-        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
-
-        return result
-    }
 
     static constraints = {
         columnName(nullable:true)

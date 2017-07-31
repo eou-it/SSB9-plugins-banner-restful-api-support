@@ -3,6 +3,8 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import org.hibernate.CacheMode
 import org.hibernate.annotations.CacheConcurrencyStrategy
 
@@ -28,6 +30,8 @@ import javax.persistence.*
         @NamedQuery(name = "ExtensionVersion.fetchAll",
                 query = """FROM ExtensionVersion a""")
 ])
+@EqualsAndHashCode(includeFields = true)
+@ToString(includeNames = true, includeFields = true)
 class ExtensionVersion implements Serializable {
 
     public static final String EXT_CACHE_NAME = "extensibilityCache";
@@ -90,53 +94,6 @@ class ExtensionVersion implements Serializable {
      */
     @Column(name = "GURAPVR_DATA_ORIGIN")
     String dataOrigin
-
-    public String toString() {
-        """ExtensionVersion[
-                id=$id,
-                version=$version,
-                resourceName=$resourceName,
-                extensionCode=$extensionCode,
-                knownMediaType=$knownMediaType,
-                comment=$comment,
-                lastModified=$lastModified,
-                lastModifiedBy=$lastModifiedBy,
-                dataOrigin=$dataOrigin"""
-    }
-
-
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (!(o instanceof ExtensionVersion)) return false
-        ExtensionVersion that = (ExtensionVersion) o
-        if (id != that.id) return false
-        if (version != that.version) return false
-        if (resourceName != that.resourceName) return false
-        if (extensionCode != that.extensionCode) return false
-        if (knownMediaType != that.knownMediaType) return false
-        if (comment != that.comment) return false
-        if (lastModified != that.lastModified) return false
-        if (lastModifiedBy != that.lastModifiedBy) return false
-        if (dataOrigin != that.dataOrigin) return false
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result
-        result = (id != null ? id.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (resourceName != null ? resourceName.hashCode() : 0)
-        result = 31 * result + (extensionCode != null ? extensionCode.hashCode() : 0)
-        result = 31 * result + (knownMediaType != null ? knownMediaType.hashCode() : 0)
-        result = 31 * result + (comment != null ? comment.hashCode() : 0)
-        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0)
-        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0)
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
-
-        return result
-    }
 
 
     static constraints = {
