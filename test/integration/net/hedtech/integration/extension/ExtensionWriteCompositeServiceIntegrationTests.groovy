@@ -11,9 +11,9 @@ import org.junit.Test
 /**
  * Created by sdorfmei on 5/18/17.
  */
-class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
+class ExtensionWriteCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
 
-    def extensionReadCompositeService
+    def extensionWriteCompositeService
 
     @Before
     public void setUp() {
@@ -31,9 +31,9 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
     @Test
     void testNoExtensions() {
         def testResourceName = "foo"
-        def testVersion = "application/vnd.hedtech.integration.v6+json"
+        def testEXtensionCode = "ETHOS_API-9.9"
 
-        ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testVersion, null, null, null)
+        ExtensionProcessResult extensionProcessResult = extensionWriteCompositeService.write(testResourceName, testEXtensionCode, null, null, null)
         assertNotNull extensionProcessResult
         assertNull extensionProcessResult.content
         assertFalse extensionProcessResult.extensionsApplied
@@ -43,9 +43,9 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
     @Test
     void testList() {
         def testResourceName = "buildings"
-        def testVersion = "application/vnd.hedtech.integration.v6+json"
+        def testEXtensionCode = "ETHOS_API-9.9"
 
-        ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testVersion, null, null, null)
+        ExtensionProcessResult extensionProcessResult = extensionWriteCompositeService.write(testResourceName, testEXtensionCode, null, null, null)
         assertNotNull extensionProcessResult
         assertNull extensionProcessResult.content
         assertFalse extensionProcessResult.extensionsApplied

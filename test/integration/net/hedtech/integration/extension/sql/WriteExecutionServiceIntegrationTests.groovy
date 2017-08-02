@@ -196,4 +196,69 @@ class WriteExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
         writeExecutionService.execute(writeSql, "test", "PUT", extractedExtensionPropertyGroup)
     }
 
+    @Test
+    void whenPostDateColumn() {
+        //Get a GUID by looking at GORGUID and grabbing one (support for every developers GUIDs)
+        def personGuidList = []
+        def guidQuery = "SELECT * FROM (select gorguid_guid from gorguid where gorguid_ldm_name = 'persons' and exists (select 1 from spbpers where spbpers_pidm = gorguid_domain_key)) gorguid WHERE rownum <= 1 ORDER BY rownum"
+        def sqlQuery = sessionFactory.currentSession.createSQLQuery(guidQuery)
+        def guidResults = sqlQuery.list()
+        assertEquals 1, guidResults.size()
+        guidResults.each { row ->
+            personGuidList.add(row)
+        }
+
+        def writeSql =
+                """begin
+                     if :HTTP_METHOD in ('POST','PUT') then
+                       update spbpers
+                         set spbpers_vetc_file_number = decode(:SPBPERS_VETC_FILE_NUMBER,dml_common.unspecified_string,spbpers_vetc_file_number,:SPBPERS_VETC_FILE_NUMBER),
+                             spbpers_active_duty_sepr_date = decode(:SPBPERS_ACTIVE_DUTY_SEPR_DATE,dml_common.unspecified_date,spbpers_active_duty_sepr_date,:SPBPERS_ACTIVE_DUTY_SEPR_DATE),   
+                             spbpers_version = spbpers_version + 1,
+                             spbpers_activity_date = SYSDATE
+                        where spbpers_pidm = (select spriden_pidm
+                                                from spriden, gorguid
+                                               where gorguid_ldm_name = 'persons'
+                                                 and gorguid_guid = :GUID
+                                                 and gorguid_domain_surrogate_id = spriden_surrogate_id);
+                     end if;
+                   end;"""
+
+
+        ExtractedExtensionPropertyGroup extractedExtensionPropertyGroup = new ExtractedExtensionPropertyGroup()
+
+        ExtractedExtensionProperty stringExtractedExtensionProperty = new ExtractedExtensionProperty()
+        ExtractedExtensionProperty dateExtractedExtensionProperty = new ExtractedExtensionProperty()
+
+        ExtensionDefinition stringExtensionDefinition = new ExtensionDefinition()
+        ExtensionDefinition dateExtensionDefinition = new ExtensionDefinition()
+
+        stringExtensionDefinition.columnName = "SPBPERS_VETC_FILE_NUMBER"
+        stringExtensionDefinition.jsonPropertyType ="S"
+        stringExtractedExtensionProperty.value = "54321"
+
+        dateExtensionDefinition.columnName = "SPBPERS_ACTIVE_DUTY_SEPR_DATE"
+        dateExtensionDefinition.jsonPropertyType ="D"
+        dateExtractedExtensionProperty.value = new SimpleDateFormat("yyyy-MM-dd").parse("2017-06-25")
+
+        stringExtractedExtensionProperty.extensionDefinition=stringExtensionDefinition
+        dateExtractedExtensionProperty.extensionDefinition=dateExtensionDefinition
+
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList = []
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(stringExtractedExtensionProperty)
+        extractedExtensionPropertyGroup.extractedExtensionPropertyList.add(dateExtractedExtensionProperty)
+
+        writeExecutionService.execute(writeSql, personGuidList[0], "POST", extractedExtensionPropertyGroup)
+
+        def verifyQuery = "select spbpers_vetc_file_number, spbpers_active_duty_sepr_date from spbpers where spbpers_pidm = (select gorguid_domain_key from gorguid where gorguid_guid = :GUID and gorguid_ldm_name = 'persons')"
+        sqlQuery = sessionFactory.currentSession.createSQLQuery(verifyQuery)
+        sqlQuery.setString("GUID", personGuidList[0])
+        def verifyResults = sqlQuery.list()
+        assertEquals 1, verifyResults.size()
+        verifyResults.each { row ->
+            assertEquals '54321', row[0]
+            assertEquals "2017-06-25", new SimpleDateFormat("yyyy-MM-dd").format(row[1])
+        }
+    }
+
 }

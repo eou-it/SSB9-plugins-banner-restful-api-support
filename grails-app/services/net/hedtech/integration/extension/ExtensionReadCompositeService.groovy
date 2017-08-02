@@ -21,7 +21,7 @@ class ExtensionReadCompositeService extends ServiceBase {
     /**
      * Read function to apply content extensions
      * @param resourceName
-     * @param catalog
+     * @param extensionCode
      * @param request
      * @param requestParms
      * @param responseContent

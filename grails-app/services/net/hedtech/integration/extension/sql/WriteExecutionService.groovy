@@ -36,6 +36,12 @@ class WriteExecutionService extends ServiceBase {
         if (log.isDebugEnabled()) log.debug "extension.sqlStatement=${writeSql}"
         if (log.isTraceEnabled()) log.trace "extension.guid=${resourceId}"
 
+        //Replace ':=' with '\:=' in the writeSql to avoid this Hibernate error
+        // - org.hibernate.QueryException: Space is not allowed after parameter prefix ':'
+        // - see: https://hibernate.atlassian.net/browse/HHH-2697
+        // - requires patched version of ParameterParser source code (for 3.6.10-Final)
+        writeSql = writeSql.replaceAll(":=", "\\\\:=")
+
         def sqlQuery = sessionFactory.currentSession.createSQLQuery(writeSql)
 
         //Set hard wired / expected parameters
