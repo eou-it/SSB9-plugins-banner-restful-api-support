@@ -51,8 +51,8 @@ class ExtensionVersionIntegrationTests  extends BaseIntegrationTestCase {
         save extensionDefinitionCode
 
         def extensionVersion = new ExtensionVersion(
-                resourceName: "baseline",
                 extensionCode: "code123",
+                resourceName: "baseline",
                 knownMediaType: "test",
                 lastModified: new Date(),
                 lastModifiedBy: "test",

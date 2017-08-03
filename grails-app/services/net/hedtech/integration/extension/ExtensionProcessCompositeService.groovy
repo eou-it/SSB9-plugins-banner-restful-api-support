@@ -36,13 +36,12 @@ class ExtensionProcessCompositeService extends ServiceBase {
         ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
         if (extensionVersion && request){
             if (isWriteMethod(request)){
-                extensionProcessResult = extensionWriteCompositeService.write(resourceName,extensionVersion.extensionCode,
-                        request,requestParms,responseContent)
+                extensionProcessResult = extensionWriteCompositeService.write(resourceName,extensionVersion.extensionCode,request.getMethod(),request,responseContent)
             }
 
             //After the writable operations are done, we need to apply extensions to the response
             if (isWriteMethod(request) || isReadMethod(request)){
-                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,request,requestParms,responseContent)
+                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,responseContent)
             }
         }
 

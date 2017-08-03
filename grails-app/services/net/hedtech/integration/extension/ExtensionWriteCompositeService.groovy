@@ -15,8 +15,15 @@ class ExtensionWriteCompositeService extends ServiceBase {
     def resourceIdExtractionService
     def responseJsonNodeBuilderService
 
-    ExtensionProcessResult write(String resourceName, String extensionCode,
-                                  def request, Map requestParms, def responseContent) {
+    /**
+     * Write function to apply content extensions
+     * @param resourceName
+     * @param extensionCode
+     * @param request
+     * @param responseContent
+     * @return
+     */
+    ExtensionProcessResult write(String resourceName, String extensionCode, String httpMethod, def request, def responseContent) {
 
         //Create a process result and default the content to be the current response
         ExtensionProcessResult extensionProcessResult = new ExtensionProcessResult()
@@ -33,7 +40,7 @@ class ExtensionWriteCompositeService extends ServiceBase {
             def extractedExtensionPropertyGroupList = extractedExtensionPropertyGroupBuilderService.build(extractedExtensionPropertyList)
             if (extractedExtensionPropertyGroupList){
                 //Need to deal with results
-                writeCompositeService.write(resourceId, request.getMethod(),extractedExtensionPropertyGroupList)
+                writeCompositeService.write(resourceId,httpMethod,extractedExtensionPropertyGroupList)
             }
         }
 

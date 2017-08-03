@@ -41,19 +41,13 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         given:
         def extensionDefinitions = []
         def extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
                 extensionCode: "code123",
                 resourceName: "abc123",
                 description: "Test data",
                 jsonPath: "/",
-                jsonType: "property",
-                jsonlabel: "abc123",
-                columnName: "columnName",
-                version: 0,
                 jsonLabel: "abc123",
-                lastModified: new Date(),
-                lastModifiedBy: "test",
-                dataOrigin: "Banner"
+                jsonPropertyType: "S",
+                columnName: "columnName"
         )
         extensionDefinitions.add(extensionDefinition)
 
@@ -80,19 +74,13 @@ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
         given:
         def extensionDefinitions = []
         def extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
                 extensionCode: "code123",
                 resourceName: "abc123",
                 description: "Test data",
                 jsonPath: "/",
-                jsonType: "property",
-                jsonlabel: "abc123",
-                columnName: "columnName",
-                version: 0,
                 jsonLabel: "abc123",
-                lastModified: new Date(),
-                lastModifiedBy: "test",
-                dataOrigin: "Banner"
+                jsonPropertyType: "S",
+                columnName: "columnName"
         )
         extensionDefinitions.add(extensionDefinition)
 

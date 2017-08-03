@@ -31,24 +31,39 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
     @Test
     void testNoExtensions() {
         def testResourceName = "foo"
-        def testVersion = "application/vnd.hedtech.integration.v6+json"
+        def testExtensionCode = "ETHOS_API-9.9"
 
-        ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testVersion, null, null, null)
+        def responseContent = """{"id":"38d4154e-276d-4907-969b-62579cf1b7a6","name":"my test","desc":"my description"}"""
+        def expectedContent = """{"id":"38d4154e-276d-4907-969b-62579cf1b7a6","name":"my test","desc":"my description"}"""
+
+        ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testExtensionCode, responseContent)
         assertNotNull extensionProcessResult
-        assertNull extensionProcessResult.content
+        assertEquals expectedContent, extensionProcessResult.content
         assertFalse extensionProcessResult.extensionsApplied
     }
 
 
     @Test
-    void testList() {
+    void testGetOne() {
         def testResourceName = "buildings"
-        def testVersion = "application/vnd.hedtech.integration.v6+json"
+        def testExtensionCode = "ETHOS_API-9.9"
 
-        ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testVersion, null, null, null)
+        def buildingGuidList = []
+        def guidQuery = "select gorguid_guid from gorguid where gorguid_ldm_name = 'buildings' and gorguid_domain_key = 'TECH'"
+        def sqlQuery = sessionFactory.currentSession.createSQLQuery(guidQuery)
+        def guidResults = sqlQuery.list()
+        assertEquals 1, guidResults.size()
+        guidResults.each { row ->
+            buildingGuidList.add(row)
+        }
+
+        def responseContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall"}"""
+        def expectedContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","capacity":150,"constructionDate":"2013-06-24","landmark":"SMALL RED TREE","roomCount":10}"""
+
+        ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testExtensionCode, responseContent)
         assertNotNull extensionProcessResult
-        assertNull extensionProcessResult.content
-        assertFalse extensionProcessResult.extensionsApplied
+        assertEquals expectedContent, extensionProcessResult.content
+        assertTrue extensionProcessResult.extensionsApplied
     }
 
 }

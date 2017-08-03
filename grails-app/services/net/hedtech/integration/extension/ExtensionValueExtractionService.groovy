@@ -7,6 +7,8 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
 import grails.converters.JSON
 
+import java.text.SimpleDateFormat
+
 class ExtensionValueExtractionService {
 
     /**
@@ -40,6 +42,16 @@ class ExtensionValueExtractionService {
                 }catch (Exception exc){
                     //Really nothing to do here now...just swallow it and move on (the value) will not be saved
                     extractedExtensionProperty.valueWasMissing = true
+                }
+                def jsonPropertyType = extensionDefinition.jsonPropertyType
+                if (jsonPropertyType in ["D","T"] && value instanceof String) {
+                    // must convert date or timestamp string to a real date value
+                    String format = (jsonPropertyType == "D" ? "yyyy-MM-dd" : "yyyy-MM-dd'T'HH:mm:ssX")
+                    def dateFormatter = new SimpleDateFormat(format)
+                    if (jsonPropertyType == "T") {
+                        dateFormatter.setTimeZone(TimeZone.getTimeZone('UTC'))
+                    }
+                    value = dateFormatter.parse(value)
                 }
                 extractedExtensionProperty.value = value
                 extractedExtensionPropertyList.add(extractedExtensionProperty)

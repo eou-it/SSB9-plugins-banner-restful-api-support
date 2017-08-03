@@ -51,7 +51,8 @@ class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         writeCompositeService.write(buildingGuidList[0], "POST", newExtractedExtensionPropertyGroups())
 
         def verifyQuery = '''
-                select sys.anydata.accessVarchar2(g1.gorsdav_value) as HEDM_BLDG_LANDMARK,
+                select slbbldg_maximum_capacity,
+                       sys.anydata.accessVarchar2(g1.gorsdav_value) as HEDM_BLDG_LANDMARK,
                        sys.anydata.accessNumber(g2.gorsdav_value) as HEDM_BLDG_ROOM_COUNT,
                        sys.anydata.accessDate(g3.gorsdav_value) as HEDM_BLDG_CONSTR_DATE
                   from gorguid g, slbbldg s, gorsdav g1, gorsdav g2, gorsdav g3
@@ -72,9 +73,10 @@ class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         def verifyResults = sqlQuery.list()
         assertEquals 1, verifyResults.size()
         verifyResults.each { row ->
-            assertEquals 'McDonalds', row[0]
-            assertEquals 150, row[1].toInteger()
-            assertEquals "2003-06-29", new SimpleDateFormat("yyyy-MM-dd").format(row[2])
+            assertEquals 200, row[0].toInteger()
+            assertEquals 'McDonalds', row[1]
+            assertEquals 150, row[2].toInteger()
+            assertEquals "2003-06-29", new SimpleDateFormat("yyyy-MM-dd").format(row[3])
         }
     }
 
@@ -84,13 +86,28 @@ class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         def extractedExtensionPropertyList = []
 
         def extractedExtensionProperty = new ExtractedExtensionProperty()
-        extractedExtensionProperty.value = "McDonalds"
+        extractedExtensionProperty.value = 200
         extractedExtensionProperty.extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
-                jsonlabel: "landmark",
+                jsonLabel: "capacity",
+                jsonPropertyType: "N",
+                sqlProcessCode: "HEDM_EXTENSIONS",
+                sqlWriteRuleCode: "BUILDINGS_WRITE",
+                columnName: "SLBBLDG_MAXIMUM_CAPACITY"
+        )
+        extractedExtensionPropertyList.add(extractedExtensionProperty)
+
+        extractedExtensionProperty = new ExtractedExtensionProperty()
+        extractedExtensionProperty.value = "McDonalds"
+        extractedExtensionProperty.extensionDefinition = new ExtensionDefinition(
+                extensionCode: "baseline",
+                resourceName: "buildings",
+                description: "Test data",
+                jsonPath: "/",
+                jsonLabel: "landmark",
                 jsonPropertyType: "S",
                 sqlProcessCode: "HEDM_EXTENSIONS",
                 sqlWriteRuleCode: "BUILDINGS_WRITE",
@@ -101,11 +118,11 @@ class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         extractedExtensionProperty = new ExtractedExtensionProperty()
         extractedExtensionProperty.value = 150
         extractedExtensionProperty.extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
-                jsonlabel: "roomCount",
+                jsonLabel: "roomCount",
                 jsonPropertyType: "N",
                 sqlProcessCode: "HEDM_EXTENSIONS",
                 sqlWriteRuleCode: "BUILDINGS_WRITE",
@@ -116,11 +133,11 @@ class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         extractedExtensionProperty = new ExtractedExtensionProperty()
         extractedExtensionProperty.value = new SimpleDateFormat("yyyy-MM-dd").parse("2003-06-29")
         extractedExtensionProperty.extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
-                jsonlabel: "constructionDate",
+                jsonLabel: "constructionDate",
                 jsonPropertyType: "D",
                 sqlProcessCode: "HEDM_EXTENSIONS",
                 sqlWriteRuleCode: "BUILDINGS_WRITE",

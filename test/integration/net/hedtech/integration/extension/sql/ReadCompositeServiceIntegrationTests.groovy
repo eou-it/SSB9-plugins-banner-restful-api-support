@@ -11,6 +11,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import java.text.SimpleDateFormat
+
 /**
  * Created by sdorfmei on 5/16/17.
  */
@@ -101,6 +103,7 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
                 foundCount++
                 assertEquals "D", extensionProcessReadResult.jsonPropertyType
                 assertTrue extensionProcessReadResult.value instanceof Date
+                assertEquals "2013-06-24", new SimpleDateFormat("yyyy-MM-dd").format(extensionProcessReadResult.value)
             }
         }
         assertEquals 4, foundCount
@@ -111,7 +114,7 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         def extensionDefinitions = []
 
         def extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
@@ -131,7 +134,7 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         def extensionDefinitions = []
 
         def extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
@@ -144,7 +147,7 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         extensionDefinitions.add(extensionDefinition)
 
         extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
@@ -157,7 +160,7 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         extensionDefinitions.add(extensionDefinition)
 
         extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",
@@ -170,7 +173,7 @@ class ReadCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
         extensionDefinitions.add(extensionDefinition)
 
         extensionDefinition = new ExtensionDefinition(
-                extensionType: "baseline",
+                extensionCode: "baseline",
                 resourceName: "buildings",
                 description: "Test data",
                 jsonPath: "/",

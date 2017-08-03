@@ -56,14 +56,9 @@ class ExtensionDefinitionIntegrationTests extends BaseIntegrationTestCase {
                 resourceName: "abc123",
                 description: "Test data",
                 jsonPath: "/",
-                jsonPropertyType: "S",
-                jsonlabel: "abc123",
-                columnName: "columnName",
-                version: 0,
                 jsonLabel: "abc123",
-                lastModified: new Date(),
-                lastModifiedBy: "test",
-                dataOrigin: "Banner"
+                jsonPropertyType: "S",
+                columnName: "columnName"
         )
         return extensionDefinition
     }

@@ -56,40 +56,44 @@ class WriteExecutionService extends ServiceBase {
                 def jsonPropertyType = extensionDefinition.jsonPropertyType
                 def parameterValue = extractedExtensionProperty.value
 
-                //If there is a value, set the correct parameter type
-                if (parameterValue instanceof String) {
-                    sqlQuery.setString(parameterName, parameterValue)
-                } else if (parameterValue instanceof Number) {
-                    sqlQuery.setBigDecimal(parameterName, parameterValue)
-                } else if (parameterValue instanceof Date) {
-                    sqlQuery.setDate(parameterName, parameterValue)
-                } else if (parameterValue instanceof Character) {
-                    sqlQuery.setCharacter(parameterName, parameterValue)
-                } else if (parameterValue == null) {
+                // verify parameter name is referenced in the query
+                if (writeSql.contains(":${parameterName?.toUpperCase()}")) {
 
-                    //If there is not a value figure out how to pass an unspecified value
-                    if (jsonPropertyType == "S") {
-                        if (extractedExtensionProperty.valueWasMissing) {
-                            parameterValue = BannerSqlConstants.UNSPECIFIED_STRING
-                        }
-                        sqlQuery.setCharacter(parameterName, parameterValue)
-                    } else if (jsonPropertyType == "N") {
-                        if (extractedExtensionProperty.valueWasMissing) {
-                            parameterValue = BannerSqlConstants.UNSPECIFIED_NUMBER
-                        }
+                    //If there is a value, set the correct parameter type
+                    if (parameterValue instanceof String) {
+                        sqlQuery.setString(parameterName, parameterValue)
+                    } else if (parameterValue instanceof Number) {
                         sqlQuery.setBigDecimal(parameterName, parameterValue)
-
-                    } else if (jsonPropertyType in ["D","T"]) {
-                        if (extractedExtensionProperty.valueWasMissing) {
-                            parameterValue = BannerSqlConstants.UNSPECIFIED_DATE
-                        }
+                    } else if (parameterValue instanceof Date) {
                         sqlQuery.setDate(parameterName, parameterValue)
-                    } else {
-                        //Default to a string
-                        if (extractedExtensionProperty.valueWasMissing) {
-                            parameterValue = BannerSqlConstants.UNSPECIFIED_STRING
-                        }
+                    } else if (parameterValue instanceof Character) {
                         sqlQuery.setCharacter(parameterName, parameterValue)
+                    } else if (parameterValue == null) {
+
+                        //If there is not a value figure out how to pass an unspecified value
+                        if (jsonPropertyType == "S") {
+                            if (extractedExtensionProperty.valueWasMissing) {
+                                parameterValue = BannerSqlConstants.UNSPECIFIED_STRING
+                            }
+                            sqlQuery.setCharacter(parameterName, parameterValue)
+                        } else if (jsonPropertyType == "N") {
+                            if (extractedExtensionProperty.valueWasMissing) {
+                                parameterValue = BannerSqlConstants.UNSPECIFIED_NUMBER
+                            }
+                            sqlQuery.setBigDecimal(parameterName, parameterValue)
+
+                        } else if (jsonPropertyType in ["D","T"]) {
+                            if (extractedExtensionProperty.valueWasMissing) {
+                                parameterValue = BannerSqlConstants.UNSPECIFIED_DATE
+                            }
+                            sqlQuery.setDate(parameterName, parameterValue)
+                        } else {
+                            //Default to a string
+                            if (extractedExtensionProperty.valueWasMissing) {
+                                parameterValue = BannerSqlConstants.UNSPECIFIED_STRING
+                            }
+                            sqlQuery.setCharacter(parameterName, parameterValue)
+                        }
                     }
                 }
             }

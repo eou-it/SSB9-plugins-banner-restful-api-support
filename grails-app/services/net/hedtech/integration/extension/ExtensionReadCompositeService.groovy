@@ -22,12 +22,10 @@ class ExtensionReadCompositeService extends ServiceBase {
      * Read function to apply content extensions
      * @param resourceName
      * @param extensionCode
-     * @param request
-     * @param requestParms
      * @param responseContent
      * @return
      */
-    ExtensionProcessResult read(String resourceName, String extensionCode, def request, Map requestParms, def responseContent) {
+    ExtensionProcessResult read(String resourceName, String extensionCode, def responseContent) {
 
         //Create a process result and default the content to be the current response
         ExtensionProcessResult ethosExtensionResult = new ExtensionProcessResult()
