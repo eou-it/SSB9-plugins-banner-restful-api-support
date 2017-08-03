@@ -9,6 +9,8 @@ import com.flipkart.zjsonpatch.JsonPatch
 
 import java.text.SimpleDateFormat
 
+import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchException
+
 /**
  * Class that takes in a list of process results and adds them to the content
  */
@@ -124,28 +126,51 @@ class ExtensionContentPatchingService {
                 && extensionProcessReadResult.jsonPath
                 && extensionProcessReadResult.jsonLabel)
         {
-            def patchedValue = extensionProcessReadResult.value
+            def value = extensionProcessReadResult.value
+
+            // get the json label and property type for mismatch validation
             String jsonPathLabel = extensionProcessReadResult.jsonPath +
                     (extensionProcessReadResult.jsonPath?.endsWith("/") ? "" : "/") +
                     extensionProcessReadResult.jsonLabel
+            String jsonPropertyType = extensionProcessReadResult.jsonPropertyType
+
+            // validate that the property value matches the defined json property type
+            if (!(jsonPropertyType in ["S","N","D","T"])) {
+                throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
+            } else {
+                if (value != null) {
+                    if (jsonPropertyType == "S" && !(value instanceof String)) {
+                        throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
+                    } else if (jsonPropertyType == "N" && !(value instanceof Number)) {
+                        throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
+                    } else if (jsonPropertyType == "D" && !(value instanceof Date)) {
+                        throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: ExtensionConstants.DATE_FORMAT)
+                    } else if (jsonPropertyType == "T" && !(value instanceof Date)) {
+                        throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: ExtensionConstants.TIMESTAMP_FORMAT)
+                    }
+                }
+            }
 
             //Build a patch for a number if the type is number, else default to a string
             // - we also check for date and timestamp which will be formatted as a string
             if (extensionProcessReadResult.jsonPropertyType == "N") {
-                patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":' + patchedValue + '}]';
+                patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":' + value + '}]';
             }else{
                 // check for dates
-                if (extensionProcessReadResult.jsonPropertyType == "D" && patchedValue instanceof Date) {
-                    patchedValue = new SimpleDateFormat("yyyy-MM-dd").format(patchedValue)
+                if (extensionProcessReadResult.jsonPropertyType == "D" && value instanceof Date) {
+                    def dateFormatter = new SimpleDateFormat(ExtensionConstants.DATE_FORMAT)
+                    dateFormatter.setLenient(false)
+                    value = dateFormatter.format(value)
                 }
                 // check for timestamps
-                if (extensionProcessReadResult.jsonPropertyType == "T" && patchedValue instanceof Date) {
-                    def dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                if (extensionProcessReadResult.jsonPropertyType == "T" && value instanceof Date) {
+                    def dateFormatter = new SimpleDateFormat(ExtensionConstants.TIMESTAMP_FORMAT_WITHOUT_TIMEZONE)
+                    dateFormatter.setLenient(false)
                     dateFormatter.setTimeZone(TimeZone.getTimeZone('UTC'))
-                    patchedValue = dateFormatter.format(patchedValue)+"+00:00"
+                    value = dateFormatter.format(value)+"+00:00"
                 }
                 // default to string formatting
-                patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":"' + patchedValue + '"}]';
+                patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":"' + value + '"}]';
             }
 
 

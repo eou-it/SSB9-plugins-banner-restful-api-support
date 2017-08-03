@@ -10,6 +10,8 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
+import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchException
+
 /**
  * Created by sdorfmei on 7/13/17.
  */
@@ -135,6 +137,28 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
     }
 
     @Test
+    void givenInvalidString(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":123}'''
+
+        def result
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid String"
+
+    }
+
+    @Test
     void givenOneInteger(){
 
         given:
@@ -183,6 +207,28 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
     }
 
     @Test
+    void givenInvalidNumber(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","N")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":"abc"}'''
+
+        def result
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid Number"
+
+    }
+
+    @Test
     void givenOneDate(){
 
         given:
@@ -207,6 +253,26 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
     }
 
     @Test
+    void givenInvalidDate(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","D")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":"01-05-1982"}'''
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd"
+
+    }
+
+    @Test
     void givenOneTimestamp(){
 
         given:
@@ -227,6 +293,48 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         assertFalse result[0].valueWasMissing
         assertTrue result[0].value instanceof Date
         assertEquals "1982-01-05T05:00:00+00:00", formatTimestamp(result[0].value)
+
+    }
+
+    @Test
+    void givenInvalidTimestamp(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","T")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":"1982-01-05T05:00:00"}'''
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX"
+
+    }
+
+    @Test
+    void givenInvalidJsonPropertyType(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","X")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":"abc"}'''
+
+        def result
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property type X is invalid for property /foo"
 
     }
 

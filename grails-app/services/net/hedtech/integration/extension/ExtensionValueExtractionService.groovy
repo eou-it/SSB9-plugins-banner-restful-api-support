@@ -9,6 +9,8 @@ import grails.converters.JSON
 
 import java.text.SimpleDateFormat
 
+import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchException
+
 class ExtensionValueExtractionService {
 
     /**
@@ -43,16 +45,46 @@ class ExtensionValueExtractionService {
                     //Really nothing to do here now...just swallow it and move on (the value) will not be saved
                     extractedExtensionProperty.valueWasMissing = true
                 }
-                def jsonPropertyType = extensionDefinition.jsonPropertyType
+
+                // get the json label and property type for mismatch validation
+                String jsonPathLabel = extensionDefinition.jsonPath +
+                        (extensionDefinition.jsonPath?.endsWith("/") ? "" : "/") +
+                        extensionDefinition.jsonLabel
+                String jsonPropertyType = extensionDefinition.jsonPropertyType
+
+                // must convert date or timestamp string to a real date value
                 if (jsonPropertyType in ["D","T"] && value instanceof String) {
-                    // must convert date or timestamp string to a real date value
-                    String format = (jsonPropertyType == "D" ? "yyyy-MM-dd" : "yyyy-MM-dd'T'HH:mm:ssX")
+                    String format = (jsonPropertyType == "D" ? ExtensionConstants.DATE_FORMAT : ExtensionConstants.TIMESTAMP_FORMAT)
                     def dateFormatter = new SimpleDateFormat(format)
+                    dateFormatter.setLenient(false)
                     if (jsonPropertyType == "T") {
                         dateFormatter.setTimeZone(TimeZone.getTimeZone('UTC'))
                     }
-                    value = dateFormatter.parse(value)
+                    try {
+                        value = dateFormatter.parse(value)
+                    } catch (Throwable t) {
+                        throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: format)
+                    }
                 }
+
+                // validate that the property value matches the defined json property type
+                if (!(jsonPropertyType in ["S","N","D","T"])) {
+                    throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
+                } else {
+                    if (value != null) {
+                        if (jsonPropertyType == "S" && !(value instanceof String)) {
+                            throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
+                        } else if (jsonPropertyType == "N" && !(value instanceof Number)) {
+                            throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
+                        } else if (jsonPropertyType == "D" && !(value instanceof Date)) {
+                            throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: ExtensionConstants.DATE_FORMAT)
+                        } else if (jsonPropertyType == "T" && !(value instanceof Date)) {
+                            throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: ExtensionConstants.TIMESTAMP_FORMAT)
+                        }
+                    }
+                }
+
+                // property value has been validated
                 extractedExtensionProperty.value = value
                 extractedExtensionPropertyList.add(extractedExtensionProperty)
             }

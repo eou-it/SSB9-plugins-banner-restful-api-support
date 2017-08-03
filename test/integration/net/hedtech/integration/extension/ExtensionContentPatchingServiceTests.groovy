@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 
+import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchException
+
 /**
  * Created by sdorfmei on 5/19/17.
  */
@@ -69,9 +71,10 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         given:
         String result
         ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
-        extensionProcessReadResult.jsonLabel = "foo"
-        extensionProcessReadResult.value = "123"
         extensionProcessReadResult.jsonPath = "/path"
+        extensionProcessReadResult.jsonLabel = "foo"
+        extensionProcessReadResult.jsonPropertyType = "S"
+        extensionProcessReadResult.value = "123"
 
         when:
         result = extensionContentPatchingService.buildPatch(extensionProcessReadResult)
@@ -136,7 +139,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
         def extensionProcessReadResults = []
         extensionProcessReadResults.add(newExtensionProcessReadResult("/","newField",
-                "SS","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+                "S","500","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
 
         String expectedResult = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce","newField":"500"}'''
         def ObjectMapper MAPPER = new ObjectMapper();
@@ -283,17 +286,122 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
 
     }
 
-    private ExtensionProcessReadResult newExtensionProcessReadResult(String p_jsonPath,
-                                                                     String p_jsonLabel,
-                                                                     String p_jsonPropertyType,
-                                                                     def p_value,
-                                                                     String p_resourceId){
+    @Test
+    void testInvalidString() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo","S",123,"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid String"
+
+    }
+
+    @Test
+    void testInvalidNumber() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo","N","abc","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid Number"
+
+    }
+
+    @Test
+    void testInvalidDate() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo","D","01-05-1982","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd"
+
+    }
+
+    @Test
+    void testInvalidTimestamp() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo","T","1982-01-05T05:00:00","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX"
+
+    }
+
+    @Test
+    void testInvalidJsonPropertyType() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo","X","abc","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property type X is invalid for property /foo"
+
+    }
+
+    private ExtensionProcessReadResult newExtensionProcessReadResult(String jsonPath,
+                                                                     String jsonLabel,
+                                                                     String jsonPropertyType,
+                                                                     def value,
+                                                                     String resourceId){
         ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
-        extensionProcessReadResult.jsonPath = p_jsonPath
-        extensionProcessReadResult.jsonLabel= p_jsonLabel
-        extensionProcessReadResult.jsonPropertyType = p_jsonPropertyType
-        extensionProcessReadResult.value = p_value
-        extensionProcessReadResult.resourceId = p_resourceId
+        extensionProcessReadResult.jsonPath = jsonPath
+        extensionProcessReadResult.jsonLabel= jsonLabel
+        extensionProcessReadResult.jsonPropertyType = jsonPropertyType
+        extensionProcessReadResult.value = value
+        extensionProcessReadResult.resourceId = resourceId
 
         return extensionProcessReadResult
 
