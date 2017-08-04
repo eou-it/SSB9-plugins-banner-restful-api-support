@@ -82,9 +82,10 @@ public class ParameterParser {
 				inQuote = true;
 				recognizer.other( c );
 			}
-			else if ( '\\' == c ) {
-				// skip sending the backslash and instead send then next character, treating is as a literal
-				recognizer.other( sqlString.charAt( ++indx ) );
+			// special handling for ':=' (the Oracle assignment operator)
+			else if ( c == ':' && indx < stringLength - 1 && sqlString.charAt( indx + 1 ) == '=' ) {
+				// colon character not used for bindings when immediately followed by an equals character
+				recognizer.other( c );
 			}
 			// otherwise
 			else {

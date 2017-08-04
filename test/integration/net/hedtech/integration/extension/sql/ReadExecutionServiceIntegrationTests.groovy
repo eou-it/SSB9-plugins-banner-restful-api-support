@@ -155,7 +155,7 @@ class ReadExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
                                                        p_pk      => lv_pk,
                                                        p_value   => lv_anydata);
                 end;'''
-        updateQuery = updateQuery.replaceAll(":=", "\\\\:=")    // must escape the ':=' with '\:=' to allow for hibernate binding
+        //updateQuery = updateQuery.replaceAll(":=", "\\\\:=")    // must escape the ':=' with '\:=' to allow for hibernate binding
         sqlQuery = sessionFactory.currentSession.createSQLQuery(updateQuery)
         sqlQuery.setString('GUID', buildingGuidList[0])
         sqlQuery.setString('HEDM_BLDG_LANDMARK', "Burger King")
