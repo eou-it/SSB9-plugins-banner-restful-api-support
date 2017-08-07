@@ -31,7 +31,7 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
     @Test
     void testNoExtensions() {
         def testResourceName = "foo"
-        def testExtensionCode = "ETHOS_API-9.9"
+        def testExtensionCode = "ETHOS_API-9.10"
 
         def responseContent = """{"id":"38d4154e-276d-4907-969b-62579cf1b7a6","name":"my test","desc":"my description"}"""
         def expectedContent = """{"id":"38d4154e-276d-4907-969b-62579cf1b7a6","name":"my test","desc":"my description"}"""
@@ -46,7 +46,7 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
     @Test
     void testGetOne() {
         def testResourceName = "buildings"
-        def testExtensionCode = "ETHOS_API-9.9"
+        def testExtensionCode = "ETHOS_API-9.10"
 
         def buildingGuidList = []
         def guidQuery = "select gorguid_guid from gorguid where gorguid_ldm_name = 'buildings' and gorguid_domain_key = 'TECH'"
