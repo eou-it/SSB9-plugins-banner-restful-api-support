@@ -1,3 +1,6 @@
+/******************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ ******************************************************************************/
 package net.hedtech.integration.resource
 
 import net.hedtech.integration.extension.ExtensionVersion
