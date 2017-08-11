@@ -58,7 +58,7 @@ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTest
         }
 
         def responseContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall"}"""
-        def expectedContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","capacity":150,"constructionDate":"2013-06-24","landmark":"SMALL RED TREE","roomCount":10}"""
+        def expectedContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","hedmCapacity":150,"hedmConstructionDate":"2013-06-24","hedmLandmark":"SMALL RED TREE","hedmRoomCount":10}"""
 
         ExtensionProcessResult extensionProcessResult = extensionReadCompositeService.read(testResourceName, testExtensionCode, responseContent)
         assertNotNull extensionProcessResult

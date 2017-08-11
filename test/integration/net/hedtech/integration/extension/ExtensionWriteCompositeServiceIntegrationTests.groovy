@@ -58,7 +58,7 @@ class ExtensionWriteCompositeServiceIntegrationTests  extends BaseIntegrationTes
             buildingGuidList.add(row)
         }
 
-        def responseContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","capacity":750,"constructionDate":"2012-03-25","landmark":"BIG RED TREE","roomCount":500}"""
+        def responseContent = """{"id":""" + "\"${buildingGuidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","hedmCapacity":750,"hedmConstructionDate":"2012-03-25","hedmLandmark":"BIG RED TREE","hedmRoomCount":500}"""
         def expectedContent = responseContent
 
         ExtensionProcessResult extensionProcessResult = extensionWriteCompositeService.write(testResourceName, testExtensionCode, "PUT", responseContent, responseContent)
