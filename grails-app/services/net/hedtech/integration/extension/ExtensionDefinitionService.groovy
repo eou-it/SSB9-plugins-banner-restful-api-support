@@ -50,15 +50,18 @@ class ExtensionDefinitionService extends ServiceBase {
         return ExtensionDefinition.findById(id)
     }
 
+    /**
+     * Delete the resource if it exists
+     * @param id
+     * @return
+     */
     def delete(def id){
-
         ExtensionDefinition extensionDefinition = getById(id)
         if (extensionDefinition){
             extensionDefinition.delete(flush: true, failOnError: true)
         }else{
             throw new ApplicationException("extension-definitions", new NotFoundException())
         }
-        return extensionDefinitionCode
     }
 
 }
