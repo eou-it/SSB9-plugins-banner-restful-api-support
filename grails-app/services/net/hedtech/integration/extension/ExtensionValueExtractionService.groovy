@@ -6,6 +6,8 @@ package net.hedtech.integration.extension
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 import java.text.SimpleDateFormat
 
@@ -68,7 +70,7 @@ class ExtensionValueExtractionService {
                 }
 
                 // validate that the property value matches the defined json property type
-                if (!(jsonPropertyType in ["S","N","D","T"])) {
+                if (!(jsonPropertyType in ["S","N","D","T","J"])) {
                     throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
                 } else {
                     if (value != null) {
@@ -80,8 +82,15 @@ class ExtensionValueExtractionService {
                             throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: ExtensionConstants.DATE_FORMAT)
                         } else if (jsonPropertyType == "T" && !(value instanceof Date)) {
                             throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType, dateFormat: ExtensionConstants.TIMESTAMP_FORMAT)
+                        } else if (jsonPropertyType == "J" && !(value instanceof JSONObject || value instanceof JSONArray)) {
+                            throw new JsonPropertyTypeMismatchException(jsonPathLabel: jsonPathLabel, jsonPropertyType: jsonPropertyType)
                         }
                     }
+                }
+
+                // convert JSON objects to raw JSON text for persistance in the database
+                if (jsonPropertyType == "J") {
+                    value = value.toString()
                 }
 
                 // property value has been validated

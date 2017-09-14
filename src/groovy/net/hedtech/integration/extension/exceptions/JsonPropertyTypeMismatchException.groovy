@@ -20,7 +20,9 @@ public class JsonPropertyTypeMismatchException extends RuntimeException {
         } else if (jsonPropertyType == "N") {
             return MessageHelper.message("jsonPropertyTypeMismatch.number.message", [jsonPathLabel]?.toArray() )
         } else if (jsonPropertyType in ["D","T"]) {
-            return MessageHelper.message("jsonPropertyTypeMismatch.date.message", [jsonPathLabel, dateFormat]?.toArray() )
+            return MessageHelper.message("jsonPropertyTypeMismatch.date.message", [jsonPathLabel, dateFormat]?.toArray())
+        } else if (jsonPropertyType == "J") {
+            return MessageHelper.message("jsonPropertyTypeMismatch.jsontext.message", [jsonPathLabel]?.toArray() )
         } else {
             return MessageHelper.message("jsonPropertyType.invalid.message", [jsonPropertyType, jsonPathLabel]?.toArray())
         }

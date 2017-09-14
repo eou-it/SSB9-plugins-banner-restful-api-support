@@ -317,6 +317,78 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
     }
 
     @Test
+    void givenOneJsonText(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","J")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def jsonText = '''{"name1":"value1"}'''
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":''' + jsonText + '''}'''
+
+        def result
+
+        when:
+        result = extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+
+        expect:
+        assertNotNull result
+        assertEquals 1, result.size
+        assertFalse result[0].valueWasMissing
+        assertTrue result[0].value instanceof String
+        assertEquals jsonText, result[0].value
+
+    }
+
+    @Test
+    void givenArrayOfJsonText(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","J")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def jsonText = '''[{"name1":"value1"},{"name2":"value2"},{"name3":"value3"}]'''
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":''' + jsonText + '''}'''
+
+        def result
+
+        when:
+        result = extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+
+        expect:
+        assertNotNull result
+        assertEquals 1, result.size
+        assertFalse result[0].valueWasMissing
+        assertTrue result[0].value instanceof String
+        assertEquals jsonText, result[0].value
+
+    }
+
+    @Test
+    void givenInvalidJsonText(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","J")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":123}'''
+
+        def result
+
+        when:
+        def errorMessage = shouldFail(JsonPropertyTypeMismatchException) {
+            extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+        }
+
+        expect:
+        assertEquals errorMessage, "Property /foo must be valid JSON text"
+
+    }
+
+    @Test
     void givenInvalidJsonPropertyType(){
 
         given:
