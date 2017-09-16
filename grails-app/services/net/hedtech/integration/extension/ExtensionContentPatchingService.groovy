@@ -154,14 +154,6 @@ class ExtensionContentPatchingService {
             // - allow raw JSON text to be patched as-is (just like a number)
             if (extensionProcessReadResult.jsonPropertyType in ["N","J"]) {
                 patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":' + value + '}]';
-                // validate raw JSON text
-                if (extensionProcessReadResult.jsonPropertyType == "J") {
-                    try {
-                        new ObjectMapper().readTree(value);
-                    } catch (Throwable t) {
-                        throw new JsonExtensibilityParseException(resourceId: extensionProcessReadResult.resourceId, jsonPathLabel: jsonPathLabel, jsonParseError: t.getMessage())
-                    }
-                }
             } else {
                 // check for dates
                 if (extensionProcessReadResult.jsonPropertyType == "D" && value instanceof Date) {
@@ -180,6 +172,14 @@ class ExtensionContentPatchingService {
                 patch = '[{"op":"add","path":"' + jsonPathLabel + '","value":"' + value + '"}]';
             }
 
+            // validate raw JSON text
+            if (extensionProcessReadResult.jsonPropertyType == "J") {
+                try {
+                    new ObjectMapper().readTree(patch);
+                } catch (Throwable t) {
+                    throw new JsonExtensibilityParseException(resourceId: extensionProcessReadResult.resourceId, jsonPathLabel: jsonPathLabel, jsonParseError: t.getMessage())
+                }
+            }
 
         }
         return patch

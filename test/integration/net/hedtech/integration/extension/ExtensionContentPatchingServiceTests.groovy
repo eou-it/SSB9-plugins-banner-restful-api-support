@@ -327,7 +327,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid String"
+        assertEquals "Property /foo must be a valid String", errorMessage
 
     }
 
@@ -348,7 +348,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid Number"
+        assertEquals "Property /foo must be a valid Number", errorMessage
 
     }
 
@@ -369,7 +369,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd"
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd", errorMessage
 
     }
 
@@ -390,7 +390,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX"
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX", errorMessage
 
     }
 
@@ -412,7 +412,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be valid JSON text"
+        assertEquals "Property /foo must be valid JSON text", errorMessage
 
     }
 
@@ -434,7 +434,29 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage.substring(0, 119), "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unrecognized token"
+        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unrecognized token", errorMessage.substring(0, 119)
+
+    }
+
+    @Test
+    void testUnparseableJsonTextMissingLeadingCurlyBrace() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo",
+                "J",'"field1":"abc","field2":123,"nested":{"nested-field":"xyz"}}',"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonExtensibilityParseException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character", errorMessage.substring(0, 121)
 
     }
 
@@ -455,7 +477,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property type X is invalid for property /foo"
+        assertEquals "Property type X is invalid for property /foo", errorMessage
 
     }
 

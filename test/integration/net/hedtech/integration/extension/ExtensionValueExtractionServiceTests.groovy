@@ -154,7 +154,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid String"
+        assertEquals "Property /foo must be a valid String", errorMessage
 
     }
 
@@ -224,7 +224,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid Number"
+        assertEquals "Property /foo must be a valid Number", errorMessage
 
     }
 
@@ -268,7 +268,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd"
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd", errorMessage
 
     }
 
@@ -312,7 +312,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX"
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX", errorMessage
 
     }
 
@@ -384,7 +384,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property /foo must be valid JSON text"
+        assertEquals "Property /foo must be valid JSON text", errorMessage
 
     }
 
@@ -406,7 +406,7 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals errorMessage, "Property type X is invalid for property /foo"
+        assertEquals "Property type X is invalid for property /foo", errorMessage
 
     }
 
