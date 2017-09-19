@@ -10,6 +10,8 @@ import com.flipkart.zjsonpatch.JsonPatch
 import java.text.SimpleDateFormat
 
 import net.hedtech.integration.extension.exceptions.JsonExtensibilityParseException
+import net.hedtech.integration.extension.exceptions.JsonExtensibilityPropertyPatchException
+import net.hedtech.integration.extension.exceptions.JsonExtensibilityArrayPatchException
 import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchException
 
 /**
@@ -79,8 +81,21 @@ class ExtensionContentPatchingService {
         }
         for (ExtensionProcessReadResult extensionProcessReadResult in extensionResultList){
             String patch = buildPatch(extensionProcessReadResult)
-            JsonNode patchNode = MAPPER.readTree(patch)
-            newContent = JsonPatch.apply(patchNode, newContent)
+            try {
+                JsonNode patchNode = MAPPER.readTree(patch)
+                newContent = JsonPatch.apply(patchNode, newContent)
+            } catch (NumberFormatException nfe) {
+                throw new JsonExtensibilityArrayPatchException(
+                        resourceId: extensionProcessReadResult.resourceId,
+                        jsonPathLabel: buildJsonPathLabel(extensionProcessReadResult.jsonPath, extensionProcessReadResult.jsonLabel),
+                        jsonParseError: nfe.getMessage())
+            } catch (Throwable t) {
+                throw new JsonExtensibilityPropertyPatchException(
+                        resourceId: extensionProcessReadResult.resourceId,
+                        jsonPathLabel: buildJsonPathLabel(extensionProcessReadResult.jsonPath, extensionProcessReadResult.jsonLabel),
+                        jsonPropertyType: extensionProcessReadResult.jsonPropertyType,
+                        jsonParseError: t.getMessage())
+            }
         }
         return  MAPPER.writeValueAsString(newContent)
     }

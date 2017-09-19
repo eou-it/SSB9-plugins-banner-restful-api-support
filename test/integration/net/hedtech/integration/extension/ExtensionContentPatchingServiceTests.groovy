@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 import net.hedtech.integration.extension.exceptions.JsonExtensibilityParseException
+import net.hedtech.integration.extension.exceptions.JsonExtensibilityPropertyPatchException
+import net.hedtech.integration.extension.exceptions.JsonExtensibilityArrayPatchException
 import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchException
 
 /**
@@ -434,7 +436,7 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unrecognized token", errorMessage.substring(0, 119)
+        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unrecognized token 'abc': was expecting ('true', 'false' or 'null')", errorMessage.substring(0, 168)
 
     }
 
@@ -456,7 +458,29 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         }
 
         expect:
-        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character", errorMessage.substring(0, 121)
+        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character (':' (code 58)): was expecting comma to separate OBJECT entries", errorMessage.substring(0, 185)
+
+    }
+
+    @Test
+    void testJsonTextInStringField() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","foo",
+                "S",'{"abc":"def"}',"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonExtensibilityPropertyPatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals "Unable to apply JSON patch for property /foo using property type of S with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character ('a' (code 97)): was expecting comma to separate OBJECT entries", errorMessage.substring(0, 215)
 
     }
 
@@ -638,6 +662,28 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
         expect:
         assertNotNull result
         assertEquals expectedResult, result
+
+    }
+
+    @Test
+    void testArrayPath_nestedPaths() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce","list":[{"name1":"value1"},{"name2":"value2"}]}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/list","foo",
+                "S","abc","24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def errorMessage = shouldFail(JsonExtensibilityArrayPatchException) {
+            extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+        }
+
+        expect:
+        assertEquals "Unable to apply JSON patch for array path /list/foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=For input string: \"foo\"", errorMessage
 
     }
 
