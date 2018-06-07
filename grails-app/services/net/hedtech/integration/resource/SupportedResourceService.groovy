@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.resource
 
@@ -69,6 +69,8 @@ public class SupportedResourceService {
                 // initialize the entry for a resource
                 SupportedResource supportedResource = new SupportedResource()
                 supportedResource.name = resourceDetail.name
+
+                // add this entry
                 supportedResources.add(supportedResource)
 
                 // add all representations of the resource that meet our criteria
@@ -78,6 +80,27 @@ public class SupportedResourceService {
                         supportedRepresentation.mediaType = mediaType
                         supportedRepresentation.methods = findSupportedHttpMethods(resourceDetail, mediaType)
                         supportedResource.representations.add(supportedRepresentation)
+
+                        // check for representation metadata
+                        Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
+                        if (representationMetadata != null) {
+
+                            // check for representation metadata: filters
+                            if (representationMetadata.containsKey("filters")) {
+                                supportedRepresentation.filters = representationMetadata.get("filters")
+                            }
+
+                            // check for representation metadata: namedQueries
+                            if (representationMetadata.containsKey("namedQueries")) {
+                                supportedRepresentation.namedQueries = new ArrayList<>()
+                                for (Map.Entry entry : representationMetadata.get("namedQueries").entrySet()) {
+                                    NamedQuery namedQuery = new NamedQuery()
+                                    namedQuery.name = entry.key
+                                    namedQuery.filters = entry.value.get("filters")
+                                    supportedRepresentation.namedQueries.add(namedQuery)
+                                }
+                            }
+                        }
                     }
                 }
             }

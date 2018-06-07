@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2013-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2018 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
 import grails.plugin.springsecurity.SecurityConfigType
@@ -56,6 +56,10 @@ avoidSessionsFor = ['api', 'qapi']
 apiUrlPrefixes = ['qapi', 'api', 'rest', 'ui']
 ssLoginWorkflowIgnoreUri = ['/api/', '/qapi/']
 
+// Force all marshallers to remove null fields and empty collections
+restfulApi.marshallers.removeNullFields = true
+restfulApi.marshallers.removeEmptyCollections = true
+
 restfulApiConfig = {
 
     // Overriding default exception handlers to provide errors in content body.
@@ -84,6 +88,24 @@ restfulApiConfig = {
             marshallers {
             }
             jsonExtractor {}
+            representationMetadata = [
+                    filters: [
+                            "filter1",
+                            "filter2"
+                    ],
+                    namedQueries: [
+                            query1: [
+                                    filters: [
+                                            "query1-filter"
+                                    ]
+                            ],
+                            query2: [
+                                    filters: [
+                                            "query2-filter"
+                                    ]
+                            ]
+                    ]
+            ]
         }
     }
 
@@ -95,6 +117,8 @@ restfulApiConfig = {
             marshallers {
                 jsonBeanMarshaller {
                     supports net.hedtech.integration.resource.SupportedResource
+                }
+                jsonBeanMarshaller {
                     supports net.hedtech.integration.resource.SupportedRepresentation
                     field 'mediaType' name 'X-Media-Type'
                 }
