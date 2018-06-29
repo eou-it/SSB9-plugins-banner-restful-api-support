@@ -1,9 +1,10 @@
 /*******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.integration.extension
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import net.hedtech.restfulapi.apiversioning.BasicApiVersionParser
 import net.hedtech.restfulapi.RepresentationRequestAttributes
 import net.hedtech.restfulapi.config.RepresentationConfig
 import org.junit.After
@@ -427,12 +428,46 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
     }
 
 
-    private MockHttpServletRequest newMockHttpServletRequest(method, mediaType, content) {
+    @Test
+    void testApiVersionInRepresentationConfig() {
+        def resourceName = "buildings"
+        def mediaType = "application/json"
+        def apiVersion = new BasicApiVersionParser().parseMediaType(resourceName, "application/vnd.hedtech.integration.v6+json")
+
+        def guidList = []
+        def guidQuery = "select gorguid_guid from gorguid where gorguid_ldm_name = 'buildings' and gorguid_domain_key = 'TECH'"
+        def sqlQuery = sessionFactory.currentSession.createSQLQuery(guidQuery)
+        def guidResults = sqlQuery.list()
+        assertEquals 1, guidResults.size()
+        guidResults.each { row ->
+            guidList.add(row)
+        }
+
+        //////  Test GET method  //////
+
+        def method = "GET"
+        def requestContent = null
+        def responseContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall"}"""
+        def expectedContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","hedmCapacity":150,"hedmConstructionDate":"2013-06-24","hedmLandmark":"SMALL RED TREE","hedmRoomCount":10}"""
+
+        def request = newMockHttpServletRequest(method, mediaType, requestContent, apiVersion)
+
+        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        assertNotNull extensionProcessResult
+        assertEquals expectedContent, extensionProcessResult.content
+        assertTrue extensionProcessResult.extensionsApplied
+    }
+
+
+    private MockHttpServletRequest newMockHttpServletRequest(method, mediaType, content, apiVersion = null) {
         MockHttpServletRequest request = new MockHttpServletRequest()
         request.setCharacterEncoding("UTF-8")
         request.setMethod(method)
         RepresentationConfig representationConfig = new RepresentationConfig()
         representationConfig.mediaType = mediaType
+        if (apiVersion) {
+            representationConfig.apiVersion = apiVersion
+        }
         request.setAttribute(RepresentationRequestAttributes.RESPONSE_REPRESENTATION, representationConfig)
         if (content) {
             request.setContentType("application/json")
