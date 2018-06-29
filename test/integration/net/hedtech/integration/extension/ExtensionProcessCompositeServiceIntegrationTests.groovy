@@ -4,6 +4,8 @@
 package net.hedtech.integration.extension
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import net.hedtech.restfulapi.RepresentationRequestAttributes
+import net.hedtech.restfulapi.config.RepresentationConfig
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -429,7 +431,9 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
         MockHttpServletRequest request = new MockHttpServletRequest()
         request.setCharacterEncoding("UTF-8")
         request.setMethod(method)
-        request.setAttribute("overwriteMediaTypeHeader", mediaType)
+        RepresentationConfig representationConfig = new RepresentationConfig()
+        representationConfig.mediaType = mediaType
+        request.setAttribute(RepresentationRequestAttributes.RESPONSE_REPRESENTATION, representationConfig)
         if (content) {
             request.setContentType("application/json")
             request.setContent(content.getBytes())

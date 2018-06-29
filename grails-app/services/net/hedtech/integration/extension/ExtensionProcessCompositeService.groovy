@@ -1,10 +1,11 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension
 
 import grails.transaction.Transactional
 import net.hedtech.banner.service.ServiceBase
+import net.hedtech.restfulapi.RepresentationRequestAttributes
 
 /**
  * The main process entry point for Ethos API extensions
@@ -17,8 +18,6 @@ class ExtensionProcessCompositeService extends ServiceBase {
     def extensionVersionService
 
     boolean transactional = true
-
-    private static final String RESPONSE_REPRESENTATION = 'net.hedtech.restfulapi.RestfulApiController.response_representation'
 
     /**
      * Main process function that applies exentions to operations
@@ -57,13 +56,11 @@ class ExtensionProcessCompositeService extends ServiceBase {
     ExtensionVersion findExtensionVersionIfExists(String resourceName, def request){
         ExtensionVersion extensionVersion = null;
 
-        //First see if the overwritten media type is there.
-        //This is ONLY set when application\json is passed in. The API services code puts the REAL latest media
-        //type in this attribute. If it is null, then look at the representation config attached.
-        String responseMediaType = request.getAttribute("overwriteMediaTypeHeader");
-        if (!responseMediaType){
-            def representationConfig = request.getAttribute(RESPONSE_REPRESENTATION)
-            responseMediaType = representationConfig.mediaType
+        //Get the media type from the attached response representation config.
+        def representationConfig = request.getAttribute(RepresentationRequestAttributes.RESPONSE_REPRESENTATION)
+        String responseMediaType = representationConfig?.apiVersion?.mediaType
+        if (!responseMediaType) {
+            responseMediaType = representationConfig?.mediaType
         }
 
         //If a media type was found, then look up to see if there are extensions defined for it.
