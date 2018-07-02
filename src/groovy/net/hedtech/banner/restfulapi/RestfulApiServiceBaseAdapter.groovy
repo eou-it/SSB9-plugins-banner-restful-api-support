@@ -6,6 +6,7 @@ package net.hedtech.banner.restfulapi
 import grails.util.Holders
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
+import net.hedtech.integration.exception.ExceptionCollectorHolder
 import net.hedtech.integration.exception.RowInfoActionableException
 import net.hedtech.restfulapi.RestfulServiceAdapter
 import net.hedtech.restfulapi.UnsupportedMethodException
@@ -36,6 +37,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         def resultSize = null
         try {
             RestfulApiRequestParams.set(params)
+            ExceptionCollectorHolder.init();
             def results = service.list(params)
             if (results instanceof List) resultSize = results.size()
             return results
@@ -46,6 +48,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else throw e
         } finally {
             RestfulApiRequestParams.clear()
+            ExceptionCollectorHolder.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "list", startDate, new Date(), resultSize)
         }
     }
