@@ -3,16 +3,16 @@ Copyright 2013-2017 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 package net.hedtech.banner.restfulapi
 
+import grails.util.Holders
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
+import net.hedtech.integration.exception.ExceptionCollectorHolder
+import net.hedtech.integration.exception.RowInfoActionableException
 import net.hedtech.restfulapi.RestfulServiceAdapter
 import net.hedtech.restfulapi.UnsupportedMethodException
-
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-
-import grails.util.Holders
 
 /**
  * A service adapter implementation for use with the 'restful-api' plugin.
@@ -22,9 +22,8 @@ import grails.util.Holders
  * If this adapter is registered in Spring IoC (e.g., in resources.groovy)
  * it will be used by the RestfulApiController when delegating to services.
  **/
-@Transactional(readOnly = true, propagation = Propagation.SUPPORTS )
+@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
-
 
     /**
      * Returns a list of domain object instances satisfying the params.
@@ -37,21 +36,21 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         def startDate = new Date()
         def resultSize = null
         try {
-            RestfulApiRequestParams.set(params)
+            RestfulApiRequestParams.set(params);
             def results = service.list(params)
             if (results instanceof List) resultSize = results.size()
             return results
-        } catch (ApplicationException ae) {
-            throw ae // we'll let this pass through
-        } catch (e) {
+        }
+        catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            if (nfe) throw new SimpleApplicationException( nfe )
-            else     throw e
+            if (nfe) throw new SimpleApplicationException(nfe)
+            else throw e
         } finally {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "list", startDate, new Date(), resultSize)
         }
     }
+
 
     /**
      * Returns a count of the domain class.
@@ -76,8 +75,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            if (nfe) throw new SimpleApplicationException( nfe )
-            else     throw e
+            if (nfe) throw new SimpleApplicationException(nfe)
+            else throw e
         } finally {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "count", startDate, new Date())
@@ -98,8 +97,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            if (nfe) throw new SimpleApplicationException( nfe )
-            else     throw e
+            if (nfe) throw new SimpleApplicationException(nfe)
+            else throw e
         } finally {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "show", startDate, new Date())
@@ -121,8 +120,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            if (nfe) throw new SimpleApplicationException( nfe )
-            else     throw e
+            if (nfe) throw new SimpleApplicationException(nfe)
+            else throw e
         } finally {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "create", startDate, new Date())
@@ -147,8 +146,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            if (nfe) throw new SimpleApplicationException( nfe )
-            else     throw e
+            if (nfe) throw new SimpleApplicationException(nfe)
+            else throw e
         } finally {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "update", startDate, new Date())
@@ -173,8 +172,8 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             throw ae // we'll let this pass through
         } catch (e) {
             def nfe = ServiceBase.extractNestedNotFoundException(e)
-            if (nfe) throw new SimpleApplicationException( nfe )
-            else     throw e
+            if (nfe) throw new SimpleApplicationException(nfe)
+            else throw e
         } finally {
             RestfulApiRequestParams.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "delete", startDate, new Date())
@@ -217,7 +216,6 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
     }
 }
 
-
 // Exceptions are generally expected to be wrapped within an ApplicationException. However, there are
 // some exceptions that may occur which will not be wrapped as such, and must be handled here.
 // One such exception is MepCodeNotFoundException, which we'll handle here to ensure it is reported
@@ -229,9 +227,9 @@ class SimpleApplicationException extends RuntimeException {
     private e // the wrapped exception
 
     public def returnMap = { localize ->
-              [ message: e?.message, // we won't localized unknown exceptions...
-                errors: null
-              ]
+        [message: e?.message, // we won't localized unknown exceptions...
+         errors : null
+        ]
     }
 
     public SimpleApplicationException(Throwable e) {
@@ -239,11 +237,11 @@ class SimpleApplicationException extends RuntimeException {
         if (e?.class?.name =~ "MepCodeNotFound") {
             this.httpStatusCode = 404
             returnMap = { localize ->
-                          [ message: localize( code: "default.mepcode.not.found.message",
-                                               args: [e?.hasProperty('mepCode') ? e?.mepCode : null ] ),
-                            errors: null
-                          ]
-                        }
+                [message: localize(code: "default.mepcode.not.found.message",
+                        args: [e?.hasProperty('mepCode') ? e?.mepCode : null]),
+                 errors : null
+                ]
+            }
         }
     }
 
