@@ -36,8 +36,7 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         def startDate = new Date()
         def resultSize = null
         try {
-            RestfulApiRequestParams.set(params)
-            ExceptionCollectorHolder.init();
+            RestfulApiRequestParams.set(params);
             def results = service.list(params)
             if (results instanceof List) resultSize = results.size()
             return results
@@ -48,7 +47,6 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
             else throw e
         } finally {
             RestfulApiRequestParams.clear()
-            ExceptionCollectorHolder.clear()
             RestfulApiServiceMetrics.logMetrics(service, params, "list", startDate, new Date(), resultSize)
         }
     }

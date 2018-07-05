@@ -9,8 +9,7 @@ import net.hedtech.restfulapi.Localizer
  * Collects exception that were thrown during a loop
  */
 class ExceptionCollector extends RuntimeException {
-    List<RowInfoActionableException> exceptionList = new ArrayList<>()
-    Localizer localizer
+    private List<RowInfoActionableException> exceptionList = new ArrayList<>()
 
     def add(String resourceName, String guid, String actionableId, Exception exception) {
         RowInfoActionableException rowInfoEx = new RowInfoActionableException()

@@ -7,6 +7,7 @@ import net.hedtech.restfulapi.ErrorResponse
 import net.hedtech.restfulapi.ExceptionHandler
 import net.hedtech.restfulapi.ExceptionHandlerContext
 import org.apache.commons.logging.LogFactory
+import org.springframework.util.Assert
 
 /**
  * Converts RowInfoActionableException into a result object
@@ -24,8 +25,9 @@ class ExceptionCollectorHandler implements ExceptionHandler {
     ErrorResponse handle(Throwable t, ExceptionHandlerContext context) {
         def response = new ErrorResponse()
         response.httpStatusCode = 500
+        Assert.notNull(context )
 
-        def localizer = context.localizer
+        def localizer = context?.localizer
         ExceptionCollector collector = (ExceptionCollector) t
         response.content = []
 
@@ -33,7 +35,8 @@ class ExceptionCollectorHandler implements ExceptionHandler {
 
         collector.exceptionList.each { rowInfo ->
 
-            def msg = localizer.message( code: "default.dataretrieval.error", args: [rowInfo.resourceName, rowInfo.actionableId,rowInfo.wrappedException.localizedMessage] )
+            def msg = localizer.message( code: "default.dataretrieval.error", args: [rowInfo.resourceName, rowInfo.actionableId,rowInfo
+                    .wrappedException?.localizedMessage] )
 
             response.content.add(["id"         : rowInfo.guid,
                                   "sourceId"   : rowInfo.actionableId,
