@@ -3,6 +3,7 @@ Copyright 2013-2017 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 package net.hedtech.integration.exception
 
+import net.hedtech.banner.restfulapi.ApiErrorFactory
 import net.hedtech.restfulapi.ErrorResponse
 import net.hedtech.restfulapi.ExceptionHandler
 import net.hedtech.restfulapi.ExceptionHandlerContext
@@ -38,15 +39,15 @@ class ExceptionCollectorHandler implements ExceptionHandler {
             def msg = localizer.message( code: "default.dataretrieval.error", args: [rowInfo.resourceName, rowInfo.actionableId,rowInfo
                     .wrappedException?.localizedMessage] )
 
-            response.content.add(["id"         : rowInfo.guid,
-                                  "sourceId"   : rowInfo.actionableId,
-                                  "code"       : "General.retrievingData",
-                                  "title"      : "General error retrieving data",
-                                  "description": msg
-            ])
+            response.content.add( ApiErrorFactory.create( ApiErrorFactory.V1_ERROR_TYPE,
+                                    rowInfo.guid,
+                                  rowInfo.actionableId,
+                                  "General.retrievingData",
+                                   "General error retrieving data",
+                                   msg))
         }
 
-
+        response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V1_ERROR_TYPE
         return response
     }
 }
