@@ -20,19 +20,11 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
     @Override
     ErrorResponse handle(Throwable e, ExceptionHandlerContext context) {
         def request = WebUtils.retrieveGrailsWebRequest()
-        def acceptHeaders = request.getHeader(HttpHeaders.ACCEPT)
-        String errorVersion = null;
-
-        if (acceptHeaders && acceptHeaders.size() > 0 && acceptHeaders.contains(ApiErrorFactory.V1_ERROR_TYPE)) {
-
-            errorVersion = ApiErrorFactory.V1_ERROR_TYPE
-        } else {
-            errorVersion = ApiErrorFactory.NO_VERSION_ERROR_TYPE
-        }
+        String errorVersion =  ApiErrorFactory.V2_ERROR_TYPE;
 
 
         def response = super.handle(e, context)
-        List<Map> newContent = []
+        def newContent = null
 
         if (response.content instanceof Map && response.content.errors) {
             //Handle BusinessLogicValidationException
@@ -43,25 +35,25 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
                                 error.containsKey('message')) {
                             if (Holders.config.restfulapi.apiErrorCodes.contains(
                                     error.messageCode)) {
-                                newContent << ApiErrorFactory.create(errorVersion,null, null, error.messageCode,
+                                newContent = ApiErrorFactory.create(errorVersion,null, null, error.messageCode,
                                         error.message.encodeAsHTML(),
                                         error.message.encodeAsHTML())
                             } else {
-                                newContent << ApiErrorFactory.create(errorVersion, null,
+                                newContent = ApiErrorFactory.create(errorVersion, null,
                                         null,
                                         SCHEMA_ERROR,
                                         error.message.encodeAsHTML(),
                                         SCHEMA_MESSAGE)
                             }
                         } else {
-                            newContent << ApiErrorFactory.create(errorVersion, null,
+                            newContent = ApiErrorFactory.create(errorVersion, null,
                                     null,
                                     SCHEMA_ERROR,
                                     error.message.encodeAsHTML(),
                                     SCHEMA_MESSAGE)
                         }
                     } else if (error instanceof String)
-                        newContent << ApiErrorFactory.create(errorVersion, null,
+                        newContent = ApiErrorFactory.create(errorVersion, null,
                                 null,
                                 SCHEMA_ERROR,
                                 error.encodeAsHTML(),
@@ -69,7 +61,7 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
 
                 }
             } else if (response.content.errors instanceof String) {
-                newContent << ApiErrorFactory.create(errorVersion, null,
+                newContent = ApiErrorFactory.create(errorVersion, null,
                         null,
                         SCHEMA_ERROR,
                         response.content.errors.encodeAsHTML(),
@@ -77,7 +69,7 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
 
             } //Some unexpected object found in errors.
             else {
-                newContent << ApiErrorFactory.create(errorVersion, null,
+                newContent = ApiErrorFactory.create(errorVersion, null,
                         null,
                         SCHEMA_ERROR,
                         response.content.errors.toString().encodeAsHTML(),
@@ -86,14 +78,14 @@ class BannerApplicationExceptionHandler extends ApplicationExceptionHandler impl
         } //Default to handle the rest.
         else if (response.hasProperty('message')) {
             if (response.httpStatusCode == 500) {
-                newContent << ApiErrorFactory.create(errorVersion, null,
+                newContent = ApiErrorFactory.create(errorVersion, null,
                         null,
                         INTERNAL_ERROR,
                         response.message.encodeAsHTML(),
                         'Unspecified Error on the system which prevented execution.')
 
             } else {
-                newContent << ApiErrorFactory.create(errorVersion, null,
+                newContent = ApiErrorFactory.create(errorVersion, null,
                         null,
                         SCHEMA_ERROR,
                         response.message.encodeAsHTML(),

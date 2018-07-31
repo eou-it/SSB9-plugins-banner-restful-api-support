@@ -27,11 +27,9 @@ public class BannerGeneralExceptionHandler implements ExceptionHandler {
         Assert.notNull(context)
 
 
-        response.content = []
-
         def msg = t.localizedMessage
 
-        response.content.add(ApiErrorFactory.create(ApiErrorFactory.V1_ERROR_TYPE,
+        response.content=(ApiErrorFactory.create(ApiErrorFactory.V2_ERROR_TYPE,
                 null,
                 null,
                 "General.error",
@@ -39,7 +37,7 @@ public class BannerGeneralExceptionHandler implements ExceptionHandler {
                 t.localizedMessage))
 
 
-        response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V1_ERROR_TYPE
+        response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V2_ERROR_TYPE
         return response
     }
 

@@ -3,47 +3,29 @@
  ****************************************************************************** */
 package net.hedtech.banner.restfulapi
 
+import org.codehaus.groovy.grails.web.util.WebUtils
+
 /**
  * Creates error objects that support V1
  */
 class ApiErrorFactory {
 
-    static String V1_ERROR_TYPE = "application/vnd.hedtech.integration.errors.v1+json"
-    static String NO_VERSION_ERROR_TYPE = ""
-    static String HEADER_RESPONSE_TYPE="X-Error-Media-Format"
+    static String V2_ERROR_TYPE = "application/vnd.hedtech.integration.errors.v2+json"
+    static String HEADER_RESPONSE_TYPE="X-Media-Type"
 
-    static def create(String version, String id, String sourceId, String code, String title, String description) {
+    static def create(String version, String id, String sourceId, String code, String description, String message) {
+        //forces use of error header
+        def request = WebUtils.retrieveGrailsWebRequest()?.removeAttribute("overwriteMediaTypeHeader",0)
 
-        if (version?.equals(V1_ERROR_TYPE)) {
-            return createV1(id, sourceId, code, title, description)
-        }
-        if(version?.equals(NO_VERSION_ERROR_TYPE))
+
+        if(version?.equals(V2_ERROR_TYPE))
         {
-            return createNoVersion(id, sourceId, code, title, description)
+            return createVersion2(id, sourceId, code, description, message)
         }
-
     }
 
-    static def createNoVersion(String id, String sourceId, String code, String title, String description) {
+    static def createVersion2(String id, String sourceId, String code, String description, String message) {
         def error = [:]
-
-
-        if (code) {
-            error['code'] = code
-        }
-        if (title) {
-            error['message'] = title
-        }
-        if (description) {
-            error['description'] = description
-        }
-        return error
-    }
-
-
-    static def createV1(String id, String sourceId, String code, String title, String description) {
-        def error = [:]
-
 
         if (id) {
             error['id'] = id;
@@ -54,13 +36,14 @@ class ApiErrorFactory {
         if (code) {
             error['code'] = code
         }
-        if (title) {
-            error['title'] = title
-        }
         if (description) {
             error['description'] = description
         }
-        return error
+        if (message) {
+            error['message'] = message
+        }
+
+        return [ "errors": [ error ]]
     }
 
 }

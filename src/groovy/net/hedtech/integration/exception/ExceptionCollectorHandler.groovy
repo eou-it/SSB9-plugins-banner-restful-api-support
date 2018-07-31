@@ -30,7 +30,7 @@ class ExceptionCollectorHandler implements ExceptionHandler {
 
         def localizer = context?.localizer
         ExceptionCollector collector = (ExceptionCollector) t
-        response.content = []
+        response.content = ["errors":[]]
 
         log.debug("Exception has " + collector.exceptionList.size() + " errors")
 
@@ -39,15 +39,15 @@ class ExceptionCollectorHandler implements ExceptionHandler {
             def msg = localizer.message( code: "default.dataretrieval.error", args: [rowInfo.resourceName, rowInfo.actionableId,rowInfo
                     .wrappedException?.localizedMessage] )
 
-            response.content.add( ApiErrorFactory.create( ApiErrorFactory.V1_ERROR_TYPE,
+            response.content["errors"].addAll( ApiErrorFactory.create( ApiErrorFactory.V2_ERROR_TYPE,
                                     rowInfo.guid,
                                   rowInfo.actionableId,
                                   "General.retrievingData",
                                    "General error retrieving data",
-                                   msg))
+                                   msg)["errors"]  )
         }
 
-        response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V1_ERROR_TYPE
+        response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V2_ERROR_TYPE
         return response
     }
 }
