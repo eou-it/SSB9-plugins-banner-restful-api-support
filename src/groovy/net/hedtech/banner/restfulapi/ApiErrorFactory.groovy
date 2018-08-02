@@ -4,6 +4,7 @@
 package net.hedtech.banner.restfulapi
 
 import org.codehaus.groovy.grails.web.util.WebUtils
+import org.springframework.util.Assert
 
 /**
  * Creates error objects that support V1
@@ -11,21 +12,25 @@ import org.codehaus.groovy.grails.web.util.WebUtils
 class ApiErrorFactory {
 
     static String V2_ERROR_TYPE = "application/vnd.hedtech.integration.errors.v2+json"
-    static String HEADER_RESPONSE_TYPE="X-Media-Type"
+    static String HEADER_RESPONSE_TYPE = "X-Media-Type"
 
     static def create(String version, String id, String sourceId, String code, String description, String message) {
+        Assert.notNull(version)
+        Assert.isTrue(version.equals(V2_ERROR_TYPE), "Requested version is not supported")
         //forces use of error header
-        def request = WebUtils.retrieveGrailsWebRequest()?.removeAttribute("overwriteMediaTypeHeader",0)
+        WebUtils.retrieveGrailsWebRequest()?.removeAttribute("overwriteMediaTypeHeader", 0)
 
-
-        if(version?.equals(V2_ERROR_TYPE))
-        {
+        if (version?.equals(V2_ERROR_TYPE)) {
             return createVersion2(id, sourceId, code, description, message)
         }
+        return null;
     }
 
-    static def createVersion2(String id, String sourceId, String code, String description, String message) {
+    static private def createVersion2(String id, String sourceId, String code, String description, String message) {
         def error = [:]
+
+        Assert.notNull(message)
+        Assert.hasLength(message)
 
         if (id) {
             error['id'] = id;
@@ -43,7 +48,7 @@ class ApiErrorFactory {
             error['message'] = message
         }
 
-        return [ "errors": [ error ]]
+        return ["errors": [error]]
     }
 
 }
