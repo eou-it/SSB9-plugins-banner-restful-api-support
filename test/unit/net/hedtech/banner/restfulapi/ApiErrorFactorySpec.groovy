@@ -49,7 +49,7 @@ class ApiErrorFactorySpec extends Specification {
         RequestAttributes mockRequest = new ServletWebRequest(new MockHttpServletRequest("GET", "/test"))
         RequestContextHolder.setRequestAttributes(mockRequest)
         when:
-        def error = ApiErrorFactory.create(ApiErrorFactory.V2_ERROR_TYPE, null, null, null, null, "message")
+        def error = ApiErrorFactory.create(ApiErrorFactory.V2_ERROR_TYPE, null, null, null,"message", null )
 
         then:
         error["errors"][0]["id"] == null
@@ -64,7 +64,7 @@ class ApiErrorFactorySpec extends Specification {
         RequestAttributes mockRequest = new ServletWebRequest(new MockHttpServletRequest("GET", "/test"))
         RequestContextHolder.setRequestAttributes(mockRequest)
         when:
-        def error = ApiErrorFactory.create(ApiErrorFactory.V2_ERROR_TYPE, "someId", "someSourceId", "someCode", "Desc", "message")
+        def error = ApiErrorFactory.create(ApiErrorFactory.V2_ERROR_TYPE, "someId", "someSourceId", "someCode", "message", "Desc")
 
         then:
         error["errors"][0]["id"].equals( "someId" )

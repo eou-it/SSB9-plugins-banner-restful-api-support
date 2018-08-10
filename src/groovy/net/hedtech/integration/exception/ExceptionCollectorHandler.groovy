@@ -43,8 +43,7 @@ class ExceptionCollectorHandler implements ExceptionHandler {
                                     rowInfo.guid,
                                   rowInfo.actionableId,
                                   "General.retrievingData",
-                                   "General error retrieving data",
-                                   msg)["errors"]  )
+                                   msg,"General error retrieving data")["errors"]  )
         }
 
         response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V2_ERROR_TYPE

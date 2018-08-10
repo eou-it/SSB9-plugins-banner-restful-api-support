@@ -33,8 +33,7 @@ public class BannerGeneralExceptionHandler implements ExceptionHandler {
                 null,
                 null,
                 "General.error",
-                "Application error",
-                t.localizedMessage))
+                t.localizedMessage,"Application error"))
 
 
         response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V2_ERROR_TYPE
