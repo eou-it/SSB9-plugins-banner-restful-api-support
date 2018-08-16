@@ -6,31 +6,34 @@ package net.hedtech.banner.restfulapi
 import net.hedtech.restfulapi.ErrorResponse
 import net.hedtech.restfulapi.ExceptionHandler
 import net.hedtech.restfulapi.ExceptionHandlerContext
+import net.hedtech.restfulapi.Inflector
 
-public class BannerGeneralExceptionHandler implements ExceptionHandler {
+public class BannerOptimisticLockExceptionHandler implements ExceptionHandler {
 
     /**
-     * Will catch almost all exceptions unless explicitly catch by higher priority handlers
+     * Will catch OptimisticLockingFailureException unless explicitly catch by higher priority handlers
      * @param t
      * @return
      */
     @Override
     boolean supports(Throwable t) {
-        return true
+       return  (t instanceof  org.springframework.dao.OptimisticLockingFailureException)
     }
 
     @Override
     ErrorResponse handle(Throwable t, ExceptionHandlerContext context) {
         def response = new ErrorResponse()
-        response.httpStatusCode = 500
+        response.httpStatusCode = 409
 
-        String msg =t.localizedMessage?:t.message?:t.getClass().getName()
+        String msg =context.localizer.message(
+                code: "default.optimistic.locking.failure",
+                args: [Inflector.singularize( context.pluralizedResourceName ) ] )
 
         response.content=(ApiErrorFactory.create(ApiErrorFactory.V2_ERROR_TYPE,
                 null,
                 null,
-                "General.error",
-                msg,"Application error"))
+                "default.optimistic.locking.failure",
+                msg,"Optimistic locking failure"))
 
 
         response.headers[ApiErrorFactory.HEADER_RESPONSE_TYPE]=ApiErrorFactory.V2_ERROR_TYPE
