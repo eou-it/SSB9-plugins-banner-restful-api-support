@@ -14,5 +14,6 @@ public class SupportedRepresentation implements Serializable {
     // representation metadata
     List<String> filters
     List<NamedQuery> namedQueries
+    DeprecationNotice deprecationNotice
 
 }

@@ -100,6 +100,16 @@ public class SupportedResourceService {
                                     supportedRepresentation.namedQueries.add(namedQuery)
                                 }
                             }
+
+                            // check for representation metadata: deprecationNotice
+                            if (representationMetadata.containsKey("deprecationNotice")) {
+                                Map map = representationMetadata.get("deprecationNotice")
+                                DeprecationNotice deprecationNotice = new DeprecationNotice()
+                                deprecationNotice.setDeprecatedOn(map.get("deprecatedOn"))
+                                deprecationNotice.setSunsetOn(map.get("sunsetOn"))
+                                deprecationNotice.setDescription(map.get("description"))
+                                supportedRepresentation.deprecationNotice = deprecationNotice
+                            }
                         }
                     }
                 }

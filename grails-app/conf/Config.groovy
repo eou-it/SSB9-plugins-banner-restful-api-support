@@ -104,6 +104,11 @@ restfulApiConfig = {
                                             "query2-filter"
                                     ]
                             ]
+                    ],
+                    deprecationNotice: [
+                            deprecatedOn: "2015-03-12",
+                            sunsetOn: "2017-09-01",
+                            description: "Resource has properties not in use"
                     ]
             ]
         }
