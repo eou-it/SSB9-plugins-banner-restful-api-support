@@ -14,18 +14,7 @@ import spock.lang.Specification
 
 class BannerGeneralExceptionHandlerSpec extends Specification {
 
-
-    def "Test handle nulls"() {
-        setup:
-
-        when:
-        BannerGeneralExceptionHandler handler = new BannerGeneralExceptionHandler();
-        ErrorResponse response = handler.handle(new ExceptionCollector(), null)
-
-
-        then:
-        thrown IllegalArgumentException
-    }
+    
 
     def "Test handle"() {
         setup:
