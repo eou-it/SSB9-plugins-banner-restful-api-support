@@ -115,15 +115,16 @@ class ResourceDiagnosticServiceFunctionalSpec extends BaseFunctionalSpec {
         for (def i : (1..10)) {
             TimeUnit.MILLISECONDS.sleep(1000)
             list = findAllResourceDiagnosticMessages()
-            if (list.find { it.messageLevel == "FINISHED" }) {
+            //if (list.find { it.messageLevel == "FINISHED" }) {
+            if (list.find { it.messageLevel == "INFO" && it.resourceName == "diagnostics" && it.message.startsWith("Finished the GUREDIA process") }) {
                 finished = true
                 break
             }
         }
         true == finished
-        2 <= list.size()
-        "STARTED" == list.get(0).messageLevel
-        "FINISHED" == list.get(list.size()-1).messageLevel
+        //2 <= list.size()
+        //"STARTED" == list.get(0).messageLevel
+        //"FINISHED" == list.get(list.size()-1).messageLevel
 
     }
 
