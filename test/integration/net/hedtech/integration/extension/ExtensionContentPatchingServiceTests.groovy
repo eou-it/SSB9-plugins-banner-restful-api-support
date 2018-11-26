@@ -313,6 +313,29 @@ class ExtensionContentPatchingServiceTests extends BaseIntegrationTestCase {
     }
 
     @Test
+    void testArrayOfJsonStrings() {
+
+        given:
+        def oneResource = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"}'''
+        def extensionProcessReadResults = []
+        extensionProcessReadResults.add(newExtensionProcessReadResult("/","newJsonText",
+                "J",'["guid1","guid2","guid3"]',"24c47f0a-0eb7-48a3-85a6-2c585691c6ce"))
+
+        String expectedResult = '''{"id":"24c47f0a-0eb7-48a3-85a6-2c585691c6ce",'''+
+                '''"newJsonText":["guid1","guid2","guid3"]}'''
+        def ObjectMapper MAPPER = new ObjectMapper();
+        JsonNode rootNode = MAPPER.readTree(oneResource);
+
+        when:
+        def result = extensionContentPatchingService.patchExtensions(extensionProcessReadResults,rootNode)
+
+        expect:
+        assertNotNull result
+        assertEquals expectedResult, result
+
+    }
+
+    @Test
     void testInvalidString() {
 
         given:

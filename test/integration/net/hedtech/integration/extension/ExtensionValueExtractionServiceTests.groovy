@@ -410,6 +410,31 @@ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
 
     }
 
+    @Test
+    void givenArrayOfJsonStrings(){
+
+        given:
+        ExtensionDefinition extensionDefinition = newExtensionDefinition("/","foo","J")
+        List<ExtensionDefinition> extensionDefinitionList = []
+        extensionDefinitionList.add(extensionDefinition)
+
+        def jsonText = '''["guid1","guid2","guid3"]'''
+        def testRequest = '''{"id": "24c47f0a-0eb7-48a3-85a6-2c585691c6ce", "foo":''' + jsonText + '''}'''
+
+        def result
+
+        when:
+        result = extensionValueExtractionService.extractExtensions(testRequest,extensionDefinitionList)
+
+        expect:
+        assertNotNull result
+        assertEquals 1, result.size
+        assertFalse result[0].valueWasMissing
+        assertTrue result[0].value instanceof String
+        assertEquals jsonText, result[0].value
+
+    }
+
 
     private def newExtensionDefinition(def jsonPath, def jsonLabel, def jsonPropertyType = "S") {
 
