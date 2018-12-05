@@ -44,7 +44,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         def request = newMockHttpServletRequest("GET", "application/json", requestContent)
 
-        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNull extensionProcessResult
     }
 
@@ -72,7 +72,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         def request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -90,7 +90,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -133,7 +133,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -156,7 +156,30 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
+        assertNotNull extensionProcessResult
+        assertEquals expectedContent, extensionProcessResult.content
+        assertTrue extensionProcessResult.extensionsApplied
+
+        verifyResults = sqlQuery.list()
+        assertEquals 1, verifyResults.size()
+        verifyResults.each { row ->
+            assertEquals 150, row[0].toInteger()
+            assertEquals 'SMALL RED TREE', row[1]
+            assertEquals 10, row[2].toInteger()
+            assertEquals "2013-06-24", new SimpleDateFormat("yyyy-MM-dd").format(row[3])
+        }
+
+        //////  Test POST QAPI method - expect no change to database when isQapi=true   //////
+
+        method = "POST"
+        requestContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","hedmCapacity":456,"hedmConstructionDate":"2017-09-15","hedmLandmark":"A LITTLE TREE","hedmRoomCount":789}"""
+        responseContent = originalContent
+        expectedContent = originalContent
+
+        request = newMockHttpServletRequest(method, mediaType, requestContent)
+
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, true)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -201,7 +224,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         def request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -219,7 +242,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -246,7 +269,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -267,7 +290,28 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
+        assertNotNull extensionProcessResult
+        assertEquals expectedContent, extensionProcessResult.content
+        assertTrue extensionProcessResult.extensionsApplied
+
+        verifyResults = sqlQuery.list()
+        assertEquals 1, verifyResults.size()
+        verifyResults.each { row ->
+            assertEquals 'A', row[0]
+            assertEquals 'B', row[1]
+        }
+
+        //////  Test POST QAPI method - expect no change to database when isQapi=true   //////
+
+        method = "POST"
+        requestContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"S","title":"Single","maritalCategory":"single","hedmEdiEquivalent":"Y","hedmFinanceConversion":"X"}"""
+        responseContent = originalContent
+        expectedContent = originalContent
+
+        request = newMockHttpServletRequest(method, mediaType, requestContent)
+
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, true)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -304,7 +348,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         def request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -322,7 +366,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -380,7 +424,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -409,7 +453,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
-        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied
@@ -452,7 +496,7 @@ class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationT
 
         def request = newMockHttpServletRequest(method, mediaType, requestContent, apiVersion)
 
-        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent)
+        ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
         assertEquals expectedContent, extensionProcessResult.content
         assertTrue extensionProcessResult.extensionsApplied

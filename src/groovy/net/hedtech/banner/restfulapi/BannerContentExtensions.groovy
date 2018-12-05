@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.banner.restfulapi
 
@@ -19,7 +19,7 @@ class BannerContentExtensions implements ContentExtensions {
     /**
      * Apply extension to content.
      **/
-    def ContentExtensionResult applyExtensions(String resourceName, def request, Map requestParams, def content) {
+    def ContentExtensionResult applyExtensions(String resourceName, def request, Map requestParams, def content, def isQapi) {
 
         ContentExtensionResult result = new ContentExtensionResult()
         result.extensionsApplied=false
@@ -29,7 +29,8 @@ class BannerContentExtensions implements ContentExtensions {
         def ethosExtensionResult = extensionProcessCompositeService.applyExtensions(resourceName,
                 request,
                 requestParams,
-                content)
+                content,
+                isQapi)
 
         if (ethosExtensionResult){
             result.extensionsApplied = ethosExtensionResult.extensionsApplied

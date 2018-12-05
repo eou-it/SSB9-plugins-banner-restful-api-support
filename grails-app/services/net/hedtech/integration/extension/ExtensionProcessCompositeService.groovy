@@ -28,18 +28,18 @@ class ExtensionProcessCompositeService extends ServiceBase {
      * @param responseContent
      * @return
      */
-    ExtensionProcessResult applyExtensions(String resourceName, def request, Map requestParms, def responseContent) {
+    ExtensionProcessResult applyExtensions(String resourceName, def request, Map requestParms, def responseContent, def isQapi) {
         ExtensionProcessResult extensionProcessResult = null
 
         //Determine if an extension has been defined for this resource
         ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
         if (extensionVersion && request){
-            if (isWriteMethod(request)){
+            if (isWriteMethod(request, isQapi)){
                 extensionProcessResult = extensionWriteCompositeService.write(resourceName,extensionVersion.extensionCode,request.getMethod(),request,responseContent)
             }
 
             //After the writable operations are done, we need to apply extensions to the response
-            if (isWriteMethod(request) || isReadMethod(request)){
+            if (isWriteMethod(request, isQapi) || isReadMethod(request, isQapi)){
                 extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,responseContent)
             }
         }
@@ -76,11 +76,11 @@ class ExtensionProcessCompositeService extends ServiceBase {
      * @param request
      * @return
      */
-    boolean isWriteMethod(def request){
+    boolean isWriteMethod(def request, def isQapi){
         boolean result = false
         if (request){
             String method = request.getMethod()
-            if (method && method == "POST" || method == "PUT" || method == "DELETE"){
+            if (method && ((method == "POST" && !isQapi) || method == "PUT" || method == "DELETE")){
                 result = true
             }
         }
@@ -92,11 +92,11 @@ class ExtensionProcessCompositeService extends ServiceBase {
      * @param request
      * @return
      */
-    boolean isReadMethod(def request){
+    boolean isReadMethod(def request, def isQapi){
         boolean result = false
         if (request){
             String method = request.getMethod()
-            if (method && method == "GET"){
+            if (method && (method == "GET" || (method == "POST" && isQapi))){
                 result = true
             }
         }
