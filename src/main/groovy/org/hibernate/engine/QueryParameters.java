@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.hibernate.engine.spi.LoadQueryInfluencers;
+import org.hibernate.engine.spi.RowSelection;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +23,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.QueryException;
 import org.hibernate.ScrollMode;
 import org.hibernate.LockOptions;
-import org.hibernate.impl.FilterImpl;
+import org.hibernate.internal.FilterImpl;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.hql.classic.ParserHelper;
-import org.hibernate.pretty.Printer;
+import org.hibernate.hql.internal.classic.ParserHelper;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.Type;
-import org.hibernate.util.ArrayHelper;
+import org.hibernate.internal.util.collections.ArrayHelper;
 
 /**
  * @author Gavin King
@@ -257,15 +260,14 @@ public final class QueryParameters {
 	}
 
 	public void traceParameters(SessionFactoryImplementor factory) throws HibernateException {
-		Printer print = new Printer( factory );
 		if ( positionalParameterValues.length != 0 ) {
 			log.trace(
 					"parameters: " +
-							print.toString( positionalParameterTypes, positionalParameterValues )
+							positionalParameterTypes + " : "+  positionalParameterValues
 			);
 		}
 		if ( namedParameters != null ) {
-			log.trace( "named parameters: " + print.toString( namedParameters ) );
+			log.trace( "named parameters: " + namedParameters);
 		}
 	}
 
@@ -347,7 +349,7 @@ public final class QueryParameters {
 	/**
 	 * Has the read-only/modifiable mode been explicitly set?
 	 * @see QueryParameters#setReadOnly(boolean)
-	 * @see QueryParameters#isReadOnly(SessionImplementor)
+	 * @see QueryParameters#isReadOnly()(org.hibernate.engine.spi.SessionImplementor)
 	 *
 	 * @return true, the read-only/modifiable mode was explicitly set
 	 *         false, the read-only/modifiable mode was not explicitly set
@@ -362,7 +364,7 @@ public final class QueryParameters {
 	 * before calling this method.
 	 *
 	 * @see QueryParameters#isReadOnlyInitialized()
-	 * @see QueryParameters#isReadOnly(SessionImplementor)
+	 * @see QueryParameters#isReadOnly(org.hibernate.engine.spi.SessionImplementor)
 	 * @see QueryParameters#setReadOnly(boolean)
 	 *
 	 * The read-only/modifiable setting has no impact on entities/proxies returned by the
