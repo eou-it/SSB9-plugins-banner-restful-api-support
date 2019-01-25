@@ -9,13 +9,12 @@ import net.hedtech.restfulapi.ErrorResponse
 import net.hedtech.restfulapi.ExceptionHandler
 import net.hedtech.restfulapi.ExceptionHandlerContext
 import net.hedtech.restfulapi.exceptionhandlers.ApplicationExceptionHandler
-import org.codehaus.groovy.grails.web.util.WebUtils
+import org.grails.web.util.WebUtils
 
 class BannerApplicationExceptionHandler extends ApplicationExceptionHandler implements ExceptionHandler {
     static String SCHEMA_ERROR = "Global.SchemaValidation.Error"
     static String SCHEMA_MESSAGE = "Errors parsing input JSON."
     static String INTERNAL_ERROR = "Global.Internal.Error"
-
 
     @Override
     ErrorResponse handle(Throwable e, ExceptionHandlerContext context) {

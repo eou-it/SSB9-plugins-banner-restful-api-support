@@ -8,9 +8,10 @@ import net.hedtech.restfulapi.ContentExtensionResult
 import net.hedtech.restfulapi.ContentExtensions
 import org.springframework.transaction.annotation.Propagation
 
-/**
+/**ApiErrorFactory
  * Created by sdorfmei on 5/19/17.
  */
+
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS )
 class BannerContentExtensions implements ContentExtensions {
 

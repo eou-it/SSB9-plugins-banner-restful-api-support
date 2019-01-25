@@ -4,7 +4,7 @@
 package net.hedtech.integration.controller
 
 import grails.validation.ValidationException
-import org.grails.databinding.SimpleMapDataBindingSource
+import grails.databinding.SimpleMapDataBindingSource
 import net.hedtech.banner.exceptions.ApplicationException
 
 /**

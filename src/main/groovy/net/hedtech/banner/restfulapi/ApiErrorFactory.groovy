@@ -3,7 +3,7 @@
  ****************************************************************************** */
 package net.hedtech.banner.restfulapi
 
-import org.codehaus.groovy.grails.web.util.WebUtils
+import org.grails.web.util.WebUtils
 import org.springframework.util.Assert
 
 /**
