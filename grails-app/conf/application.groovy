@@ -35,7 +35,7 @@ grails {
                 mepErrorLogoutUrl = '/logout/logoutPage'
             }
             useRequestMapDomainClass = false
-            securityConfigType = grails.plugin.springsecurity.SecurityConfigType.SecurityConfigType.InterceptUrlMap
+            securityConfigType = grails.plugin.springsecurity.SecurityConfigType.InterceptUrlMap
             interceptUrlMap = [
                     [pattern:'/',                access: ['IS_AUTHENTICATED_ANONYMOUSLY']],
                     [pattern:'/login/**',        access: ['IS_AUTHENTICATED_ANONYMOUSLY']],
