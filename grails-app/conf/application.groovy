@@ -22,9 +22,9 @@ formControllerMap = [
         // add NON_EXISTANT to foo resource for testing that
         // a non-authorized security object won't cause an
         // exception with the read-only API access check.
+        'restfulapi'  : ['GUAGMNU', 'API_RESTFULAPI'],
         'foo'         : ['API_TEST_FOO_SERVICE_API','NON_EXISTANT'],
-        'diagnostics' : ['API_DIAGNOSTICS'],
-        'restfulapi'  : ['API_RESTFULAPI']
+        'diagnostics' : ['API_DIAGNOSTICS']
 ]
 
 grails {
