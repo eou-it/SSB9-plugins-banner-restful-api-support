@@ -3,14 +3,26 @@ package restful.api.support
 class UrlMappings {
 
     static mappings = {
-        "/$controller/$action?/$id?(.$format)?"{
+
+        "/api/$pluralizedResourceName/$id"(controller: 'restfulApi') {
+            action = [GET: "show", PUT: "update", DELETE: "delete"]
+            parseRequest = false
+        }
+
+        "/api/$pluralizedResourceName"(controller: 'restfulApi') {
+            action = [GET: "list", POST: "create"]
+            parseRequest = false
+        }
+
+        "/$controller/$action?/$id?" {
             constraints {
                 // apply constraints here
             }
         }
 
-        "/"(view:"/index")
-        "500"(view:'/error')
-        "404"(view:'/notFound')
+        "/"(view: "/index")
+        "500"(view: '/error')
+
     }
+
 }
