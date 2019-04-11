@@ -2,7 +2,7 @@
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension.sql
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
 import net.hedtech.integration.extension.ExtensionDefinitionSourceGroup
 import net.hedtech.integration.extension.ExtractedExtensionPropertyGroup

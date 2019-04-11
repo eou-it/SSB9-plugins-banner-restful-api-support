@@ -5,7 +5,7 @@ package net.hedtech.integration.extension
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
 
 @Transactional

@@ -3,7 +3,7 @@
  ******************************************************************************/
 package net.hedtech.integration.extension.api
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.NotFoundException
 import net.hedtech.integration.extension.ExtensionVersion
 import net.hedtech.integration.utility.RestfulApiValidationUtility

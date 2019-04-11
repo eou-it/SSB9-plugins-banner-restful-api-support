@@ -3,7 +3,7 @@
  ******************************************************************************/
 package net.hedtech.integration.diagnostic
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.query.DynamicFinder
 import net.hedtech.banner.query.operators.Operators
 import net.hedtech.banner.service.ServiceBase
