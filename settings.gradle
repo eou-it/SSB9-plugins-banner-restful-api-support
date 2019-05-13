@@ -1,5 +1,5 @@
 include 'restful-api'
-project(':restful-api').projectDir = new File('../restful-api')
+project(':restful-api').projectDir = new File('../restful-api.git')
 include ':banner-core'
 project(':banner-core').projectDir = new File('../banner_core.git')
 include ':banner-codenarc'

@@ -3,7 +3,7 @@
  ******************************************************************************/
 package net.hedtech.banner.restfulapi
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.restfulapi.ContentExtensionResult
 import net.hedtech.restfulapi.ContentExtensions
 import org.springframework.transaction.annotation.Propagation
