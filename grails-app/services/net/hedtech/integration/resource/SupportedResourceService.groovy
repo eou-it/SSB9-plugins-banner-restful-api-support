@@ -152,6 +152,9 @@ public class SupportedResourceService {
      * Return true if the media type is json.
      */
     private boolean isMediaTypeJson(String mediaType) {
+        if (mediaType && (mediaType.startsWith("application/vnd.hedtech+") || mediaType.startsWith("application/vnd.hedtech.v"))) {
+            return false
+        }
         switch (mediaType) {
             case ~/.*json$/:
                 return true

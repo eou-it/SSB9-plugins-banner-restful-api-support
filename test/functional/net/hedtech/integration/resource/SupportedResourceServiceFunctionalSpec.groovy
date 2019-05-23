@@ -36,7 +36,7 @@ class SupportedResourceServiceFunctionalSpec extends BaseFunctionalSpec {
         null == representation1a.filters
         null == representation1a.namedQueries
         null == representation1a.deprecationNotice
-        def representation1b = resource1.representations.find { it."X-Media-Type" == "application/vnd.hedtech.v1+json" }
+        def representation1b = resource1.representations.find { it."X-Media-Type" == "application/vnd.hedtech.integration.v1+json" }
         null != representation1b
         ["get","post","put","delete"] == representation1b.methods
         null == representation1b.filters
@@ -54,7 +54,7 @@ class SupportedResourceServiceFunctionalSpec extends BaseFunctionalSpec {
         "2015-03-12" == deprecationNotice2a.deprecatedOn
         "2017-09-01" == deprecationNotice2a.sunsetOn
         "Resource has properties not in use" == deprecationNotice2a.description
-        def representation2b = resource2.representations.find { it."X-Media-Type" == "application/vnd.hedtech.v1+json" }
+        def representation2b = resource2.representations.find { it."X-Media-Type" == "application/vnd.hedtech.integration.v1+json" }
         null != representation2b
         ["get"] == representation2b.methods
         ["filter1", "filter2"] == representation2b.filters
@@ -63,7 +63,7 @@ class SupportedResourceServiceFunctionalSpec extends BaseFunctionalSpec {
         "2015-03-12" == deprecationNotice2b.deprecatedOn
         "2017-09-01" == deprecationNotice2b.sunsetOn
         "Resource has properties not in use" == deprecationNotice2b.description
-        def representation2c = resource2.representations.find { it."X-Media-Type" == "application/vnd.hedtech.v2+json" }
+        def representation2c = resource2.representations.find { it."X-Media-Type" == "application/vnd.hedtech.integration.v2+json" }
         null != representation2c
         ["get","post","put","delete"] == representation2c.methods
         ["filter1", "filter2"] == representation2c.filters

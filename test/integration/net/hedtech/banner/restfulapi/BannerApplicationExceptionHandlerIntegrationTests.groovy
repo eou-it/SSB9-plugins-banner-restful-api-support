@@ -52,7 +52,7 @@ class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationT
 
     @Test
     void testHandle_BusinessLogicValidationException_MessageCodeNotInApiErrorCodes() {
-        setAcceptHeader("application/vnd.hedtech.v1+json")
+        setAcceptHeader("application/vnd.hedtech.integration.v1+json")
 
         assertFalse Holders.config.restfulapi.apiErrorCodes.contains(applicationException.wrappedException.messageCode)
 
