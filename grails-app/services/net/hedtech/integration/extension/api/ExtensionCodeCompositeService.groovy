@@ -3,7 +3,7 @@
  ******************************************************************************/
 package net.hedtech.integration.extension.api
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.integration.controller.ApiController
 import net.hedtech.integration.extension.ExtensionDefinitionCode
 import net.hedtech.integration.utility.RestfulApiValidationUtility

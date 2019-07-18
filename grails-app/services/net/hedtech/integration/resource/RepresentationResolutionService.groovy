@@ -5,9 +5,10 @@ package net.hedtech.integration.resource
 
 import net.hedtech.integration.extension.ExtensionVersion
 import net.hedtech.integration.extension.ExtensionVersionService
-import org.codehaus.groovy.grails.web.servlet.HttpHeaders
+import grails.web.http.HttpHeaders
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import grails.gorm.transactions.Transactional
 
 /**
  * Created by sdorfmei on 6/21/17.

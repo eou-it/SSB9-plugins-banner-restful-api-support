@@ -3,7 +3,7 @@
  ******************************************************************************/
 package net.hedtech.integration.extension
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
 import net.hedtech.restfulapi.RepresentationRequestAttributes
 
