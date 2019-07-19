@@ -24,3 +24,5 @@ plugin.xml
 *en_PS.properties
 **-rtl.css
 cobertura.ser
+.gradle/
+build/
