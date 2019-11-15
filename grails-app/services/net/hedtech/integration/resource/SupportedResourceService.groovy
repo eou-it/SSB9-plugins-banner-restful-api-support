@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2019 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.resource
 
@@ -88,6 +88,18 @@ public class SupportedResourceService {
                             // check for representation metadata: filters
                             if (representationMetadata.containsKey("filters")) {
                                 supportedRepresentation.filters = representationMetadata.get("filters")
+                            }
+
+                            // check for getAllPatterns
+                            if (representationMetadata.containsKey("getAllPatterns")) {
+                                supportedRepresentation.getAllPatterns = new ArrayList<>()
+                                representationMetadata.get("getAllPatterns").each {
+                                    SupportedPattern pattern = new SupportedPattern()
+                                    pattern.name = it.name
+                                    pattern.method = it.method
+                                    pattern.mediaType = it.mediaType
+                                    supportedRepresentation.getAllPatterns.add(pattern)
+                                }
                             }
 
                             // check for representation metadata: namedQueries
