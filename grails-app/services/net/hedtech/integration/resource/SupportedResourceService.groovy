@@ -178,6 +178,9 @@ public class SupportedResourceService {
             if (!unsupportedMethods?.contains(method)) {
                 String httpMethod = Methods.getHttpMethod(method)
                 if (httpMethod) {
+                    if(resourceDetail?.mediaTypes?.contains("qapiRequest")){
+                        httpMethod = Methods.getHttpMethod("create")
+                    }
                     httpMethods.add(httpMethod.toLowerCase())
                 }
             }
