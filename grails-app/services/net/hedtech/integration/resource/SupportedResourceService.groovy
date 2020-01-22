@@ -14,12 +14,10 @@ import net.hedtech.restfulapi.ResourceDetailList
  **/
 public class SupportedResourceService {
 
-
     // custom sort order for listing http methods
-    def customHttpMethodSorter = { a, b, order=Methods.getAllHttpMethods()*.toLowerCase() ->
-        order.indexOf( a ) <=> order.indexOf( b )
+    def customHttpMethodSorter = { a, b, order = Methods.getAllHttpMethods()*.toLowerCase() ->
+        order.indexOf(a) <=> order.indexOf(b)
     }
-
 
     /**
      * GET /api/resources
@@ -31,7 +29,6 @@ public class SupportedResourceService {
         List<SupportedResource> supportedResources = processResourceDetailList()
         return new PagedResultArrayList(supportedResources, supportedResources.size())
     }
-
 
     /**
      * GET /api/resources
@@ -46,7 +43,6 @@ public class SupportedResourceService {
     def count(params) {
         return processResourceDetailList().size()
     }
-
 
     /**
      * Return the resources supported by the application. Only json media types are returned.
@@ -132,7 +128,6 @@ public class SupportedResourceService {
         return supportedResources
     }
 
-
     /**
      * Return true if the resource is to be excluded from the response.
      *
@@ -153,7 +148,6 @@ public class SupportedResourceService {
         return !resourceSupportsJson
     }
 
-
     /**
      * Return true if the media type is json.
      */
@@ -167,23 +161,27 @@ public class SupportedResourceService {
         }
     }
 
-
     /**
      * Return the list of http methods supported by the resource for a media type.
      */
     private List<String> findSupportedHttpMethods(ResourceDetail resourceDetail, String mediaType) {
         List<String> httpMethods = []
+        String httpMethod
         List<String> unsupportedMethods = resourceDetail.unsupportedMediaTypeMethods.get(mediaType)
+        if (resourceDetail?.mediaTypes?.contains("qapiRequest")) {
+            httpMethod = Methods.getHttpMethod("create")
+            httpMethods.add(httpMethod.toLowerCase())
+        }
         resourceDetail.methods.each() { method ->
             if (!unsupportedMethods?.contains(method)) {
-                String httpMethod = Methods.getHttpMethod(method)
+                httpMethod = Methods.getHttpMethod(method)
                 if (httpMethod) {
-                    if(resourceDetail?.mediaTypes?.contains("qapiRequest")){
-                        httpMethod = Methods.getHttpMethod("create")
-                    }
                     httpMethods.add(httpMethod.toLowerCase())
                 }
             }
+        }
+        if(!(resourceDetail?.methods?.contains('show')) && resourceDetail?.mediaTypes?.contains("qapiRequest")){
+            httpMethods.remove('get')
         }
         return httpMethods.unique().sort(customHttpMethodSorter)
     }
