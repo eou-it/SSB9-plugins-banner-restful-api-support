@@ -74,11 +74,11 @@ public class SupportedResourceService {
                     if (isMediaTypeJson(mediaType)) {
                         SupportedRepresentation supportedRepresentation = new SupportedRepresentation()
                         supportedRepresentation.mediaType = mediaType
-                        supportedRepresentation.methods = findSupportedHttpMethods(resourceDetail, mediaType)
+                        Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
+                        supportedRepresentation.methods = findSupportedHttpMethods(resourceDetail, mediaType,representationMetadata)
                         supportedResource.representations.add(supportedRepresentation)
 
                         // check for representation metadata
-                        Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
                         if (representationMetadata != null) {
 
                             // check for representation metadata: filters
@@ -164,11 +164,11 @@ public class SupportedResourceService {
     /**
      * Return the list of http methods supported by the resource for a media type.
      */
-    private List<String> findSupportedHttpMethods(ResourceDetail resourceDetail, String mediaType) {
+    private List<String> findSupportedHttpMethods(ResourceDetail resourceDetail, String mediaType,Map representationMetadata) {
         List<String> httpMethods = []
         String httpMethod
         List<String> unsupportedMethods = resourceDetail.unsupportedMediaTypeMethods.get(mediaType)
-        if (resourceDetail?.mediaTypes?.contains("qapiRequest")) {
+        if (representationMetadata.get("qapiRequest")) {
             httpMethod = Methods.getHttpMethod("create")
             httpMethods.add(httpMethod.toLowerCase())
         }
@@ -180,7 +180,7 @@ public class SupportedResourceService {
                 }
             }
         }
-        if(!(resourceDetail?.methods?.contains('show')) && resourceDetail?.mediaTypes?.contains("qapiRequest")){
+        if(!(resourceDetail?.methods?.contains('show')) && representationMetadata.get("qapiRequest")){
             httpMethods.remove('get')
         }
         return httpMethods.unique().sort(customHttpMethodSorter)
