@@ -173,10 +173,6 @@ public class SupportedResourceService {
         List<String> httpMethods = []
         String httpMethod
         List<String> unsupportedMethods = resourceDetail.unsupportedMediaTypeMethods.get(mediaType)
-        if (representationMetadata.get("qapiRequest")) {
-            httpMethod = Methods.getHttpMethod("create")
-            httpMethods.add(httpMethod.toLowerCase())
-        }
         resourceDetail.methods.each() { method ->
             if (!unsupportedMethods?.contains(method)) {
                 httpMethod = Methods.getHttpMethod(method)
@@ -185,7 +181,12 @@ public class SupportedResourceService {
                 }
             }
         }
-        if(!(resourceDetail?.methods?.contains('show')) && representationMetadata.get("qapiRequest")){
+        if (representationMetadata.get("qapiRequest")) {
+            httpMethod = Methods.getHttpMethod("create")
+            httpMethods.add(httpMethod.toLowerCase())
+        }
+
+        if(!(httpMethods.contains('show')) && representationMetadata.get("qapiRequest")){
             httpMethods.remove('get')
         }
         return httpMethods.unique().sort(customHttpMethodSorter)
