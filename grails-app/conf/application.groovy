@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2013-2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
 println "appName -> ${appName}"
@@ -71,7 +71,7 @@ restfulApiConfig = {
     /*resource 'foo' config {
         serviceName = 'fooService'
         representation {
-            mediaTypes = ["application/vnd.hedtech.v1+json", "application/json"]
+            mediaTypes = ["application/vnd.hedtech.integration.v1+json", "application/json"]
             marshallers {
             }
             jsonExtractor {}
@@ -81,8 +81,8 @@ restfulApiConfig = {
     resource 'fooTestSupportedResources' config {
         serviceName = 'fooService'
         representation {
-            mediaTypes = ["application/vnd.hedtech.v2+json", "application/vnd.hedtech.v1+json", "application/json", "application/xml"]
-            unsupportedMediaTypeMethods = ['application/vnd.hedtech.v1+json': ['create', 'update', 'delete']]
+            mediaTypes = ["application/vnd.hedtech.integration.v2+json", "application/vnd.hedtech.integration.v1+json", "application/json", "application/xml"]
+            unsupportedMediaTypeMethods = ['application/vnd.hedtech.integration.v1+json': ['create', 'update', 'delete']]
             marshallers {
             }
             jsonExtractor {}
