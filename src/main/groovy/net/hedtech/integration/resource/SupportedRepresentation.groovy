@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.resource
 
@@ -15,5 +15,6 @@ public class SupportedRepresentation implements Serializable {
     List<String> filters
     List<NamedQuery> namedQueries
     DeprecationNotice deprecationNotice
-
+	List<SupportedPattern> getAllPatterns
+	
 }
