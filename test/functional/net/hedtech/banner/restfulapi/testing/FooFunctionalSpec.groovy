@@ -1,5 +1,5 @@
 /* ****************************************************************************
-Copyright 2013-2016 Ellucian Company L.P. and its affiliates.
+Copyright 2013-2020 Ellucian Company L.P. and its affiliates.
 ******************************************************************************/
 
 package net.hedtech.banner.restfulapi.testing
@@ -29,14 +29,14 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
     def "list - read-write"() {
         when:
         get("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}") {
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = authHeader()
         }
 
         then:
         200 == response.status
         'application/json' == response.contentType
-        'application/vnd.hedtech.v1+json' == responseHeader("X-hedtech-Media-Type")
+        'application/vnd.hedtech.integration.v1+json' == responseHeader("X-hedtech-Media-Type")
         "List of foo resources" == responseHeader('X-hedtech-message')
         def numberOfRecordsInResponse = JSON.parse(response.text).size()
         0 < numberOfRecordsInResponse
@@ -48,7 +48,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         post("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = authHeader()
             body {
                 """
@@ -63,7 +63,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         then:
         201 == response.status
         'application/json' == response.contentType
-        'application/vnd.hedtech.v1+json' == responseHeader("X-hedtech-Media-Type")
+        'application/vnd.hedtech.integration.v1+json' == responseHeader("X-hedtech-Media-Type")
         "foo resource created" == responseHeader('X-hedtech-message')
         def foo = JSON.parse(response.text)
         "TT" == foo.code
@@ -83,7 +83,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         put("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}/${id}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = authHeader()
             body {
                 """
@@ -100,7 +100,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         then:
         200 == response.status
         'application/json' == response.contentType
-        'application/vnd.hedtech.v1+json' == responseHeader("X-hedtech-Media-Type")
+        'application/vnd.hedtech.integration.v1+json' == responseHeader("X-hedtech-Media-Type")
         "foo resource updated" == responseHeader('X-hedtech-message')
         def foo = JSON.parse(response.text)
         "TT" == foo.code
@@ -120,7 +120,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         delete("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}/${id}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = authHeader()
         }
 
@@ -133,14 +133,14 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
     def "list - read-only"() {
         when:
         get("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}") {
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = readOnlyAuthHeader()
         }
 
         then:
         200 == response.status
         'application/json' == response.contentType
-        'application/vnd.hedtech.v1+json' == responseHeader("X-hedtech-Media-Type")
+        'application/vnd.hedtech.integration.v1+json' == responseHeader("X-hedtech-Media-Type")
         "List of foo resources" == responseHeader('X-hedtech-message')
         def numberOfRecordsInResponse = JSON.parse(response.text).size()
         0 < numberOfRecordsInResponse
@@ -152,7 +152,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         post("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = readOnlyAuthHeader()
             body {
                 """
@@ -183,7 +183,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         put("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}/${id}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = readOnlyAuthHeader()
             body {
                 """
@@ -216,7 +216,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         delete("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}/${id}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = readOnlyAuthHeader()
         }
 
@@ -237,7 +237,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         when:
         post("${RESTFUL_API_BASE_URL}/${RESOURCE_NAME}") {
             headers['Content-Type'] = 'application/json'
-            headers['Accept'] = 'application/vnd.hedtech.v1+json'
+            headers['Accept'] = 'application/vnd.hedtech.integration.v1+json'
             headers['Authorization'] = readOnlyAuthHeader()
             body {
                 """
@@ -252,7 +252,7 @@ class FooFunctionalSpec extends BaseFunctionalSpec {
         then:
         201 == response.status
         'application/json' == response.contentType
-        'application/vnd.hedtech.v1+json' == responseHeader("X-hedtech-Media-Type")
+        'application/vnd.hedtech.integration.v1+json' == responseHeader("X-hedtech-Media-Type")
         "foo resource created" == responseHeader('X-hedtech-message')
         def foo = JSON.parse(response.text)
         "TT" == foo.code
