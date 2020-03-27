@@ -5,9 +5,7 @@ import net.hedtech.banner.restfulapi.BannerApplicationExceptionHandler
  Copyright 2013-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
-println "appName -> ${appName}"
-
-grails.config.locations = [] // leave this initialized to an empty list, and add your locations in the map below.
+//println "appName -> ${appName}"
 
 grails.config.locations = [
         BANNER_APP_CONFIG:           "banner_configuration.groovy"
@@ -27,21 +25,24 @@ grails.project.groupId = "net.hedtech" // used when deploying to a maven repo
     println "config location -> " + it
 }*/
 
+grails.enable.native2ascii = false
+grails.databinding.useSpringBinder=true
+
 dataSource {
     dialect = "org.hibernate.dialect.Oracle10gDialect"
     loggingSql = false
 }
 
 hibernate {
+    packagesToScan="net.hedtech.**.*"
+    dialect = "org.hibernate.dialect.Oracle10gDialect"
+    show_sql = false
     cache.use_second_level_cache = true
     cache.use_query_cache = true
     cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
     cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory'
-    packagesToScan="net.hedtech.**.*"
-    hbm2ddl.auto = null
-    show_sql = false
+    flush.mode = AUTO
     //naming_strategy = "org.hibernate.cfg.ImprovedNamingStrategy"
-    dialect = "org.hibernate.dialect.Oracle10gDialect"
     config.location = ["classpath:hibernate-banner-core.cfg.xml",
                        "classpath:hibernate-banner-core.testing.cfg.xml",
                        "classpath:hibernate-banner-restful-api-support.cfg.xml"]
