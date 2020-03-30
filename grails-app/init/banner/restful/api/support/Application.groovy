@@ -1,4 +1,4 @@
-package restful.api.support
+package banner.restful.api.support
 
 import grails.boot.*
 import grails.boot.config.GrailsAutoConfiguration

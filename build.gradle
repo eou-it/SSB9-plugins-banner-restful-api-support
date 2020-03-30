@@ -5,6 +5,8 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:1.4"
+        classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.2"
         classpath "net.saliman:gradle-cobertura-plugin:2.6.0"
     }

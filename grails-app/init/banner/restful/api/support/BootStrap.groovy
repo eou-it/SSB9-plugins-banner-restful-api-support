@@ -1,4 +1,4 @@
-package restful.api.support
+package banner.restful.api.support
 
 class BootStrap {
 

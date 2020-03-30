@@ -1,4 +1,4 @@
-package restful.api.support
+package banner.restful.api.support
 
 class UrlMappings {
 
@@ -20,9 +20,8 @@ class UrlMappings {
             }
         }
 
-        "/"(view: "/index")
-        "500"(view: '/error')
-
+        "/"(view:"/index")
+        "500"(view:'/error')
+        "404"(view:'/notFound')
     }
-
 }
