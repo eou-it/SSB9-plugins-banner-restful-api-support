@@ -10,11 +10,7 @@ import groovy.sql.Sql
 /**
  * Test data for BannerFilterConfig
  */
-import grails.testing.mixin.integration.Integration
-import grails.gorm.transactions.Rollback
-import static groovy.test.GroovyAssert.* 
- @ Rollback
-@ Integration
+
  class BannerFilterConfigTestData extends BaseIntegrationTestCase {
 
 
