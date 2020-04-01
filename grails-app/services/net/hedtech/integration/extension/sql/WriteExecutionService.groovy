@@ -13,6 +13,8 @@ import net.hedtech.banner.service.ServiceBase
  * Class used to execute the SQL to write extended values
  */
 @Transactional
+import groovy.util.logging.Slf4j
+@ Slf4j
 class WriteExecutionService extends ServiceBase {
 
     /* Session factor used in the query call*/

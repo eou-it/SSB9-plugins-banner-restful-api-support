@@ -10,7 +10,12 @@ import org.junit.Test
 /**
  * Created by sdorfmei on 5/17/17.
  */
-class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrationTestCase {
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class ExtensionDefinitionSourceGroupBuilderIntegrationTests extends BaseIntegrationTestCase {
 
     def extensionDefinitionSourceGroupBuilderService
 

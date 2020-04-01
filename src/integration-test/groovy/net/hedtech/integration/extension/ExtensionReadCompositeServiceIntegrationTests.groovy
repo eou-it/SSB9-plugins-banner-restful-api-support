@@ -11,7 +11,14 @@ import org.junit.Test
 /**
  * Created by sdorfmei on 5/18/17.
  */
-class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
+import groovy.util.logging.Slf4j
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Slf4j
+@ Integration
+ class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
 
     def extensionReadCompositeService
 

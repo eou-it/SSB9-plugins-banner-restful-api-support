@@ -11,7 +11,12 @@ import org.junit.Test
 /**
  * Created by sdorfmei on 5/26/17.
  */
-class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
 
     def readResultBuilderService
 

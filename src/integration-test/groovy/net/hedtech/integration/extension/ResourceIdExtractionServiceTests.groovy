@@ -10,7 +10,12 @@ import org.junit.Before
 import org.junit.Test
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 
-class ResourceIdExtractionServiceTests extends BaseIntegrationTestCase {
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class ResourceIdExtractionServiceTests extends BaseIntegrationTestCase {
 
     def resourceIdExtractionService
 

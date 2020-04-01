@@ -14,6 +14,13 @@ import org.junit.Test
 /**
  * Test class for BannerContentFilter
  */
+
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.*
+
+@ Rollback
+@ Integration
 class BannerContentFilterIntegrationTests extends BannerFilterConfigTestData {
 
     ContentFilter restContentFilter

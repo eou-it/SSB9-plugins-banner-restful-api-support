@@ -8,7 +8,14 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class ExtensionDefinitionServiceIntegrationTests extends BaseIntegrationTestCase {
+import groovy.util.logging.Slf4j
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Slf4j
+@ Integration
+ class ExtensionDefinitionServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def extensionDefinitionService
 

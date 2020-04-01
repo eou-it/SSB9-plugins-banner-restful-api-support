@@ -13,7 +13,14 @@ import java.text.SimpleDateFormat
 /**
  * Created by sdorfmei on 5/18/17.
  */
-class ExtensionWriteCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
+import groovy.util.logging.Slf4j
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Slf4j
+@ Integration
+ class ExtensionWriteCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
 
     def extensionWriteCompositeService
 

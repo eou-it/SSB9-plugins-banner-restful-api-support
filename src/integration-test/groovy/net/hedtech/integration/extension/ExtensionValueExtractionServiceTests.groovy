@@ -15,7 +15,12 @@ import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchExce
 /**
  * Created by sdorfmei on 7/13/17.
  */
-class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class ExtensionValueExtractionServiceTests extends BaseIntegrationTestCase {
 
     def extensionValueExtractionService
 

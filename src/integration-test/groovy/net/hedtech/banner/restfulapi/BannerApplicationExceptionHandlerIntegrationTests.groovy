@@ -24,11 +24,21 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import javax.servlet.http.HttpServletRequest
 
 /**
- * Test class for BannerApplicationExceptionHandler
+ * Test import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class for BannerApplicationExceptionHandler
  */
 @Integration
 @Rollback
-class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationTestCase {
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationTestCase {
 
     ApplicationException applicationException
     ExceptionHandlerContext exceptionHandlerContext

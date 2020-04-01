@@ -7,6 +7,8 @@ import net.hedtech.banner.service.ServiceBase
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional
+import groovy.util.logging.Slf4j
+@ Slf4j
 class WriteCompositeService extends ServiceBase {
 
     def writeSqlBuilderService

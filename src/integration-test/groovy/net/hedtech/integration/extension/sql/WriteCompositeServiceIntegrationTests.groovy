@@ -17,7 +17,12 @@ import java.text.SimpleDateFormat
 /**
  * Created by sdorfmei on 5/16/17.
  */
-class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
+import grails.testing.mixin.integration.Integration
+import grails.gorm.transactions.Rollback
+import static groovy.test.GroovyAssert.* 
+ @ Rollback
+@ Integration
+ class WriteCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def writeCompositeService
     def extractedExtensionPropertyGroupBuilderService
