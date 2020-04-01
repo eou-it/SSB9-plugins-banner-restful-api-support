@@ -77,17 +77,33 @@ dataSource {
 }
 
 hibernate {
+    packagesToScan="net.hedtech.**.*"
+    dialect = "org.hibernate.dialect.Oracle10gDialect"
+    show_sql = false
     cache.use_second_level_cache = true
     cache.use_query_cache = true
     cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
-    cache.region.factory_class = 'org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory'
-    packagesToScan="net.hedtech.**.*"
-    hbm2ddl.auto = null
-    show_sql = false
+    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory'
+    flush.mode = AUTO
     //naming_strategy = "org.hibernate.cfg.ImprovedNamingStrategy"
-    dialect = "org.hibernate.dialect.Oracle10gDialect"
     config.location = ["classpath:hibernate-banner-core.cfg.xml",
                        "classpath:hibernate-banner-core.testing.cfg.xml",
                        "classpath:hibernate-banner-restful-api-support.cfg.xml"]
+}
+
+// environment specific settings
+environments {
+    development {
+        dataSource {
+        }
+    }
+    test {
+        dataSource {
+        }
+    }
+    production {
+        dataSource {
+        }
+    }
 }
 
