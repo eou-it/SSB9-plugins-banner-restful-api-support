@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.integration.extension
 
@@ -159,7 +159,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid String", errorMessage
+        assertEquals "Property /foo must be a valid String", errorMessage?.getMessage()
 
     }
 
@@ -229,7 +229,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid Number", errorMessage
+        assertEquals "Property /foo must be a valid Number", errorMessage?.getMessage()
 
     }
 
@@ -273,7 +273,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd", errorMessage
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd", errorMessage?.getMessage()
 
     }
 
@@ -317,7 +317,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX", errorMessage
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX", errorMessage?.getMessage()
 
     }
 
@@ -389,7 +389,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be valid JSON text", errorMessage
+        assertEquals "Property /foo must be valid JSON text", errorMessage?.getMessage()
 
     }
 
@@ -411,7 +411,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property type X is invalid for property /foo", errorMessage
+        assertEquals "Property type X is invalid for property /foo", errorMessage?.getMessage()
 
     }
 

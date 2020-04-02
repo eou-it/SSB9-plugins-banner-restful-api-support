@@ -357,7 +357,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid String", errorMessage
+        assertEquals "Property /foo must be a valid String", errorMessage?.getMessage()
 
     }
 
@@ -378,7 +378,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid Number", errorMessage
+        assertEquals "Property /foo must be a valid Number", errorMessage?.getMessage()
 
     }
 
@@ -399,7 +399,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd", errorMessage
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd", errorMessage?.getMessage()
 
     }
 
@@ -420,7 +420,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX", errorMessage
+        assertEquals "Property /foo must be a valid Date using format yyyy-MM-dd'T'HH:mm:ssX", errorMessage?.getMessage()
 
     }
 
@@ -442,7 +442,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property /foo must be valid JSON text", errorMessage
+        assertEquals "Property /foo must be valid JSON text", errorMessage?.getMessage()
 
     }
 
@@ -464,7 +464,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unrecognized token 'abc': was expecting ('true', 'false' or 'null')", errorMessage.substring(0, 168)
+        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unrecognized token 'abc': was expecting ('true', 'false' or 'null')", errorMessage?.getMessage().substring(0, 168)
 
     }
 
@@ -486,7 +486,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character (':' (code 58)): was expecting comma to separate OBJECT entries", errorMessage.substring(0, 185)
+        assertEquals "Unparseable JSON text for property /foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character (':' (code 58)): was expecting comma to separate Object entries", errorMessage?.getMessage().substring(0, 185)
 
     }
 
@@ -508,7 +508,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Unable to apply JSON patch for property /foo using property type of S with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character ('a' (code 97)): was expecting comma to separate OBJECT entries", errorMessage.substring(0, 215)
+        assertEquals "Unable to apply JSON patch for property /foo using property type of S with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=Unexpected character ('a' (code 97)): was expecting comma to separate Object entries", errorMessage?.getMessage().substring(0, 215)
 
     }
 
@@ -529,7 +529,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Property type X is invalid for property /foo", errorMessage
+        assertEquals "Property type X is invalid for property /foo", errorMessage?.getMessage()
 
     }
 
@@ -711,7 +711,7 @@ import static groovy.test.GroovyAssert.*
         }
 
         expect:
-        assertEquals "Unable to apply JSON patch for array path /list/foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=For input string: \"foo\"", errorMessage
+        assertEquals "Unable to apply JSON patch for array path /list/foo with resource id=24c47f0a-0eb7-48a3-85a6-2c585691c6ce; error=For input string: \"foo\"", errorMessage?.getMessage()
 
     }
 
