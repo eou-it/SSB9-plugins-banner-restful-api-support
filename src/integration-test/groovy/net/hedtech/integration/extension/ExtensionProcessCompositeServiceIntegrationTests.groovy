@@ -455,8 +455,10 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         // must adjust expected content for re-parsing of raw json text
         expectedContent = requestContent.
-                replaceAll('"date":"2002-01-13","status":"FT","level":7','"level":7,"status":"FT","date":"2002-01-13"').
-                replaceAll('"date":"2000-12-06","status":"PT","level":5','"level":5,"status":"PT","date":"2000-12-06"')
+                replaceAll('"date":"2002-01-13","status":"FT","level":7','"date":"2002-01-13","level":7,"status":"FT"').
+                replaceAll('"date":"2000-12-06","status":"PT","level":5','"date":"2000-12-06","level":5,"status":"PT"')
+
+        //adjusting expected content above
 
         request = newMockHttpServletRequest(method, mediaType, requestContent)
 
@@ -474,7 +476,7 @@ import static groovy.test.GroovyAssert.*
             assertEquals "2000-12-06", new SimpleDateFormat("yyyy-MM-dd").format(row[3])
             assertEquals "2008-02-09", new SimpleDateFormat("yyyy-MM-dd").format(row[4])
             assertEquals 'A12365427', row[5]
-            assertEquals '[{"level":7,"status":"FT","date":"2002-01-13"},{"level":5,"status":"PT","date":"2000-12-06"}]', row[6]
+            assertEquals '[{"date":"2002-01-13","level":7,"status":"FT"},{"date":"2000-12-06","level":5,"status":"PT"}]', row[6]
         }
     }
 

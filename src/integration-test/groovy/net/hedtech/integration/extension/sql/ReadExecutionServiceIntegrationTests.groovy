@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.integration.extension.sql
 
@@ -160,7 +160,7 @@ import static groovy.test.GroovyAssert.*
                                                        p_pk      => lv_pk,
                                                        p_value   => lv_anydata);
                 end;'''
-        //updateQuery = updateQuery.replaceAll(":=", "\\\\:=")    // must escape the ':=' with '\:=' to allow for hibernate binding
+        updateQuery = updateQuery.replaceAll(":=", "\\\\:=")    // must escape the ':=' with '\:=' to allow for hibernate binding
         sqlQuery = sessionFactory.currentSession.createSQLQuery(updateQuery)
         sqlQuery.setString('GUID', buildingGuidList[0])
         sqlQuery.setString('HEDM_BLDG_LANDMARK', "Burger King")
