@@ -29,16 +29,22 @@ class BannerRestfulApiSupportGrailsPlugin extends Plugin{
 
     def documentation = ""
 
-    def doWithSpring = {
-        if (Holders.config.useRestApiAuthenticationEntryPoint) {
-            basicAuthenticationFilter(BasicAuthenticationFilter) {
-                authenticationManager = ref('authenticationManager')
-                authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
-            }
+    Closure doWithSpring() {
+        { ->
+            if (Holders.config.useRestApiAuthenticationEntryPoint) {
 
-            basicExceptionTranslationFilter(ExceptionTranslationFilter) {
-                authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
-                accessDeniedHandler = ref('restApiAccessDeniedHandler')
+                basicAuthenticationFilter(BasicAuthenticationFilter , ref('authenticationManager'),  ref('restApiAuthenticationEntryPoint')) {
+                    //authenticationManager = ref('authenticationManager')                                 restApiAuthenticationEntryPoint
+                    //authenticationEntryPoint = ref('basicAuthenticationEntryPoint')
+                }
+
+                    basicExceptionTranslationFilter(ExceptionTranslationFilter,ref('restApiAuthenticationEntryPoint')) {
+                    //authenticationEntryPoint = ref('restApiAuthenticationEntryPoint')
+                   // accessDeniedHandler = ref('restApiAccessDeniedHandler')
+
+                }
+
+
             }
         }
     }
