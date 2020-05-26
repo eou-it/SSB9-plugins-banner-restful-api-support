@@ -1,5 +1,5 @@
-import grails.plugin.springsecurity.SecurityConfigType
-import net.hedtech.banner.restfulapi.BannerApplicationExceptionHandler
+
+
 
 /*******************************************************************************
  Copyright 2013-2020 Ellucian Company L.P. and its affiliates.
@@ -8,8 +8,11 @@ import net.hedtech.banner.restfulapi.BannerApplicationExceptionHandler
 //println "appName -> ${appName}"
 
 grails.config.locations = [
-        BANNER_APP_CONFIG:           "banner_configuration.groovy"
+        BANNER_APP_CONFIG:           "banner_configuration.groovy",
+        BANNER_STUDENT_API_CONFIG: "StudentApi_configuration.groovy"
 ]
+
+
 
 grails.project.groupId = "net.hedtech" // used when deploying to a maven repo
 
@@ -27,6 +30,8 @@ grails.project.groupId = "net.hedtech" // used when deploying to a maven repo
 
 grails.enable.native2ascii = false
 grails.databinding.useSpringBinder=true
+
+grails.plugin.springsecurity.securityConfigType = grails.plugin.springsecurity.SecurityConfigType.Requestmap
 
 
 formControllerMap = [
@@ -46,7 +51,7 @@ grails {
                 mepErrorLogoutUrl = '/logout/logoutPage'
             }
             useRequestMapDomainClass = false
-            securityConfigType = grails.plugin.springsecurity.SecurityConfigType.InterceptUrlMap
+           
             interceptUrlMap = [
                     [pattern:'/',                access: ['IS_AUTHENTICATED_ANONYMOUSLY']],
                     [pattern:'/login/**',        access: ['IS_AUTHENTICATED_ANONYMOUSLY']],
@@ -60,7 +65,7 @@ grails {
 }
 
 useRestApiAuthenticationEntryPoint = true
-apiOracleUsersProxied = false
+apiOracleUsersProxied = true
 avoidSessionsFor = ['api', 'qapi']
 apiUrlPrefixes = ['qapi', 'api', 'rest', 'ui']
 ssLoginWorkflowIgnoreUri = ['/api/', '/qapi/']

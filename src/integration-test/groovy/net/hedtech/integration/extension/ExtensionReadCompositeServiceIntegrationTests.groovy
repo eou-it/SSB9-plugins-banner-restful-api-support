@@ -15,9 +15,10 @@ import groovy.util.logging.Slf4j
 import grails.testing.mixin.integration.Integration
 import grails.gorm.transactions.Rollback
 import static groovy.test.GroovyAssert.* 
- @ Rollback
-@ Slf4j
-@ Integration
+
+@Slf4j
+ @Rollback
+ @Integration
  class ExtensionReadCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
 
     def extensionReadCompositeService
