@@ -14,6 +14,8 @@ import net.hedtech.restfulapi.ResourceDetailList
  **/
 public class SupportedResourceService {
 
+CustomResourcesService customResourcesService
+
     // custom sort order for listing http methods
     def customHttpMethodSorter = { a, b, order = Methods.getAllHttpMethods()*.toLowerCase() ->
         order.indexOf(a) <=> order.indexOf(b)
@@ -51,6 +53,19 @@ public class SupportedResourceService {
 
         // get the bean that was initialized by the RestfulApiController
         ResourceDetailList resourceDetailList = Holders.grailsApplication.mainContext.getBean("resourceDetailList")
+
+        //get custom resources and append them to ethos resources
+        ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
+
+        ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
+        customResourcesList.resourceDetails.each() {
+            if (!resourceDetailNameList.contains(it.name))
+            {
+                resourceDetailList.resourceDetails.add(it)
+                resourceDetailNameList.add(it.name)
+            }
+        }
+        //end of custom resources code
 
         // get the list of resources to be excluded from the response
         String[] excludedResources = (Holders.config.supportedResource.excludedResources ?: [])
@@ -153,8 +168,8 @@ public class SupportedResourceService {
      */
     private boolean isMediaTypeJson(String mediaType) {
         if (mediaType && (mediaType.equals('application/vnd.hedtech.integration+json') ||
-                          mediaType.startsWith("application/vnd.hedtech+") ||
-                          mediaType.startsWith("application/vnd.hedtech.v"))) {
+                mediaType.startsWith("application/vnd.hedtech+") ||
+                mediaType.startsWith("application/vnd.hedtech.v"))) {
             return false
         }
         switch (mediaType) {

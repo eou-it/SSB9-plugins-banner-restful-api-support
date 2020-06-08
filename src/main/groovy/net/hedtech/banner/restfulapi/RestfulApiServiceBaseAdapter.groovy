@@ -92,7 +92,13 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
-            service.get(params.id)
+            //service.get(params.id)
+            service.get(params)
+            /*
+            Identify if its custom call
+            and pass whole params into get method
+            service.get(params)
+             */
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
         } catch (e) {
