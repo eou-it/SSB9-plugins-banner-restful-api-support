@@ -1,5 +1,5 @@
 /* ******************************************************************************
- Copyright 2013-2015 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2020 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 
 import grails.util.Holders
