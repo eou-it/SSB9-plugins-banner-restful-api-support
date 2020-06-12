@@ -8,6 +8,8 @@ import net.hedtech.banner.service.ServiceBase
 /**
  * Service to read the data sources for extensions and build a set of pojo results
  */
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ReadCompositeService extends ServiceBase {
 
     def readSqlBuilderService

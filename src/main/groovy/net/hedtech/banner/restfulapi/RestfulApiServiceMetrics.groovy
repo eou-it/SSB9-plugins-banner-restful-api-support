@@ -7,12 +7,13 @@ import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 
 import org.apache.commons.logging.LogFactory
-
+import groovy.util.logging.Slf4j
+@ Slf4j
 class RestfulApiServiceMetrics {
 
     private static final HashMap metricsMap = new HashMap()
     
-    private static final log = LogFactory.getLog(this)
+//    private static final log = LogFactory.getLog(this)
     
     private static trackApiMetrics = false
 

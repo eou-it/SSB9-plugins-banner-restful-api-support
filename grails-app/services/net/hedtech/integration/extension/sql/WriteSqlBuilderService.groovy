@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Propagation
  * Created by sdorfmei on 7/17/17.
  */
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+import groovy.util.logging.Slf4j
+@ Slf4j
 class WriteSqlBuilderService  extends ServiceBase {
     boolean transactional = true
 

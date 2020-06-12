@@ -17,6 +17,8 @@ import net.hedtech.integration.extension.exceptions.JsonPropertyTypeMismatchExce
 /**
  * Class that takes in a list of process results and adds them to the content
  */
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ExtensionContentPatchingService {
 
     /**
