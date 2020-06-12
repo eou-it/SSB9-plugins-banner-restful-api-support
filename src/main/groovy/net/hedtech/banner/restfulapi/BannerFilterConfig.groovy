@@ -10,6 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 /**
  * Filter configuration for use with the 'restful-api' plugin.
  **/
+import groovy.util.logging.Slf4j
+@ Slf4j
 abstract
 class BannerFilterConfig {
 

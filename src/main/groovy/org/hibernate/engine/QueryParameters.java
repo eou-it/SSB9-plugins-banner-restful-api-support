@@ -33,6 +33,8 @@ import org.hibernate.internal.util.collections.ArrayHelper;
 /**
  * @author Gavin King
  */
+import groovy.util.logging.Slf4j;
+@ Slf4j
 public final class QueryParameters {
 	private static final Logger log = LoggerFactory.getLogger( QueryParameters.class );
 

@@ -7,11 +7,14 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.15.1"
+        classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:1.4"
+        classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.2"
+        classpath "net.saliman:gradle-cobertura-plugin:2.6.0"
     }
 }
-
-version "0.1"
-group "test"
+version "9.20"
+group "bannerRestfulApiSupport"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -19,6 +22,33 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
+apply plugin:'net.saliman.cobertura'
+apply plugin: 'codenarc'
+
+codenarc {
+    toolVersion = '0.27.0'
+    def codenarcRulePath = project(":banner-codenarc").projectDir.absolutePath + "/config/codenarc/rules.groovy"
+    configFile = file(codenarcRulePath)
+    reportFormat = 'html'
+    ignoreFailures = true
+}
+
+cobertura {
+    coverageFormats = ['xml','html']
+    coverageIgnoreTrivial = true
+    coverageIgnores = ['org.slf4j.Logger.*']
+    //only an example to skip instrumentation
+    //coverageIgnoreMethodAnnotations = ['grails.gorm.transactions.Transactional']
+    coverageExcludes = ['.Application.',
+                        '.BootStrap.',
+                        '.UrlMappings.']
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+}
+
+integrationTest {
+    ignoreFailures = true
+}
 
 repositories {
     mavenLocal()
@@ -30,7 +60,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.grails:grails-core"
     compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "org.springframework.boot:spring-boot-starter-tomcat"
+    provided "org.springframework.boot:spring-boot-starter-tomcat"
     compile "org.grails:grails-web-boot"
     compile "org.grails:grails-logging"
     compile "org.grails:grails-plugin-rest"
@@ -50,6 +80,7 @@ dependencies {
     compile "com.flipkart.zjsonpatch:zjsonpatch:0.2.4"
     compile "com.jayway.jsonpath:json-path:2.3.0"
     compile 'org.grails.plugins:cache-headers:2.0.2'
+    console "org.grails:grails-console"
     profile "org.grails.profiles:web-plugin"
     provided "org.grails:grails-plugin-services"
     provided "org.grails:grails-plugin-domain-class"
@@ -57,13 +88,14 @@ dependencies {
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails:grails-web-testing-support"
-}
+    //testCompile 'org.grails.plugins:hibernate-filter-plugin:0.5.4'
+    testCompile "org.grails:grails-test-mixins:3.3.0"
 
-grails{
-    plugins{
-        compile project(":restful-api")
-        compile project(":banner-core")
-    }
+    //Quartz
+    compile 'org.grails.plugins:quartz:2.0.13'
+
+    //Added for BannerXE For FileUtils and others
+    compile 'commons-io:commons-io:2.6'
 
 }
 
@@ -87,8 +119,20 @@ grailsPublish {
     developers = [johndoe:"John Doe"]
 }
 
-
+test {
+    ignoreFailures = true
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
 
 assets {
     packagePlugin = true
+}
+
+grails{
+    plugins{
+        compile project(":restful-api")
+        compile project(":banner-core")
+    }
 }

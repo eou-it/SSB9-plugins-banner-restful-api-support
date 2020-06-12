@@ -9,6 +9,8 @@ import net.hedtech.integration.extension.ExtensionDefinitionSourceGroup
 import org.springframework.transaction.annotation.Propagation
 
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ReadSqlBuilderService extends ServiceBase {
     boolean transactional = true
 
