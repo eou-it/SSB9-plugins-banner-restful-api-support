@@ -43,7 +43,7 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
         ResourceConfig resourceConfig = new ResourceConfig();
 
         resourceConfig.name = resource
-        resourceConfig.serviceName = "specDrivenApiDataModelFacadeService"
+        resourceConfig.serviceName = "specDrivenAPIDataModelFacadeService"
         resourceConfig.setMethods(['list', 'show'])
 
         JSONBeanMarshallerConfig jsonBeanMarshallerConfig = new JSONBeanMarshallerConfig();
