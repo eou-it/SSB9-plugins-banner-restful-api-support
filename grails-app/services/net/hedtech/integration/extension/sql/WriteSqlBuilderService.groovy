@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension.sql
 import grails.gorm.transactions.Transactional
@@ -9,9 +9,7 @@ import net.hedtech.integration.extension.ExtractedExtensionPropertyGroup
 import org.springframework.transaction.annotation.Propagation
 
 
-/**
- * Created by sdorfmei on 7/17/17.
- */
+
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 import groovy.util.logging.Slf4j
 @ Slf4j
