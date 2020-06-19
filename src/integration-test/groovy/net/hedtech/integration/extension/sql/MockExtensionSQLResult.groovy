@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.integration.extension.sql
 
@@ -13,5 +13,5 @@ import grails.testing.mixin.integration.Integration
 @Integration
 class MockExtensionSQLResult {
     String GUID
-    String columnName
+    def columnName
 }

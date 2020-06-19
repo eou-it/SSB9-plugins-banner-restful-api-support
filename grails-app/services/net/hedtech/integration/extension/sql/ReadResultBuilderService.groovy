@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension.sql
 
@@ -17,21 +17,22 @@ class ReadResultBuilderService extends ServiceBase {
      * @param sqlResults
      * @return
      */
-    def buildResults(def extensionDefinitions, def sqlResults){
+    def buildResults(def extensionDefinitions, def sqlResults) {
         def extensionProcessReadResults = []
-        if (sqlResults && extensionDefinitions){
+        if (sqlResults && extensionDefinitions) {
             //For each sql query result row
             sqlResults.each { row ->
                 //For each column definition
-                extensionDefinitions.each { extensionDefinition->
+                extensionDefinitions.each { extensionDefinition ->
                     ExtensionProcessReadResult extensionProcessReadResult = new ExtensionProcessReadResult()
                     extensionProcessReadResult.jsonLabel = extensionDefinition.jsonLabel
                     extensionProcessReadResult.jsonPropertyType = extensionDefinition.jsonPropertyType
                     extensionProcessReadResult.jsonPath = extensionDefinition.jsonPath
 
-                    if (row[extensionDefinition.columnName]){
+                    def value = row[extensionDefinition.columnName]
+                    if (value || value instanceof Number) {
                         extensionProcessReadResult.resourceId = row.GUID
-                        extensionProcessReadResult.value = row[extensionDefinition.columnName]
+                        extensionProcessReadResult.value = value
 
                         extensionProcessReadResults.add(extensionProcessReadResult)
                     }
