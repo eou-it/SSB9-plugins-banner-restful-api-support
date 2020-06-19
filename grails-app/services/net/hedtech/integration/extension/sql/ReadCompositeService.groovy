@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension.sql
 
@@ -8,6 +8,8 @@ import net.hedtech.banner.service.ServiceBase
 /**
  * Service to read the data sources for extensions and build a set of pojo results
  */
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ReadCompositeService extends ServiceBase {
 
     def readSqlBuilderService

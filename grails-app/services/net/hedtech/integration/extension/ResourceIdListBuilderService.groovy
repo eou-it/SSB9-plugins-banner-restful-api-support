@@ -9,6 +9,8 @@ import net.hedtech.banner.service.ServiceBase
 /**
  * Class that loops through the response content and builds a list of guids
  */
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ResourceIdListBuilderService extends ServiceBase {
 
     /**

@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension
 
@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
+import groovy.util.logging.Slf4j
 
 @Transactional
+@ Slf4j
 class ExtensionReadCompositeService extends ServiceBase {
 
     def extensionContentPatchingService

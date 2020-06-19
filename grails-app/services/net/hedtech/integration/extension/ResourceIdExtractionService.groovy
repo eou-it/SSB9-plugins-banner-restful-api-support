@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode
 /**
  * Class to extract the resource identifier (GUID) from the json content
  */
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ResourceIdExtractionService {
 
     /**
