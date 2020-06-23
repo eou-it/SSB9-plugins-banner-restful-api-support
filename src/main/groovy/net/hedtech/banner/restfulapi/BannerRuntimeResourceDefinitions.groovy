@@ -3,12 +3,21 @@
  *******************************************************************************/
 package net.hedtech.banner.restfulapi
 
+import grails.util.Holders
 import net.hedtech.restfulapi.RestRuntimeResourceDefinitions
+import net.hedtech.restfulapi.apiversioning.BasicApiVersionParser
 import net.hedtech.restfulapi.config.JSONBeanMarshallerConfig
 import net.hedtech.restfulapi.config.MarshallerConfig
 import net.hedtech.restfulapi.config.RepresentationConfig
 import net.hedtech.restfulapi.config.ResourceConfig
+import org.springframework.transaction.annotation.Transactional
+import groovy.sql.Sql
 
+
+@Transactional
+import groovy.util.logging.Slf4j
+
+@Slf4j
 class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions {
 
     /**
@@ -27,11 +36,8 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
      */
     ResourceConfig getResourceConfig(String resource) {
         ResourceConfig resourceConfig = null;
-        if (resource.equalsIgnoreCase("custom-resources")) {
-            resourceConfig = newConfigForBasketballs(resource);
-        }
-        if (resource.equalsIgnoreCase("soccerballs")) {
-            resourceConfig = newConfigForSoccerballs(resource);
+        if (resource) {
+            resourceConfig = newConfigForCustomResources(resource);
         }
         return resourceConfig;
     }
@@ -39,78 +45,61 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
      * Fake out method to return the defintion of a basketballs resource
      * @return
      */
-    ResourceConfig newConfigForBasketballs(resource) {
+    ResourceConfig newConfigForCustomResources(resource) {
         ResourceConfig resourceConfig = new ResourceConfig();
+
+        def results = executeNativeSQL(resource)
 
         resourceConfig.name = resource
         resourceConfig.serviceName = "specDrivenAPIDataModelFacadeService"
         resourceConfig.setMethods(['list', 'show'])
 
-        JSONBeanMarshallerConfig jsonBeanMarshallerConfig = new JSONBeanMarshallerConfig();
-        jsonBeanMarshallerConfig.setMarshallNullFields(false);
-
-
-        RepresentationConfig representationConfigJson = new RepresentationConfig();
-        representationConfigJson.setMediaType("application/json");
-        representationConfigJson.setAllMediaTypes(["application/json", "application/vnd.hedtech.integration.v6+json", "application/vnd.hedtech.integration.v6.0.0+json"])
-
-        RepresentationConfig representationConfigVersion = new RepresentationConfig();
-        representationConfigVersion.setMediaType("application/vnd.hedtech.integration.v6+json");
-        representationConfigVersion.setAllMediaTypes(["application/json", "application/vnd.hedtech.integration.v6+json", "application/vnd.hedtech.integration.v6.0.0+json"])
-
-        RepresentationConfig representationConfigVersion2 = new RepresentationConfig();
-        representationConfigVersion2.setMediaType("application/vnd.hedtech.integration.v6.0.0+json");
-        representationConfigVersion2.setAllMediaTypes(["application/json", "application/vnd.hedtech.integration.v6+json", "application/vnd.hedtech.integration.v6.0.0+json"])
-
-
-        MarshallerConfig marshallerConfig = new MarshallerConfig();
-        marshallerConfig.setInstance(jsonBeanMarshallerConfig);
-
-        representationConfigJson.setMarshallers(marshallerConfig);
-        representationConfigVersion.setMarshallers(marshallerConfig);
-
-        resourceConfig.representations.put(representationConfigVersion.getMediaType(), representationConfigVersion);
-        resourceConfig.representations.put(representationConfigVersion2.getMediaType(), representationConfigVersion2);
-        resourceConfig.representations.put(representationConfigJson.getMediaType(), representationConfigJson);
-
-        return resourceConfig
-
-    }
-
-    ResourceConfig newConfigForSoccerballs(resource) {
-        ResourceConfig resourceConfig = new ResourceConfig();
-
-        resourceConfig.name = resource
-        resourceConfig.serviceName = "runtimeResourceDefinitionCompositeService"
-        resourceConfig.setMethods(['list', 'show'])
 
         JSONBeanMarshallerConfig jsonBeanMarshallerConfig = new JSONBeanMarshallerConfig();
         jsonBeanMarshallerConfig.setMarshallNullFields(false);
+        results?.each {
+            String sampleText = it[2]
+            Collection<String> list = sampleText.split(',')
+            String returnedMediaType = it[1]
+            list?.each {
+                RepresentationConfig representationConfigJson = new RepresentationConfig();
+                representationConfigJson.setMediaType(it)
+                representationConfigJson.setAllMediaTypes(list)
 
-        RepresentationConfig representationConfigJson = new RepresentationConfig();
-        representationConfigJson.setMediaType("application/json");
-        representationConfigJson.setAllMediaTypes(["application/json", "application/vnd.hedtech.integration.v11+json"])
+                MarshallerConfig marshallerConfig = new MarshallerConfig();
+                marshallerConfig.setInstance(jsonBeanMarshallerConfig);
 
-        RepresentationConfig representationConfigVersion = new RepresentationConfig();
-        representationConfigVersion.setMediaType("application/vnd.hedtech.integration.v11+json");
-        representationConfigVersion.setAllMediaTypes(["application/json", "application/vnd.hedtech.integration.v11+json"])
+                representationConfigJson.setMarshallers(marshallerConfig);
 
-        MarshallerConfig marshallerConfig = new MarshallerConfig();
-        marshallerConfig.setInstance(jsonBeanMarshallerConfig);
+                def apiVersion = new BasicApiVersionParser().parseMediaType(resource,returnedMediaType)
+                representationConfigJson.setApiVersion(apiVersion)
 
-        representationConfigJson.setMarshallers(marshallerConfig);
-        representationConfigVersion.setMarshallers(marshallerConfig);
-
-        resourceConfig.representations.put(representationConfigVersion.getMediaType(), representationConfigVersion);
-        resourceConfig.representations.put(representationConfigJson.getMediaType(), representationConfigJson);
+                resourceConfig.representations.put(representationConfigJson.getMediaType(), representationConfigJson);
+            }
+        }
 
         return resourceConfig
+
     }
 
     String getGenericConfigName(def acceptHeaders) {
-
         //"restfulapi:" + resource.name + ":" + representation.mediaType
         return ("restfulapi:restfulapiRuntimeDefinition:application/json")
+    }
+
+    private def executeNativeSQL(String resourceName) {
+        String nativeSql = """select GURASPC_RESOURCE,GURASPC_RETURNED_MEDIA_TYPE,GURASPC_KNOWN_MEDIA_TYPES from GURASPC where GURASPC_RESOURCE = '$resourceName'"""
+        def rows
+        def sql
+        def sessionFactory = Holders?.grailsApplication?.getMainContext()?.sessionFactory
+        try {
+            sql = new Sql(sessionFactory.getCurrentSession().connection())
+            rows = sql.rows(nativeSql)
+        } catch (Exception e) {
+            System.out.println(e)
+        }
+        log.debug "Executed native SQL successfully"
+        return rows
     }
 
 }
