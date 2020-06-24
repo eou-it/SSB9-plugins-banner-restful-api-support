@@ -16,9 +16,9 @@ import java.text.SimpleDateFormat
  */
 import grails.testing.mixin.integration.Integration
 import grails.gorm.transactions.Rollback
-import static groovy.test.GroovyAssert.* 
- @ Rollback
-@ Integration
+import static groovy.test.GroovyAssert.*
+@Rollback
+@Integration
  class ReadExecutionServiceIntegrationTests  extends BaseIntegrationTestCase {
 
     def readExecutionService

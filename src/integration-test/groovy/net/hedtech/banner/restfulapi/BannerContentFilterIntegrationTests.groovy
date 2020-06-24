@@ -19,8 +19,8 @@ import grails.testing.mixin.integration.Integration
 import grails.gorm.transactions.Rollback
 import static groovy.test.GroovyAssert.*
 
-@ Rollback
-@ Integration
+@Rollback
+@Integration
 class BannerContentFilterIntegrationTests extends BannerFilterConfigTestData {
 
     ContentFilter restContentFilter

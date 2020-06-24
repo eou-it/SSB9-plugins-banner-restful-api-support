@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest
  class for BannerApplicationExceptionHandler
  */
 
-@ Rollback
-@ Integration
+@Rollback
+@Integration
  class BannerApplicationExceptionHandlerIntegrationTests extends BaseIntegrationTestCase {
 
     ApplicationException applicationException

@@ -16,6 +16,8 @@ public class SupportedResourceService {
 
 CustomResourcesService customResourcesService
 
+    def sessionFactory
+
     // custom sort order for listing http methods
     def customHttpMethodSorter = { a, b, order = Methods.getAllHttpMethods()*.toLowerCase() ->
         order.indexOf(a) <=> order.indexOf(b)
@@ -84,9 +86,21 @@ CustomResourcesService customResourcesService
                 // add this entry
                 supportedResources.add(supportedResource)
 
+                //def gtvsdaxValue = SdaCrosswalkConversion.fetchAllByInternalAndInternalGroup('GUAEBLK', 'BULK LOAD AVAILABLE')[0]?.external
+                def gtvsdaxValue = sessionFactory.currentSession
+                        .createSQLQuery("""SELECT GTVSDAX_EXTERNAL_CODE FROM GTVSDAX WHERE GTVSDAX_INTERNAL_CODE = :internalCode AND GTVSDAX_INTERNAL_CODE_GROUP = :internalCodeGroup
+                                        AND GTVSDAX_CONCEPT = :concept""")
+                        .setString( 'internalCode', "GUAEBLK" )
+                        .setString( 'internalCodeGroup', "BULK LOAD AVAILABLE" )
+                        .setString( 'concept', "ALL" ).list()
+                Boolean isBulkRoute = true
+                if(gtvsdaxValue != null && gtvsdaxValue[0] == "N"){
+                    isBulkRoute = false
+                }
+
                 // add all representations of the resource that meet our criteria
                 resourceDetail.mediaTypes.each() { mediaType ->
-                    if (isMediaTypeJson(mediaType)) {
+                    if (isMediaTypeJson(mediaType) && (!mediaType.contains("bulk-requests") || (isBulkRoute && mediaType.contains("bulk-requests")))) {
                         SupportedRepresentation supportedRepresentation = new SupportedRepresentation()
                         supportedRepresentation.mediaType = mediaType
                         Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
@@ -105,11 +119,13 @@ CustomResourcesService customResourcesService
                             if (representationMetadata.containsKey("getAllPatterns")) {
                                 supportedRepresentation.getAllPatterns = new ArrayList<>()
                                 representationMetadata.get("getAllPatterns").each {
-                                    SupportedPattern pattern = new SupportedPattern()
-                                    pattern.name = it.name
-                                    pattern.method = it.method
-                                    pattern.mediaType = it.mediaType
-                                    supportedRepresentation.getAllPatterns.add(pattern)
+                                    if((!it.mediaType.contains("bulk-requests") || (isBulkRoute && it.mediaType.contains("bulk-requests")))){
+                                        SupportedPattern pattern = new SupportedPattern()
+                                        pattern.name = it.name
+                                        pattern.method = it.method
+                                        pattern.mediaType = it.mediaType
+                                        supportedRepresentation.getAllPatterns.add(pattern)
+                                    }
                                 }
                             }
 
