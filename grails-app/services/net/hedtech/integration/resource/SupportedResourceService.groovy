@@ -57,7 +57,7 @@ CustomResourcesService customResourcesService
         ResourceDetailList resourceDetailList = Holders.grailsApplication.mainContext.getBean("resourceDetailList")
 
         //get custom resources and append them to ethos resources
-        ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
+        /*ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
 
         ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
         customResourcesList.resourceDetails.each() {
@@ -66,7 +66,7 @@ CustomResourcesService customResourcesService
                 resourceDetailList.resourceDetails.add(it)
                 resourceDetailNameList.add(it.name)
             }
-        }
+        }*/
         //end of custom resources code
 
         // get the list of resources to be excluded from the response
