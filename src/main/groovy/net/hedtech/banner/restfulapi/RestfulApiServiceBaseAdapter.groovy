@@ -92,8 +92,11 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
-            //service.get(params.id)
-            service.get(params)
+            if (params?.serviceName && params?.serviceName == "specDrivenAPIDataModelFacadeService") {
+                service.get(params)
+            } else {
+                service.get(params.id)
+            }
             /*
             Identify if its custom call
             and pass whole params into get method
