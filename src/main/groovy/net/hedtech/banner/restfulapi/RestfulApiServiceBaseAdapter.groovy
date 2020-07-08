@@ -124,7 +124,13 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         def startDate = new Date()
         try {
             RestfulApiRequestParams.set(params)
-            service.create(content)
+
+            if (params?.serviceName && params?.serviceName == "specDrivenAPIDataModelFacadeService") {
+                service.create(content,params)
+            }else{
+                service.create(content)
+            }
+
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
         } catch (e) {
@@ -150,7 +156,11 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         try {
             RestfulApiRequestParams.set(params)
             if (!content.id) content.id = params.id
-            service.update(content)
+            if (params?.serviceName && params?.serviceName == "specDrivenAPIDataModelFacadeService") {
+                service.update(content,params)
+            }else{
+                service.update(content)
+            }
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
         } catch (e) {
@@ -176,7 +186,12 @@ class RestfulApiServiceBaseAdapter implements RestfulServiceAdapter {
         try {
             RestfulApiRequestParams.set(params)
             if (!content.id) content.id = params.id
-            service.delete(content)
+            if (params?.serviceName && params?.serviceName == "specDrivenAPIDataModelFacadeService") {
+                service.delete(content,params)
+            }else{
+                service.delete(content)
+            }
+
         } catch (ApplicationException ae) {
             throw ae // we'll let this pass through
         } catch (e) {
