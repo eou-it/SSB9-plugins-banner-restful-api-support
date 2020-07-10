@@ -10,6 +10,7 @@ import net.hedtech.restfulapi.config.JSONBeanMarshallerConfig
 import net.hedtech.restfulapi.config.MarshallerConfig
 import net.hedtech.restfulapi.config.RepresentationConfig
 import net.hedtech.restfulapi.config.ResourceConfig
+import net.hedtech.restfulapi.extractors.json.DefaultJSONExtractor
 import org.springframework.transaction.annotation.Transactional
 import groovy.sql.Sql
 
@@ -52,19 +53,25 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
 
         resourceConfig.name = resource
         resourceConfig.serviceName = "specDrivenAPIDataModelFacadeService"
-        resourceConfig.setMethods(['list', 'show'])
-
+        resourceConfig.setMethods(['list', 'show','create','update','delete'])
+        Map unsupportedMediaTypeMethods = [:]
 
         JSONBeanMarshallerConfig jsonBeanMarshallerConfig = new JSONBeanMarshallerConfig();
         jsonBeanMarshallerConfig.setMarshallNullFields(false);
+
         results?.each {
             String sampleText = it[2]
             Collection<String> list = sampleText.split(',')
+            String unsupportedMethodString = it[3]
+            Collection<String> unsupportedMethodList = unsupportedMethodString.split(',')
+
+
             String returnedMediaType = it[1]
-            list?.each {
+            list?.each {entity ->
                 RepresentationConfig representationConfigJson = new RepresentationConfig();
-                representationConfigJson.setMediaType(it)
+                representationConfigJson.setMediaType(entity)
                 representationConfigJson.setAllMediaTypes(list)
+                unsupportedMediaTypeMethods.put(entity,unsupportedMethodList)
 
                 MarshallerConfig marshallerConfig = new MarshallerConfig();
                 marshallerConfig.setInstance(jsonBeanMarshallerConfig);
@@ -73,8 +80,9 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
 
                 def apiVersion = new BasicApiVersionParser().parseMediaType(resource,returnedMediaType)
                 representationConfigJson.setApiVersion(apiVersion)
-
+                representationConfigJson.setExtractor(new DefaultJSONExtractor());
                 resourceConfig.representations.put(representationConfigJson.getMediaType(), representationConfigJson);
+                resourceConfig.unsupportedMediaTypeMethods = unsupportedMediaTypeMethods
             }
         }
 
@@ -88,7 +96,7 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
     }
 
     private def executeNativeSQL(String resourceName) {
-        String nativeSql = """select GURASPC_RESOURCE,GURASPC_RETURNED_MEDIA_TYPE,GURASPC_KNOWN_MEDIA_TYPES from GURASPC where GURASPC_RESOURCE = '$resourceName'"""
+        String nativeSql = """select GURASPC_RESOURCE,GURASPC_RETURNED_MEDIA_TYPE,GURASPC_KNOWN_MEDIA_TYPES,GURASPC_UNSUPPORTED_METHODS from GURASPC where GURASPC_RESOURCE = '$resourceName'"""
         def rows
         def sql
         def sessionFactory = Holders?.grailsApplication?.getMainContext()?.sessionFactory
