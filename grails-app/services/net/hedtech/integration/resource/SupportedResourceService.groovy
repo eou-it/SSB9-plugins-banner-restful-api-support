@@ -57,16 +57,16 @@ CustomResourcesService customResourcesService
         ResourceDetailList resourceDetailList = Holders.grailsApplication.mainContext.getBean("resourceDetailList")
 
         //get custom resources and append them to ethos resources
-        /*ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
+        ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
 
-        ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
-        customResourcesList.resourceDetails.each() {
-            if (!resourceDetailNameList.contains(it.name))
-            {
-                resourceDetailList.resourceDetails.add(it)
-                resourceDetailNameList.add(it.name)
+        if(customResourcesList?.resourceDetails?.size() > 0){
+            ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
+            customResourcesList?.resourceDetails?.each() {
+                if (!resourceDetailNameList?.contains(it.name)) {
+                    resourceDetailList?.resourceDetails?.add(it)
+                }
             }
-        }*/
+        }
         //end of custom resources code
 
         // get the list of resources to be excluded from the response
@@ -212,12 +212,12 @@ CustomResourcesService customResourcesService
                 }
             }
         }
-        if (representationMetadata.get("qapiRequest")) {
+        if (representationMetadata?.get("qapiRequest")) {
             httpMethod = Methods.getHttpMethod("create")
             httpMethods.add(httpMethod.toLowerCase())
         }
 
-        if(!(httpMethods.contains('show')) && representationMetadata.get("qapiRequest")){
+        if (!(httpMethods?.contains('show')) && representationMetadata?.get("qapiRequest")) {
             httpMethods.remove('get')
         }
         return httpMethods.unique().sort(customHttpMethodSorter)

@@ -1,82 +1,70 @@
 package net.hedtech.integration.resource
-
 import grails.util.Holders
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import net.hedtech.restfulapi.Methods
 import net.hedtech.restfulapi.ResourceDetail
 import net.hedtech.restfulapi.ResourceDetailList
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-
 @Transactional
-class CustomResourcesService{
+class CustomResourcesService {
 
-    @Transactional(readOnly=true, propagation=Propagation.REQUIRED)
-    public def callEthosUtil(Map map) {
-        String valueFromClob
-        def sessionFactory = Holders.grailsApplication.getMainContext().sessionFactory
-        String statement = """ select gb_ethos_util.f_get_custom_resources as result from dual """
-        Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
+    SupportedResourceService supportedResourceService
+
+
+    public def callEthosUtil() {
+        String nativeSql = """select GURASPC_RESOURCE,GURASPC_RETURNED_MEDIA_TYPE,GURASPC_KNOWN_MEDIA_TYPES,GURASPC_METHODS,GURASPC_UNSUPPORTED_METHODS from GURASPC"""
+        def rows
+        def sql
+        def sessionFactory = Holders?.grailsApplication?.getMainContext()?.sessionFactory
         try {
-            sql.eachRow(statement) { row ->
-                java.sql.Clob clob = (java.sql.Clob) row["result"]
-                List lines = clob.getCharacterStream().readLines()
-                StringBuffer contents = new StringBuffer()
-                lines.each {
-                    contents.append(it)
-                }
-                valueFromClob = contents.toString()
-            }
-        } catch (Exception ae) {
-            throw ae
+            sql = new Sql(sessionFactory.getCurrentSession().connection())
+            rows = sql.rows(nativeSql)
+        } catch (Exception e) {
+            System.out.println(e)
         }
-        finally {
-            sql?.close()
-        }
-        return valueFromClob
+        log.debug "Executed native SQL successfully"
+        return rows
     }
 
-    public def convertToMap(Map params) {
-        String responseInString = callEthosUtil(params)
-        def response = convertStringToMap(responseInString)
-        return response
-    }
-
-    public def convertStringToMap(String response) {
-        return new JsonSlurper().parseText(response)
-    }
-
-    public static def getDynamicResourcesMap(){
-        CustomResourcesService customResourcesService = new CustomResourcesService()
-        def customResourceMap = customResourcesService.convertToMap([:])
-        return customResourceMap
-    }
-
-    public static def getDynamicResources(){
+    public static def getDynamicResources() {
         ResourceDetailList resourceDetailList = []
-        def customResourceMap = getDynamicResourcesMap()
-        customResourceMap.each { customResource->
+        String depricationNotice
+        CustomResourcesService customResourcesService = new CustomResourcesService()
+        def rows = customResourcesService.callEthosUtil()
+        Collection<String> uniqueResourceNames = rows?.GURASPC_RESOURCE?.unique()
+        uniqueResourceNames.each {
             ResourceDetail resourceDetail = new ResourceDetail()
-            resourceDetail.name = customResource?.customResource
-            def representations = customResource?.representations
-            Set methods = []
-            representations.each{ representation ->
-                methods.addAll(representation.methods)
-                def representationMetaData = [:]
-                def mediaType = [:]
-                mediaType.put("deprecationNotice",representation.deprecationNotice)
-                mediaType.put("betaNotice",representation.betaNotice)
-                mediaType.put("deprecationNotice",representation.deprecationNotice)
-                representationMetaData.put(representation.get("X-Media-Type"),mediaType)
-                resourceDetail.mediaTypes << representation.get("X-Media-Type")
-                resourceDetail.representationMetadata << representationMetaData
+            resourceDetail.name = it
+            Collection<GroovyRowResult> results = rows?.findAll { entity -> entity?.GURASPC_RESOURCE == it }
+            def representationsList = []
+            List<String> methods = []
+            Map unsupportedMediaTypeMethods = [:]
+            results?.each { result ->
+                def unsupportedMethodsList = []
+                def representationListForEachRecord = []
+                representationsList.addAll(result[2].split(','))
+                representationListForEachRecord.addAll(result[2].split(','))
+                methods.addAll(result[3].split(','))
+                unsupportedMethodsList.addAll(result[4].split(','))
+                representationListForEachRecord.each {rep->
+                    unsupportedMediaTypeMethods.put(rep,unsupportedMethodsList?.unique())
+                }
+                depricationNotice = result[5]
             }
-            resourceDetail.methods.addAll(methods)
-            resourceDetail.unsupportedMediaTypeMethods = [:]
-            resourceDetail.resourceMetadata = [:]
-            resourceDetailList.resourceDetails.add(resourceDetail)
+
+            resourceDetail.unsupportedMediaTypeMethods = unsupportedMediaTypeMethods
+            representationsList.each { representation ->
+                Map representationMetaData = [:]
+                resourceDetail.representationMetadata << representationMetaData
+                resourceDetail.mediaTypes << representation
+                resourceDetail.methods = methods?.unique()
+            }
+            resourceDetailList?.resourceDetails?.add(resourceDetail)
         }
         return resourceDetailList
     }
-
 }
