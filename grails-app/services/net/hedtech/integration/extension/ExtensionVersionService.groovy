@@ -1,12 +1,12 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension
 
 import grails.gorm.transactions.Transactional
-import net.hedtech.banner.service.ServiceBase
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.NotFoundException
+import net.hedtech.banner.service.ServiceBase
 
 @Transactional
 class ExtensionVersionService extends ServiceBase {
@@ -16,7 +16,7 @@ class ExtensionVersionService extends ServiceBase {
     /**
      * Find by the resource name and known version
      * @param resourceName
-     * @param known
+     * @param knownMediaType
      * @return
      */
     def findByResourceNameAndKnownMediaType(String resourceName, String knownMediaType){
@@ -58,6 +58,20 @@ class ExtensionVersionService extends ServiceBase {
             throw new ApplicationException("extension-versions", new NotFoundException())
         }
         return extensionVersion
+    }
+
+    /**
+     * Find all by the resource name
+     * @param resourceName
+     * @return
+     */
+    List<ExtensionVersion> fetchAllByResourceName(String resourceName) {
+        List<ExtensionVersion> extensionVersionList = []
+        if (resourceName) {
+            extensionVersionList = ExtensionVersion.fetchAllByResourceName(resourceName)
+        }
+
+        return extensionVersionList
     }
 
 }

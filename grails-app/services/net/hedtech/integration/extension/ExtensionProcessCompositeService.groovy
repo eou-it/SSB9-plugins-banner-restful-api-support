@@ -1,11 +1,12 @@
 /******************************************************************************
- Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension
 
 import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
 import net.hedtech.restfulapi.RepresentationRequestAttributes
+import net.hedtech.restfulapi.apiversioning.BasicApiVersionParser
 
 /**
  * The main process entry point for Ethos API extensions
@@ -31,16 +32,29 @@ class ExtensionProcessCompositeService extends ServiceBase {
     ExtensionProcessResult applyExtensions(String resourceName, def request, Map requestParms, def responseContent, def isQapi) {
         ExtensionProcessResult extensionProcessResult = null
 
+        //Get all extension versions for the resource - return immediately if none are defined
+        List<ExtensionVersion> extensionVersionList = extensionVersionService.fetchAllByResourceName(resourceName)
+        if (!(extensionVersionList?.size() > 0)) {
+            return extensionProcessResult
+        }
+
         //Determine if an extension has been defined for this resource
-        ExtensionVersion extensionVersion = findExtensionVersionIfExists(resourceName, request)
-        if (extensionVersion && request){
-            if (isWriteMethod(request, isQapi)){
-                extensionProcessResult = extensionWriteCompositeService.write(resourceName,extensionVersion.extensionCode,request.getMethod(),request,responseContent)
+        if (request) {
+            if (isWriteMethod(request, isQapi)) {
+                def representationConfig = request.getAttribute(RepresentationRequestAttributes.REQUEST_REPRESENTATION)
+                ExtensionVersion extensionVersion = findExtensionVersionMatch(resourceName, representationConfig, extensionVersionList)
+                if (extensionVersion) {
+                    extensionProcessResult = extensionWriteCompositeService.write(resourceName, extensionVersion.extensionCode, request.getMethod(), request, responseContent)
+                }
             }
 
             //After the writable operations are done, we need to apply extensions to the response
-            if (isWriteMethod(request, isQapi) || isReadMethod(request, isQapi)){
-                extensionProcessResult = extensionReadCompositeService.read(resourceName,extensionVersion.extensionCode,responseContent)
+            if (isWriteMethod(request, isQapi) || isReadMethod(request, isQapi)) {
+                def representationConfig = request.getAttribute(RepresentationRequestAttributes.RESPONSE_REPRESENTATION)
+                ExtensionVersion extensionVersion = findExtensionVersionMatch(resourceName, representationConfig, extensionVersionList)
+                if (extensionVersion) {
+                    extensionProcessResult = extensionReadCompositeService.read(resourceName, extensionVersion.extensionCode, responseContent)
+                }
             }
         }
 
@@ -50,14 +64,14 @@ class ExtensionProcessCompositeService extends ServiceBase {
     /**
      *
      * @param resourceName
-     * @param request
+     * @param representationConfig
+     * @param extensionVersionList
      * @return
      */
-    ExtensionVersion findExtensionVersionIfExists(String resourceName, def request){
-        ExtensionVersion extensionVersion = null;
+    ExtensionVersion findExtensionVersionMatch(String resourceName, def representationConfig, List<ExtensionVersion> extensionVersionList){
+        ExtensionVersion extensionVersion = null
 
         //Get the media type from the attached response representation config.
-        def representationConfig = request.getAttribute(RepresentationRequestAttributes.RESPONSE_REPRESENTATION)
         String responseMediaType = representationConfig?.apiVersion?.mediaType
         if (!responseMediaType) {
             responseMediaType = representationConfig?.mediaType
@@ -65,7 +79,7 @@ class ExtensionProcessCompositeService extends ServiceBase {
 
         //If a media type was found, then look up to see if there are extensions defined for it.
         if (responseMediaType){
-            extensionVersion = extensionVersionService.findByResourceNameAndKnownMediaType(resourceName,responseMediaType)
+            extensionVersion = getPrioritizedExtensionVersion(resourceName, responseMediaType, extensionVersionList)
         }
 
         return extensionVersion
@@ -102,4 +116,38 @@ class ExtensionProcessCompositeService extends ServiceBase {
         }
         return result
     }
+
+    /**
+     * Returns the prioritized extension version from list.
+     * @param resourceName
+     * @param responseMediaType
+     * @param extensionVersionList
+     * @return
+     */
+    ExtensionVersion getPrioritizedExtensionVersion(String resourceName, String responseMediaType, List<ExtensionVersion> extensionVersionList) {
+        // the priority order is:
+        //  1) use full matching semantic version of a resource extension
+        //  2) use matching major version of a resource extension
+        //  3) use application/json media type if defined
+        ExtensionVersion extensionVersion = null
+        for (ExtensionVersion checkVersion : extensionVersionList) {
+            if (checkVersion.knownMediaType == responseMediaType) {
+                return checkVersion
+            } else if (!extensionVersion && checkVersion.knownMediaType == 'application/json') {
+                extensionVersion = checkVersion
+            } else {
+                // check for match on major version
+                def checkApiVersion = new BasicApiVersionParser().parseMediaType(resourceName, checkVersion.knownMediaType)
+                if (checkApiVersion.majorVersion != -1 && (checkApiVersion.minorVersion == -1 || checkApiVersion.patchVersion == -1)) {
+                    def responseApiVersion = new BasicApiVersionParser().parseMediaType(resourceName, responseMediaType)
+                    if (responseApiVersion.majorVersion == checkApiVersion.majorVersion) {
+                        extensionVersion = checkVersion
+                    }
+                }
+            }
+        }
+
+        return extensionVersion
+    }
+
 }

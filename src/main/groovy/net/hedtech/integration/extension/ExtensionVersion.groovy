@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension
 
@@ -8,7 +8,19 @@ import groovy.transform.ToString
 import org.hibernate.CacheMode
 import org.hibernate.annotations.CacheConcurrencyStrategy
 
-import javax.persistence.*
+import javax.persistence.Cacheable
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.NamedQueries
+import javax.persistence.NamedQuery
+import javax.persistence.SequenceGenerator
+import javax.persistence.Table
+import javax.persistence.Temporal
+import javax.persistence.TemporalType
+import javax.persistence.Version
 
 /**
  * API Extension Version  resolution table
@@ -18,7 +30,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "GURAPVR")
 @NamedQueries(value = [
-        @NamedQuery(name = "ExtensionVersion.fetchByResourceName",
+        @NamedQuery(name = "ExtensionVersion.fetchAllByResourceName",
                 query = """FROM ExtensionVersion a
                               WHERE a.resourceName = :resourceName"""),
         @NamedQuery(name = "ExtensionVersion.fetchByResourceNameAndKnownMediaType",
@@ -121,18 +133,6 @@ class ExtensionVersion implements Serializable {
         return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
     }
 
-    static ExtensionVersion fetchByResourceName(String resourceName) {
-        List<ExtensionVersion> extensionVersionList = null
-        if( !resourceName ) {
-            return extensionVersionList
-        }
-
-        extensionVersionList = ExtensionVersion.withSession { session ->
-            extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchByResourceName').setCacheMode(CacheMode.GET)
-                    .setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
-        }
-        return extensionVersionList?.size() > 0 ? extensionVersionList?.get(0) : null
-    }
 
     static long countAll(){
         def result
@@ -150,6 +150,18 @@ class ExtensionVersion implements Serializable {
             extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchAll').setCacheMode(CacheMode.IGNORE)
                     .setCacheable(false).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
         }
+        return extensionVersionList
+    }
+
+    static List<ExtensionVersion> fetchAllByResourceName(String resourceName) {
+        List<ExtensionVersion> extensionVersionList = []
+        if (resourceName) {
+            extensionVersionList = ExtensionVersion.withSession { session ->
+                extensionVersionList = session.getNamedQuery('ExtensionVersion.fetchAllByResourceName').setCacheMode(CacheMode.GET)
+                        .setString('resourceName', resourceName).setCacheable(true).setCacheRegion(ExtensionVersion.EXT_CACHE_NAME).list()
+            }
+        }
+
         return extensionVersionList
     }
 
