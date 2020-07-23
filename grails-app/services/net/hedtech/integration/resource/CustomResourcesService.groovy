@@ -46,13 +46,24 @@ class CustomResourcesService {
             results?.each { result ->
                 def unsupportedMethodsList = []
                 def representationListForEachRecord = []
-                representationsList.addAll(result[2].split(','))
-                representationListForEachRecord.addAll(result[2].split(','))
-                methods.addAll(result[3].split(','))
-                unsupportedMethodsList.addAll(result[4].split(','))
-                representationListForEachRecord.each {rep->
+                String knownMediaTypes = result[2]
+                String supportedMethods = result[3]
+                String unsupportedMethods = result[4]
+                if(knownMediaTypes){
+                    representationsList.addAll(knownMediaTypes?.split(','))
+                    representationListForEachRecord?.addAll(knownMediaTypes?.split(','))
+                }
+                if(supportedMethods){
+                    methods.addAll(supportedMethods?.split(','))
+                }
+                if(unsupportedMethods){
+                    unsupportedMethodsList.addAll(unsupportedMethods?.split(','))
+                }
+
+                representationListForEachRecord?.each {rep->
                     unsupportedMediaTypeMethods.put(rep,unsupportedMethodsList?.unique())
                 }
+
                 depricationNotice = result[5]
             }
 
