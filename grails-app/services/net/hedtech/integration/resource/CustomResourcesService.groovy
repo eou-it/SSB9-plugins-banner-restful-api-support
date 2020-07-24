@@ -16,7 +16,7 @@ class CustomResourcesService {
 
 
     public def callEthosUtil() {
-        String nativeSql = """select GURASPC_RESOURCE,GURASPC_RETURNED_MEDIA_TYPE,GURASPC_KNOWN_MEDIA_TYPES,GURASPC_METHODS,GURASPC_UNSUPPORTED_METHODS from GURASPC"""
+        String nativeSql = """select GURASPC_RESOURCE,GURASPC_RETURNED_MEDIA_TYPE,GURASPC_KNOWN_MEDIA_TYPES,GURASPC_METHODS,GURASPC_UNSUPPORTED_METHODS from GURASPC where GURASPC_STATUS = 'Enabled' """
         def rows
         def sql
         def sessionFactory = Holders?.grailsApplication?.getMainContext()?.sessionFactory
@@ -68,6 +68,7 @@ class CustomResourcesService {
             }
 
             resourceDetail.unsupportedMediaTypeMethods = unsupportedMediaTypeMethods
+            resourceDetail.customResource = true
             representationsList.each { representation ->
                 Map representationMetaData = [:]
                 resourceDetail.representationMetadata << representationMetaData

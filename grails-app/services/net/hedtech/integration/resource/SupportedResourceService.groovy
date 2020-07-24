@@ -8,6 +8,7 @@ import net.hedtech.restfulapi.Methods
 import net.hedtech.restfulapi.PagedResultArrayList
 import net.hedtech.restfulapi.ResourceDetail
 import net.hedtech.restfulapi.ResourceDetailList
+import net.hedtech.restfulapi.RestRuntimeResourceDefinitions
 
 /**
  * A service to return the list of resources supported by an application.
@@ -17,6 +18,7 @@ public class SupportedResourceService {
 CustomResourcesService customResourcesService
 
     def sessionFactory
+    RestRuntimeResourceDefinitions restRuntimeResourceDefinitions
 
     // custom sort order for listing http methods
     def customHttpMethodSorter = { a, b, order = Methods.getAllHttpMethods()*.toLowerCase() ->
@@ -56,14 +58,20 @@ CustomResourcesService customResourcesService
         // get the bean that was initialized by the RestfulApiController
         ResourceDetailList resourceDetailList = Holders.grailsApplication.mainContext.getBean("resourceDetailList")
 
-        //get custom resources and append them to ethos resources
-        ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
+        if(restRuntimeResourceDefinitions){
+            Collection<ResourceDetail> customRemovableEntities = resourceDetailList?.resourceDetails?.findAll{ it?.customResource }
 
-        if(customResourcesList?.resourceDetails?.size() > 0){
-            ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
-            customResourcesList?.resourceDetails?.each() {
-                if (!resourceDetailNameList?.contains(it.name)) {
-                    resourceDetailList?.resourceDetails?.add(it)
+            resourceDetailList?.resourceDetails?.removeAll(customRemovableEntities)
+
+            //get custom resources and append them to ethos resources
+            ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
+
+            if(customResourcesList?.resourceDetails?.size() > 0){
+                ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
+                customResourcesList?.resourceDetails?.each() {
+                    if (!resourceDetailNameList?.contains(it.name)) {
+                        resourceDetailList?.resourceDetails?.add(it)
+                    }
                 }
             }
         }
