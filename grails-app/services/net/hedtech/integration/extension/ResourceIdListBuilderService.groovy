@@ -1,6 +1,7 @@
 /******************************************************************************
  Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
+
 package net.hedtech.integration.extension
 
 import com.fasterxml.jackson.databind.JsonNode
