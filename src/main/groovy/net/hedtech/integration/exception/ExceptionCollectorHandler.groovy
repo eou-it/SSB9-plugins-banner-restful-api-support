@@ -13,9 +13,12 @@ import org.springframework.util.Assert
 /**
  * Converts RowInfoActionableException into a result object
  */
+
+import groovy.util.logging.Slf4j
+@ Slf4j
 class ExceptionCollectorHandler implements ExceptionHandler {
 
-    private static log = LogFactory.getLog(ExceptionCollectorHandler.class)
+//    private static log = LogFactory.getLog(ExceptionCollectorHandler.class)
 
     @Override
     boolean supports(Throwable t) {

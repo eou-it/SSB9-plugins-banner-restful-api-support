@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.extension.sql
 
@@ -13,6 +13,8 @@ import net.hedtech.banner.service.ServiceBase
  * Class used to execute the SQL to write extended values
  */
 @Transactional
+import groovy.util.logging.Slf4j
+@ Slf4j
 class WriteExecutionService extends ServiceBase {
 
     /* Session factor used in the query call*/
@@ -36,6 +38,8 @@ class WriteExecutionService extends ServiceBase {
         if (log.isDebugEnabled()) log.debug "extension.sqlStatement=${writeSql}"
         if (log.isTraceEnabled()) log.trace "extension.guid=${resourceId}"
 
+        // added the below line for integration tests
+        writeSql = writeSql.replaceAll(":=", "\\\\:=")    // must escape the ':=' with '\:=' to allow for hibernate binding
         def sqlQuery = sessionFactory.currentSession.createSQLQuery(writeSql)
 
         //Set hard wired / expected parameters

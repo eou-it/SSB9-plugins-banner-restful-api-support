@@ -9,12 +9,14 @@ import grails.web.http.HttpHeaders
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 
 /**
  * Created by sdorfmei on 6/21/17.
  */
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS )
-public class RepresentationResolutionService {
+@ Slf4j
+public class  RepresentationResolutionService {
 
     private static final String catalogHeaderName = "X-Catalog"
 

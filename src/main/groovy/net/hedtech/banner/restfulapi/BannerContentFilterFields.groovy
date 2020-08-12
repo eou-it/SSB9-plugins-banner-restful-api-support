@@ -8,6 +8,8 @@ import net.hedtech.restfulapi.ContentFilterFields
 /**
  * A content filter fields implementation for use with the 'restful-api' plugin.
  **/
+import groovy.util.logging.Slf4j
+@ Slf4j
 class BannerContentFilterFields extends BannerFilterConfig
                                 implements ContentFilterFields {
 

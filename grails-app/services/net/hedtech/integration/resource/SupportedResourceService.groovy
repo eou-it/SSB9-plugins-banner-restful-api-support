@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.resource
 
@@ -14,12 +14,10 @@ import net.hedtech.restfulapi.ResourceDetailList
  **/
 public class SupportedResourceService {
 
-
     // custom sort order for listing http methods
-    def customHttpMethodSorter = { a, b, order=Methods.getAllHttpMethods()*.toLowerCase() ->
-        order.indexOf( a ) <=> order.indexOf( b )
+    def customHttpMethodSorter = { a, b, order = Methods.getAllHttpMethods()*.toLowerCase() ->
+        order.indexOf(a) <=> order.indexOf(b)
     }
-
 
     /**
      * GET /api/resources
@@ -31,7 +29,6 @@ public class SupportedResourceService {
         List<SupportedResource> supportedResources = processResourceDetailList()
         return new PagedResultArrayList(supportedResources, supportedResources.size())
     }
-
 
     /**
      * GET /api/resources
@@ -46,7 +43,6 @@ public class SupportedResourceService {
     def count(params) {
         return processResourceDetailList().size()
     }
-
 
     /**
      * Return the resources supported by the application. Only json media types are returned.
@@ -78,16 +74,28 @@ public class SupportedResourceService {
                     if (isMediaTypeJson(mediaType)) {
                         SupportedRepresentation supportedRepresentation = new SupportedRepresentation()
                         supportedRepresentation.mediaType = mediaType
-                        supportedRepresentation.methods = findSupportedHttpMethods(resourceDetail, mediaType)
+                        Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
+                        supportedRepresentation.methods = findSupportedHttpMethods(resourceDetail, mediaType,representationMetadata)
                         supportedResource.representations.add(supportedRepresentation)
 
                         // check for representation metadata
-                        Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
                         if (representationMetadata != null) {
 
                             // check for representation metadata: filters
                             if (representationMetadata.containsKey("filters")) {
                                 supportedRepresentation.filters = representationMetadata.get("filters")
+                            }
+
+                            // check for getAllPatterns
+                            if (representationMetadata.containsKey("getAllPatterns")) {
+                                supportedRepresentation.getAllPatterns = new ArrayList<>()
+                                representationMetadata.get("getAllPatterns").each {
+                                    SupportedPattern pattern = new SupportedPattern()
+                                    pattern.name = it.name
+                                    pattern.method = it.method
+                                    pattern.mediaType = it.mediaType
+                                    supportedRepresentation.getAllPatterns.add(pattern)
+                                }
                             }
 
                             // check for representation metadata: namedQueries
@@ -120,7 +128,6 @@ public class SupportedResourceService {
         return supportedResources
     }
 
-
     /**
      * Return true if the resource is to be excluded from the response.
      *
@@ -141,11 +148,15 @@ public class SupportedResourceService {
         return !resourceSupportsJson
     }
 
-
     /**
      * Return true if the media type is json.
      */
     private boolean isMediaTypeJson(String mediaType) {
+        if (mediaType && (mediaType.equals('application/vnd.hedtech.integration+json') ||
+                          mediaType.startsWith("application/vnd.hedtech+") ||
+                          mediaType.startsWith("application/vnd.hedtech.v"))) {
+            return false
+        }
         switch (mediaType) {
             case ~/.*json$/:
                 return true
@@ -155,20 +166,28 @@ public class SupportedResourceService {
         }
     }
 
-
     /**
      * Return the list of http methods supported by the resource for a media type.
      */
-    private List<String> findSupportedHttpMethods(ResourceDetail resourceDetail, String mediaType) {
+    private List<String> findSupportedHttpMethods(ResourceDetail resourceDetail, String mediaType,Map representationMetadata) {
         List<String> httpMethods = []
+        String httpMethod
         List<String> unsupportedMethods = resourceDetail.unsupportedMediaTypeMethods.get(mediaType)
         resourceDetail.methods.each() { method ->
             if (!unsupportedMethods?.contains(method)) {
-                String httpMethod = Methods.getHttpMethod(method)
+                httpMethod = Methods.getHttpMethod(method)
                 if (httpMethod) {
                     httpMethods.add(httpMethod.toLowerCase())
                 }
             }
+        }
+        if (representationMetadata.get("qapiRequest")) {
+            httpMethod = Methods.getHttpMethod("create")
+            httpMethods.add(httpMethod.toLowerCase())
+        }
+
+        if(!(httpMethods.contains('show')) && representationMetadata.get("qapiRequest")){
+            httpMethods.remove('get')
         }
         return httpMethods.unique().sort(customHttpMethodSorter)
     }
