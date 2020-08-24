@@ -4,6 +4,7 @@
 package net.hedtech.integration.diagnostic
 
 import grails.gorm.transactions.Transactional
+import groovy.json.JsonOutput
 import net.hedtech.banner.query.DynamicFinder
 import net.hedtech.banner.query.operators.Operators
 import net.hedtech.banner.service.ServiceBase
@@ -57,8 +58,26 @@ public class ResourceDiagnosticService extends ServiceBase {
      * @param content Request body
      */
     def create(Map content) {
-        ResourceDiagnosticMessage.withSession { session ->
-            session.getNamedQuery('ResourceDiagnosticMessage.submitDiagnosticsJob').executeUpdate()
+
+        //In 9.21 we are adding support for calling the API and running only one or some options. Currently
+        //the only thing that is running from a POST in GURIDEA is everything.
+
+        //Therefore on a post try to extract the data in the request body
+        //This is done in a local function vs the General utlity, because I did not want to create a new plugin dependency
+        //The API really should be in banner-api.
+        Map extractedData = extractDataFromRequestBody(content)
+        if (extractedData.containsKey("options")){
+            //If we have job options take the array of options and make a string.
+            String jobOptions = buildJobOptionsString(extractedData)
+            //Call GURIDEA passing it our string options
+            ResourceDiagnosticMessage.withSession { session ->
+                session.getNamedQuery('ResourceDiagnosticMessage.p_request_mgmt_center_diag').setString("options",jobOptions).executeUpdate()
+            }
+        }else{
+            //If we don't have options assume this is a legacy call so call the old procedure
+            ResourceDiagnosticMessage.withSession { session ->
+                session.getNamedQuery('ResourceDiagnosticMessage.submitDiagnosticsJob').executeUpdate()
+            }
         }
         return null
     }
@@ -148,4 +167,46 @@ public class ResourceDiagnosticService extends ServiceBase {
         }
     }
 
+
+    /**
+     * This function will extract data from the request body. This is a clone of what is in the General utility
+     * DataModelPropertyExtractor because if we used it, it would create a new dependency
+     * @param content
+     * @return
+     */
+    protected def extractDataFromRequestBody(Map content) {
+        Map extractedData = [:]
+        //Only try to grab the request body if it has options in it
+        if (content?.containsKey("options") && content.get("options") instanceof Collection) {
+            def list
+            list = content.get("options")
+            list.retainAll { it instanceof String }
+            extractedData.put("options",list)
+        }
+
+        return extractedData
+    }
+
+    /**
+     * Take the array of options and build a CSV string for it.
+     * @param content
+     * @return
+     */
+    protected String buildJobOptionsString(Map extractedData) {
+        String jobOptions
+        //Take the array of options and build a csv like
+        //  security-test,persons,courses
+        def parameters = extractedData.get("options")
+        if (parameters != null){
+            jobOptions = ""
+            parameters.each{
+                entry -> jobOptions = jobOptions + entry + ","
+            }
+            //Strip off the last comma
+            if (jobOptions.length() > 0){
+                jobOptions = jobOptions.substring(0,jobOptions.length()-1)
+            }
+        }
+        return jobOptions
+    }
 }
