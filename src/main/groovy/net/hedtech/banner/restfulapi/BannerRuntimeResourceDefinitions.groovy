@@ -61,9 +61,9 @@ class BannerRuntimeResourceDefinitions implements RestRuntimeResourceDefinitions
 
         results?.each {
             String sampleText = it[2]
-            Collection<String> list = sampleText.split(',')
+            Collection<String> list = sampleText?.split(',')
             String unsupportedMethodString = it[3]
-            Collection<String> unsupportedMethodList = unsupportedMethodString.split(',')
+            Collection<String> unsupportedMethodList = unsupportedMethodString?.split(',')
 
 
             String returnedMediaType = it[1]
