@@ -1,6 +1,7 @@
 /*******************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
+
 package net.hedtech.banner.restfulapi
 
 import net.hedtech.restfulapi.ContentFilterFields
