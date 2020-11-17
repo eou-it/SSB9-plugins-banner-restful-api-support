@@ -96,9 +96,6 @@ dependencies {
     //testCompile 'org.grails.plugins:hibernate-filter-plugin:0.5.4'
     testCompile "org.grails:grails-test-mixins:3.3.0"
 
-    //Quartz
-    compile 'org.grails.plugins:quartz:2.0.13'
-
     //Added for BannerXE For FileUtils and others
     compile 'commons-io:commons-io:2.6'
 
