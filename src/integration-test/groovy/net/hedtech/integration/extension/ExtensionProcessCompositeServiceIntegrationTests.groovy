@@ -1,7 +1,6 @@
 /*******************************************************************************
- Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2021 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
-
 package net.hedtech.integration.extension
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -23,9 +22,10 @@ import groovy.util.logging.Slf4j
 import grails.testing.mixin.integration.Integration
 import grails.gorm.transactions.Rollback
 import static groovy.test.GroovyAssert.* 
- @ Rollback
-@ Slf4j
-@ Integration
+
+@Slf4j
+ @Rollback
+ @Integration
  class ExtensionProcessCompositeServiceIntegrationTests  extends BaseIntegrationTestCase  {
 
     def extensionProcessCompositeService
@@ -50,7 +50,7 @@ import static groovy.test.GroovyAssert.*
         def requestContent = null
         def responseContent = """{"id":"38d4154e-276d-4907-969b-62579cf1b7a6","name":"my test","desc":"my description"}"""
 
-        def request = newMockHttpServletRequest("GET", "application/json", requestContent)
+        def request = newMockHttpServletRequest("GET", "application/json", null, requestContent)
 
         ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNull extensionProcessResult
@@ -78,7 +78,7 @@ import static groovy.test.GroovyAssert.*
         def responseContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall"}"""
         def expectedContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","hedmCapacity":150,"hedmConstructionDate":"2013-06-24","hedmLandmark":"SMALL RED TREE","hedmRoomCount":10}"""
 
-        def request = newMockHttpServletRequest(method, mediaType, requestContent)
+        def request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -96,7 +96,7 @@ import static groovy.test.GroovyAssert.*
 
         def updatedContent = expectedContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, mediaType, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -139,7 +139,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         expectedContent = updatedContent // a delete should not change extension values
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -162,7 +162,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         expectedContent = requestContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, mediaType, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -185,7 +185,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = originalContent
         expectedContent = originalContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, true)
         assertNotNull extensionProcessResult
@@ -230,7 +230,7 @@ import static groovy.test.GroovyAssert.*
         def responseContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"S","title":"Single","maritalCategory":"single"}"""
         def expectedContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"S","title":"Single","maritalCategory":"single","hedmEdiEquivalent":"B","hedmFinanceConversion":"A"}"""
 
-        def request = newMockHttpServletRequest(method, mediaType, requestContent)
+        def request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -248,7 +248,7 @@ import static groovy.test.GroovyAssert.*
 
         def updatedContent = expectedContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, mediaType, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -275,7 +275,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         expectedContent = updatedContent // a delete should not change extension values
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -296,7 +296,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         expectedContent = requestContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, mediaType, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -317,7 +317,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = originalContent
         expectedContent = originalContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, true)
         assertNotNull extensionProcessResult
@@ -354,7 +354,7 @@ import static groovy.test.GroovyAssert.*
         def responseContent = """{"id":""" + "\"${guidList[0]}\"" + ""","abbreviation":"DC","title":"Just another test code"}"""
         def expectedContent = """{"id":""" + "\"${guidList[0]}\"" + ""","abbreviation":"DC","title":"Just another test code","hedmExternalData":{"hedmCode":"A12365427","hedmHistory":[{"date":"2002-01-13","status":"FT","level":7},{"date":"2000-12-06","status":"PT","level":5}]},"hedmInstructionalMethodCode":"WLB","hedmDuration":21,"hedmEndDate":"2008-02-09","hedmInstructor":"Smith","hedmStartDate":"2000-12-06"}"""
 
-        def request = newMockHttpServletRequest(method, mediaType, requestContent)
+        def request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -372,7 +372,7 @@ import static groovy.test.GroovyAssert.*
 
         def updatedContent = expectedContent
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, mediaType, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -430,7 +430,7 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         expectedContent = updatedContent // a delete should not change extension values
 
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, null, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -456,12 +456,10 @@ import static groovy.test.GroovyAssert.*
         responseContent = requestContent
         // must adjust expected content for re-parsing of raw json text
         expectedContent = requestContent.
-                replaceAll('"date":"2002-01-13","status":"FT","level":7','"date":"2002-01-13","level":7,"status":"FT"').
-                replaceAll('"date":"2000-12-06","status":"PT","level":5','"date":"2000-12-06","level":5,"status":"PT"')
+                replaceAll('"date":"2002-01-13","status":"FT","level":7','"level":7,"status":"FT","date":"2002-01-13"').
+                replaceAll('"date":"2000-12-06","status":"PT","level":5','"level":5,"status":"PT","date":"2000-12-06"')
 
-        //adjusting expected content above
-
-        request = newMockHttpServletRequest(method, mediaType, requestContent)
+        request = newMockHttpServletRequest(method, mediaType, mediaType, requestContent)
 
         extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -477,7 +475,7 @@ import static groovy.test.GroovyAssert.*
             assertEquals "2000-12-06", new SimpleDateFormat("yyyy-MM-dd").format(row[3])
             assertEquals "2008-02-09", new SimpleDateFormat("yyyy-MM-dd").format(row[4])
             assertEquals 'A12365427', row[5]
-            assertEquals '[{"date":"2002-01-13","level":7,"status":"FT"},{"date":"2000-12-06","level":5,"status":"PT"}]', row[6]
+            assertEquals '[{"level":7,"status":"FT","date":"2002-01-13"},{"level":5,"status":"PT","date":"2000-12-06"}]', row[6]
         }
     }
 
@@ -504,7 +502,7 @@ import static groovy.test.GroovyAssert.*
         def responseContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall"}"""
         def expectedContent = """{"id":""" + "\"${guidList[0]}\"" + ""","code":"TECH","title":"Technology Hall","hedmCapacity":150,"hedmConstructionDate":"2013-06-24","hedmLandmark":"SMALL RED TREE","hedmRoomCount":10}"""
 
-        def request = newMockHttpServletRequest(method, mediaType, requestContent, apiVersion)
+        def request = newMockHttpServletRequest(method, mediaType, null, requestContent, apiVersion)
 
         ExtensionProcessResult extensionProcessResult = extensionProcessCompositeService.applyExtensions(resourceName, request, null, responseContent, false)
         assertNotNull extensionProcessResult
@@ -513,21 +511,31 @@ import static groovy.test.GroovyAssert.*
     }
 
 
-    private MockHttpServletRequest newMockHttpServletRequest(method, mediaType, content, apiVersion = null) {
+    private MockHttpServletRequest newMockHttpServletRequest(method, responseMediaType, requestMediaType, content, apiVersion = null) {
         MockHttpServletRequest request = new MockHttpServletRequest()
         request.setCharacterEncoding("UTF-8")
         request.setMethod(method)
-        RepresentationConfig representationConfig = new RepresentationConfig()
-        representationConfig.mediaType = mediaType
-        if (apiVersion) {
-            representationConfig.apiVersion = apiVersion
-        }
+        RepresentationConfig representationConfig = newRepresentationConfig(responseMediaType, apiVersion)
         request.setAttribute(RepresentationRequestAttributes.RESPONSE_REPRESENTATION, representationConfig)
+        if (requestMediaType) {
+            representationConfig = (requestMediaType == responseMediaType ? representationConfig : newRepresentationConfig(requestMediaType, apiVersion))
+            request.setAttribute(RepresentationRequestAttributes.REQUEST_REPRESENTATION, representationConfig)
+        }
         if (content) {
             request.setContentType("application/json")
             request.setContent(content.getBytes())
         }
         return request
+    }
+
+
+    private RepresentationConfig newRepresentationConfig(mediaType, apiVersion) {
+        RepresentationConfig representationConfig = new RepresentationConfig()
+        representationConfig.mediaType = mediaType
+        if (apiVersion) {
+            representationConfig.apiVersion = apiVersion
+        }
+        return representationConfig;
     }
 
 }

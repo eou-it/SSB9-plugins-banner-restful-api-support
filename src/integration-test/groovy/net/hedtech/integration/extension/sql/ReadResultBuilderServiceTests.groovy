@@ -1,7 +1,6 @@
 /*******************************************************************************
- Copyright 2017-2020 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2021 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
-
 package net.hedtech.integration.extension.sql
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import net.hedtech.integration.extension.ExtensionDefinition
@@ -14,9 +13,9 @@ import org.junit.Test
  */
 import grails.testing.mixin.integration.Integration
 import grails.gorm.transactions.Rollback
-import static groovy.test.GroovyAssert.* 
- @ Rollback
-@ Integration
+import static groovy.test.GroovyAssert.*
+@Rollback
+@Integration
  class ReadResultBuilderServiceTests extends BaseIntegrationTestCase {
 
     def readResultBuilderService
@@ -114,6 +113,41 @@ import static groovy.test.GroovyAssert.*
         assertEquals 2, result.size
     }
 
+    @Test
+    void buildWithNumericZero(){
 
+        given:
+        def extensionDefinitions = []
+        def extensionDefinition = new ExtensionDefinition(
+                extensionCode: "code123",
+                resourceName: "abc123",
+                description: "Test data",
+                jsonPath: "/",
+                jsonLabel: "abc123",
+                jsonPropertyType: "N",
+                columnName: "columnName"
+        )
+        extensionDefinitions.add(extensionDefinition)
+
+        def mockSQLResults = []
+        def sqlResult = new MockExtensionSQLResult()
+        sqlResult.GUID = "aaaaaa"
+        sqlResult.columnName = 0
+
+        def sqlResult2 = new MockExtensionSQLResult()
+        sqlResult2.GUID = "bbbbb"
+        sqlResult2.columnName = 1
+
+        mockSQLResults.add(sqlResult)
+        mockSQLResults.add(sqlResult2)
+
+
+        when:
+        def result = readResultBuilderService.buildResults(extensionDefinitions,mockSQLResults)
+
+        expect:
+        assertNotNull result
+        assertEquals 2, result.size
+    }
 
 }

@@ -8,11 +8,17 @@ import net.hedtech.restfulapi.Methods
 import net.hedtech.restfulapi.PagedResultArrayList
 import net.hedtech.restfulapi.ResourceDetail
 import net.hedtech.restfulapi.ResourceDetailList
+import net.hedtech.restfulapi.RestRuntimeResourceDefinitions
 
 /**
  * A service to return the list of resources supported by an application.
  **/
 public class SupportedResourceService {
+
+    CustomResourcesService customResourcesService
+
+    def sessionFactory
+    RestRuntimeResourceDefinitions restRuntimeResourceDefinitions
 
     // custom sort order for listing http methods
     def customHttpMethodSorter = { a, b, order = Methods.getAllHttpMethods()*.toLowerCase() ->
@@ -52,6 +58,25 @@ public class SupportedResourceService {
         // get the bean that was initialized by the RestfulApiController
         ResourceDetailList resourceDetailList = Holders.grailsApplication.mainContext.getBean("resourceDetailList")
 
+        if(restRuntimeResourceDefinitions){
+            Collection<ResourceDetail> customRemovableEntities = resourceDetailList?.resourceDetails?.findAll{ it?.customResource }
+
+            resourceDetailList?.resourceDetails?.removeAll(customRemovableEntities)
+
+            //get custom resources and append them to ethos resources
+            ResourceDetailList customResourcesList = customResourcesService.getDynamicResources()
+
+            if(customResourcesList?.resourceDetails?.size() > 0){
+                ArrayList resourceDetailNameList = resourceDetailList.resourceDetails?.name
+                customResourcesList?.resourceDetails?.each() {
+                    if (!resourceDetailNameList?.contains(it.name)) {
+                        resourceDetailList?.resourceDetails?.add(it)
+                    }
+                }
+            }
+        }
+        //end of custom resources code
+
         // get the list of resources to be excluded from the response
         String[] excludedResources = (Holders.config.supportedResource.excludedResources ?: [])
 
@@ -69,9 +94,21 @@ public class SupportedResourceService {
                 // add this entry
                 supportedResources.add(supportedResource)
 
+                //def gtvsdaxValue = SdaCrosswalkConversion.fetchAllByInternalAndInternalGroup('GUAEBLK', 'BULK LOAD AVAILABLE')[0]?.external
+                def gtvsdaxValue = sessionFactory.currentSession
+                        .createSQLQuery("""SELECT GTVSDAX_EXTERNAL_CODE FROM GTVSDAX WHERE GTVSDAX_INTERNAL_CODE = :internalCode AND GTVSDAX_INTERNAL_CODE_GROUP = :internalCodeGroup
+                                        AND GTVSDAX_CONCEPT = :concept""")
+                        .setString( 'internalCode', "GUAEBLK" )
+                        .setString( 'internalCodeGroup', "BULK LOAD AVAILABLE" )
+                        .setString( 'concept', "ALL" ).list()
+                Boolean isBulkRoute = true
+                if(gtvsdaxValue != null && gtvsdaxValue[0] == "N"){
+                    isBulkRoute = false
+                }
+
                 // add all representations of the resource that meet our criteria
                 resourceDetail.mediaTypes.each() { mediaType ->
-                    if (isMediaTypeJson(mediaType)) {
+                    if (isMediaTypeJson(mediaType) && (!mediaType.contains("bulk-requests") || (isBulkRoute && mediaType.contains("bulk-requests")))) {
                         SupportedRepresentation supportedRepresentation = new SupportedRepresentation()
                         supportedRepresentation.mediaType = mediaType
                         Map representationMetadata = resourceDetail.representationMetadata.get(mediaType)
@@ -90,11 +127,13 @@ public class SupportedResourceService {
                             if (representationMetadata.containsKey("getAllPatterns")) {
                                 supportedRepresentation.getAllPatterns = new ArrayList<>()
                                 representationMetadata.get("getAllPatterns").each {
-                                    SupportedPattern pattern = new SupportedPattern()
-                                    pattern.name = it.name
-                                    pattern.method = it.method
-                                    pattern.mediaType = it.mediaType
-                                    supportedRepresentation.getAllPatterns.add(pattern)
+                                    if((!it.mediaType.contains("bulk-requests") || (isBulkRoute && it.mediaType.contains("bulk-requests")))){
+                                        SupportedPattern pattern = new SupportedPattern()
+                                        pattern.name = it.name
+                                        pattern.method = it.method
+                                        pattern.mediaType = it.mediaType
+                                        supportedRepresentation.getAllPatterns.add(pattern)
+                                    }
                                 }
                             }
 
@@ -153,8 +192,8 @@ public class SupportedResourceService {
      */
     private boolean isMediaTypeJson(String mediaType) {
         if (mediaType && (mediaType.equals('application/vnd.hedtech.integration+json') ||
-                          mediaType.startsWith("application/vnd.hedtech+") ||
-                          mediaType.startsWith("application/vnd.hedtech.v"))) {
+                mediaType.startsWith("application/vnd.hedtech+") ||
+                mediaType.startsWith("application/vnd.hedtech.v"))) {
             return false
         }
         switch (mediaType) {
@@ -181,12 +220,12 @@ public class SupportedResourceService {
                 }
             }
         }
-        if (representationMetadata.get("qapiRequest")) {
+        if (representationMetadata?.get("qapiRequest")) {
             httpMethod = Methods.getHttpMethod("create")
             httpMethods.add(httpMethod.toLowerCase())
         }
 
-        if(!(httpMethods.contains('show')) && representationMetadata.get("qapiRequest")){
+        if (!(httpMethods?.contains('show')) && representationMetadata?.get("qapiRequest")) {
             httpMethods.remove('get')
         }
         return httpMethods.unique().sort(customHttpMethodSorter)

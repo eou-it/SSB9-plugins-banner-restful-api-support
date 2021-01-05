@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017-2021 Ellucian Company L.P. and its affiliates.
  ******************************************************************************/
 package net.hedtech.integration.diagnostic
 
@@ -16,6 +16,9 @@ import javax.persistence.*
 @NamedNativeQueries(value = [
         @NamedNativeQuery(name = "ResourceDiagnosticMessage.submitDiagnosticsJob",
                 query = """BEGIN gokhedd.p_submit_diagnostics_job; END;""",
+                resultSetMapping="ResourceDiagnosticMessage.void"),
+        @NamedNativeQuery(name = "ResourceDiagnosticMessage.p_request_mgmt_center_diag",
+                query = """BEGIN guredia.p_request_mgmt_center_diag(:options); END;""",
                 resultSetMapping="ResourceDiagnosticMessage.void")
 ])
 @SqlResultSetMappings(value = [

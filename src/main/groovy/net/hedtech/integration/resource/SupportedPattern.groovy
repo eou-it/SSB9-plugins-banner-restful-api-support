@@ -12,3 +12,4 @@ public class SupportedPattern implements Serializable {
     String method
     String mediaType
 }
+
