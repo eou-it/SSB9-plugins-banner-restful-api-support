@@ -1,9 +1,11 @@
 /*******************************************************************************
- Copyright 2016-2020 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2021 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
 package net.hedtech.banner.restfulapi
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 import groovy.sql.Sql
@@ -11,7 +13,8 @@ import groovy.sql.Sql
 /**
  * Test data for BannerFilterConfig
  */
-
+@Rollback
+@Integration
  class BannerFilterConfigTestData extends BaseIntegrationTestCase {
 
 

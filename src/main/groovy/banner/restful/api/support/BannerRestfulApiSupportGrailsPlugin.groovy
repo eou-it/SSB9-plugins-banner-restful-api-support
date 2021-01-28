@@ -1,5 +1,5 @@
 /* ******************************************************************************
- Copyright 2013-2020 Ellucian Company L.P. and its affiliates.
+ Copyright 2013-2021 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 
 import grails.util.Holders
@@ -11,7 +11,7 @@ class BannerRestfulApiSupportGrailsPlugin extends Plugin{
     String version = "9.20"
 
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "2.2.1 > *"
+    def grailsVersion = "3.3.11 > *"
 
     //must load after banner-core to override basic auth
     //and exception filters if configured to do so.
